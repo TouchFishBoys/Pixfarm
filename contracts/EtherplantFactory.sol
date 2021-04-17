@@ -1,22 +1,35 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
-
 import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 
 abstract contract IEtherplantFactory {
-    enum Quality {R, SR, SSR}
+    enum Quality {N, R, SR, SSR}
+    enum Type {Seed,Fruit}
 
-    struct Seed {
+    struct Plant { 
         string name;
-        uint32 dna;
-    }
+        uint32 dna;         //1 bit to classfy seed and fruit 4 bits for species 2 bits for quality and 3 bits for each properties
+    }                       //total:19 bits
+                            //  example:
+                            //  seed or fruit
+                            //  |
+                            //  |species
+                            //  ||   quality
+                            //  ||   | hp
+                            //  ||   | |  atk
+                            //  ||   | |  |  def             
+                            //  ||   | |  |  |  spd
+                            //  ||   | |  |  |  |
+                            //  1110010001011100010
 
-    function getSeedProperties(uint64 _dna)
+
+    function getPlantProperties(uint64 _dna)
         external
         view
         virtual
         returns (
+            Type type,
             uint256 hp,
             uint256 atk,
             uint256 def,
@@ -35,19 +48,22 @@ contract EtherplantFactory is Ownable, IEtherplantFactory {
         return uint32(parent1 + parent2);
     }
 
-    function getSeedProperties(uint64 _dna)
+    function getPlantProperties(uint64 _dna)
         external
         view
         virtual
         override
         returns (
+            Type type,
             uint256 hp,
             uint256 atk,
             uint256 def,
             uint256 spd,
             Quality quality
         )
-    {}
+    {
+        
+    }
 
     function check(uint256 probability, uint256 decimal)
         public
