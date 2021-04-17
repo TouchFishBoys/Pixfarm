@@ -3,10 +3,15 @@ pragma solidity ^0.8.0;
 
 contract Auction {
     struct Good {
+        bool finished;
         address owner;
         uint256 price;
+        uint256 money;
         string name;
     }
+
+    mapping(address => mapping(uint256 => uint256)) private money;
+
     Good[] public goods;
 
     function addGood(uint256 _price) public {
