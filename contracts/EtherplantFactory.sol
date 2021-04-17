@@ -29,13 +29,18 @@ abstract contract IEtherplantFactory {
         view
         virtual
         returns (
-            Type type,
+            uint256 specie,
             uint256 hp,
             uint256 atk,
             uint256 def,
             uint256 spd,
             Quality quality
         );
+    function getQuality(uint256 code)
+        internal
+        view
+        virtual
+    returns(Quality q);
 }
 
 contract EtherplantFactory is Ownable, IEtherplantFactory {
@@ -54,7 +59,7 @@ contract EtherplantFactory is Ownable, IEtherplantFactory {
         virtual
         override
         returns (
-            Type type,
+            uint256 specie,
             uint256 hp,
             uint256 atk,
             uint256 def,
@@ -62,7 +67,37 @@ contract EtherplantFactory is Ownable, IEtherplantFactory {
             Quality quality
         )
     {
-        
+        uint256 _spd = _dna % 8;
+        _dna/=8;
+        uint256 _def = _dna % 8;
+        _dna/=8;
+        uint256 _atk = _dna % 8;
+        _dna/=8;
+        uint256 _hp = _dna % 8;
+        _dna/=8;
+        Quality _quality = getQuality(_dna % 4);
+        _dna/=4;
+        uint256 _specie = _dna % 16;
+        _dna/=16;
+        //get type
+        return (_specie,_hp,_atk,_def,_spd,_quality); 
+    }
+
+    function getQuality(uint256 code)
+        internal
+        view
+        virtual
+        override
+        returns(Quality q){
+        if(code==0){
+            return Quality.N;
+        }else if(code==1){
+            return Quality.R;
+        }else if(code==2){
+            return Quality.SR;
+        }else if(code==3){
+            return Quality.SSR;
+        }
     }
 
     function check(uint256 probability, uint256 decimal)
