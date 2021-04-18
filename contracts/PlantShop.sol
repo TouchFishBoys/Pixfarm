@@ -3,13 +3,14 @@ pragma solidity ^0.8.0;
 import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "./Pixfarmon.sol";
-import "./Etherplant.sol"
+import "./EtherplantFactory.sol";
 contract PlantShop {
     Pixfarmon pixfarmon;
-    Etherplant plant;
+    IEtherplantFactory plantFactory;
 
     function buySeed(uint256 specie,uint256 level)
     external 
+    view
     returns(uint256 _dna){
         uint256 hp = 0;
         uint256 atk = 0;
@@ -31,9 +32,7 @@ contract PlantShop {
                 spd++;
             }
         }
-        return 
-
-        
+        return plantFactory.getSeedDNA(specie, hp, atk, def, spd);
     }
    
 }
