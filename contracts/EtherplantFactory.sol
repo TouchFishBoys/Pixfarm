@@ -16,16 +16,15 @@ abstract contract IEtherplantFactory {
 
     //total:19 bits
     //  example:
-    //  seed or fruit
-    //  |
-    //  |species
-    //  ||   quality
-    //  ||   | hp
-    //  ||   | |  atk
-    //  ||   | |  |  def
-    //  ||   | |  |  |  spd
-    //  ||   | |  |  |  |
-    //  1110000001011100010
+    //  specie (4bits)
+    //  |   hp (3bits)
+    //  |   |  atk (3bits)
+    //  |   |  |  def (3bits)
+    //  |   |  |  |  spd (3bits)
+    //  |   |  |  |  |  quality (2bits)
+    //  |   |  |  |  |  | itemType (3bits)
+    //  |   |  |  |  |  | |
+    //  001100101001110001010
 
     function getPlantProperties(uint64 _dna)
         external
