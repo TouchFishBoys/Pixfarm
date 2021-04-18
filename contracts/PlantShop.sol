@@ -12,13 +12,11 @@ contract PlantShop {
     external 
     view
     returns(uint256 _dna){
+        require(level<=4,"illegal level");
         uint256 hp = 0;
         uint256 atk = 0;
         uint256 def = 0;
         uint256 spd = 0;
-        if (level >= 4){
-            return 0;
-        }
         for (uint i=0; i<level; i++)
         {
             uint256 rnd = pixfarmon.getRandom(4);
