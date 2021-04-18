@@ -3,5 +3,6 @@
     "files.trimTrailingWhitespace": true,
     "files.trimFinalNewlines": true,
     "files.eol": "\n",
-    "files.insertFinalNewline": true
+    "files.insertFinalNewline": true,
+    "solidity.linter": "solium"
 }
