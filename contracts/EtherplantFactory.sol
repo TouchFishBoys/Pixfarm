@@ -5,7 +5,7 @@ import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "./Pixfarmon.sol";
 
-abstract contract IEtherplantFactory {
+abstract contract IEtherplantFactory is Pixfarmon {
     enum Quality {N, R, SR, SSR}
     enum Specie {RESERVED}
 
@@ -15,6 +15,7 @@ abstract contract IEtherplantFactory {
         uint8 atk;
         uint8 def;
         uint8 spd;
+        ItemType plantType;
         Quality quality;
     }
 
@@ -30,48 +31,33 @@ abstract contract IEtherplantFactory {
     //  |   |  atk (3bits)
     //  |   |  |  def (3bits)
     //  |   |  |  |  spd (3bits)
-    //  |   |  |  |  |  quality (2bits)
-    //  |   |  |  |  |  | itemType (3bits)
-    //  |   |  |  |  |  | |
-    //  001100101001110001010
+    //  |   |  |  |  |  DNA  quality (2bits)
+    //  |   |  |  |  |       | itemType (3bits)
+    //  |   |  |  |  |       | |
+    //  0011001010011100     01010
 
     function getPlantProperties(uint64 _dna)
         external
         view
         virtual
-        returns (
-            uint256 specie,
-            uint256 hp,
-            uint256 atk,
-            uint256 def,
-            uint256 spd,
-            PlantType plantType,
-            Quality quality
-        );
+        returns (PlantPropertiesPacked calldata);
 
-    function _getQuality(uint256 code)
-        internal
+    ///@dev 计算DNA
+    function calDna(PlantPropertiesPacked calldata _pack)
+        public
         view
         virtual
-        returns (Quality q);
+        returns (uint256 dna);
 
-    function _getType(uint256 code)
-        internal
-        view
-        virtual
-        returns (PlantType plantType);
-
-    function getDNA(
-        uint256 specie,
-        uint256 hp,
-        uint256 atk,
-        uint256 def,
-        uint256 spd
-    ) external view virtual returns (uint256 dna);
+    ///@dev 计算Tag
+    function calTag(
+        PlantPropertiesPacked calldata _pack,
+        Quality quality,
+        ItemType itemType
+    ) public pure virtual returns (uint256 tag);
 }
 
-contract EtherplantFactory is Ownable, IEtherplantFactory, Pixfarmon {
-    Pixfarmon pixfarmon;
+contract EtherplantFactory is Ownable, IEtherplantFactory {
     function _generateDna(uint32 parent1, uint32 parent2)
         private
         view
@@ -84,11 +70,11 @@ contract EtherplantFactory is Ownable, IEtherplantFactory, Pixfarmon {
         child /= 4096;
         child = child - (child % 4); //clear quality
         //random give 0,1,2,3
-        if(pixfarmon.probabilityCheck(1, 100)){
+        if (probabilityCheck(1, 100)) {
             child += 3;
-        }else if(pixfarmon.probabilityCheck(5, 99)){
+        } else if (probabilityCheck(5, 99)) {
             child += 2;
-        }else if(pixfarmon.probabilityCheck(10, 94)){
+        } else if (probabilityCheck(10, 94)) {
             child += 1;
         }
         child = child * 4096 + propertiesData;
@@ -100,85 +86,48 @@ contract EtherplantFactory is Ownable, IEtherplantFactory, Pixfarmon {
         view
         virtual
         override
-        returns (
-            uint256 specie,
-            uint256 hp,
-            uint256 atk,
-            uint256 def,
-            uint256 spd,
-            PlantType plantType,
-            Quality quality
-        )
+        returns (PlantPropertiesPacked memory)
     {
-        uint256 _spd = _dna % 8;
+        PlantPropertiesPacked memory pack;
+        pack.spd = uint8(_dna % 8);
         _dna /= 8;
-        uint256 _def = _dna % 8;
+        pack.def = uint8(_dna % 8);
         _dna /= 8;
-        uint256 _atk = _dna % 8;
+        pack.atk = uint8(_dna % 8);
         _dna /= 8;
-        uint256 _hp = _dna % 8;
+        pack.hp = uint8(_dna % 8);
         _dna /= 8;
-        Quality _quality = _getQuality(_dna % 4);
+        pack.quality = Quality(_dna % 4);
         _dna /= 4;
-        uint256 _specie = _dna % 16;
+        pack.specie = Specie(_dna % 16);
         _dna /= 16;
-        PlantType _plantType = _getType(_dna);
-        return (_specie, _hp, _atk, _def, _spd, _plantType, _quality);
+        pack.plantType = ItemType(_dna);
+        return pack;
     }
 
-    function _getQuality(uint256 code)
-        internal
-        view
-        virtual
+    function calDna(PlantPropertiesPacked calldata _pack)
+        public
+        pure
         override
-        returns (Quality q)
+        returns (uint256 dna)
     {
-        if (code == 0) {
-            return Quality.N;
-        } else if (code == 1) {
-            return Quality.R;
-        } else if (code == 2) {
-            return Quality.SR;
-        } else if (code == 3) {
-            return Quality.SSR;
-        }
-    }
-
-    function _getType(uint256 code)
-        internal
-        view
-        virtual
-        override
-        returns (PlantType plantType)
-    {
-        if (code == 0) {
-            return PlantType.Seed;
-        } else if (code == 1) {
-            return PlantType.Fruit;
-        }
-    }
-
-    function getDNA(
-        uint256 specie,
-        uint256 hp,
-        uint256 atk,
-        uint256 def,
-        uint256 spd
-    ) external pure override returns (uint256 dna) {
         uint256 _dna =
-            spd + (def << 3) + (atk << 6) + (hp << 9) + (specie << 12);
-        /*
-        uint256 _dna = specie;
-        _dna *= 32;
-        _dna += hp;
-        _dna *= 8;
-        _dna += atk;
-        _dna *= 8;
-        _dna += def;
-        _dna *= 8;
-        _dna += spd;
-        */
+            _pack.spd +
+                (_pack.def << 3) +
+                (_pack.atk << 6) +
+                (_pack.hp << 9) +
+                (uint8(_pack.specie) << 13);
         return _dna;
+    }
+
+    function calTag(
+        PlantPropertiesPacked calldata _pack,
+        Quality quality,
+        ItemType itemType
+    ) public pure override returns (uint256 tag) {
+        uint256 _tag =
+            (calDna(_pack) << 5) + (uint256(quality) << 3) + uint256(itemType);
+        return _tag;
     }
 
     function check(uint256 probability, uint256 decimal)
