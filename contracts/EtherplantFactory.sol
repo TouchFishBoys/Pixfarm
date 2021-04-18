@@ -5,7 +5,7 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 
 abstract contract IEtherplantFactory {
     enum Quality {N, R, SR, SSR}
-    enum Type {Seed,Fruit}
+    enum PlantType {Seed, Fruit}
 
     struct Plant { 
         string name;
@@ -34,6 +34,7 @@ abstract contract IEtherplantFactory {
             uint256 atk,
             uint256 def,
             uint256 spd,
+            PlantType plantType,
             Quality quality
         );
     function getQuality(uint256 code)
@@ -41,16 +42,23 @@ abstract contract IEtherplantFactory {
         view
         virtual
     returns(Quality q);
+
+     function getType(uint256 code)
+        internal
+        view
+        virtual
+        returns(PlantType plantType);
 }
 
 contract EtherplantFactory is Ownable, IEtherplantFactory {
+
     function _generateDna(uint32 parent1, uint32 parent2)
         private
         pure
         returns (uint32)
     {
         //TODO
-        return uint32(parent1 + parent2);
+        return uint32((parent1 + parent2)/2);
     }
 
     function getPlantProperties(uint64 _dna)
@@ -64,6 +72,7 @@ contract EtherplantFactory is Ownable, IEtherplantFactory {
             uint256 atk,
             uint256 def,
             uint256 spd,
+            PlantType plantType,
             Quality quality
         )
     {
@@ -79,8 +88,8 @@ contract EtherplantFactory is Ownable, IEtherplantFactory {
         _dna/=4;
         uint256 _specie = _dna % 16;
         _dna/=16;
-        //get type
-        return (_specie,_hp,_atk,_def,_spd,_quality); 
+        PlantType _plantType = getType(_dna);
+        return (_specie,_hp,_atk,_def,_spd,_plantType,_quality); 
     }
 
     function getQuality(uint256 code)
@@ -97,6 +106,18 @@ contract EtherplantFactory is Ownable, IEtherplantFactory {
             return Quality.SR;
         }else if(code==3){
             return Quality.SSR;
+        }
+    }
+    function getType(uint256 code)
+        internal
+        view
+        virtual
+        override
+        returns(PlantType plantType){
+        if(code==0){
+            return PlantType.Seed;
+        }else if(code==1){
+            return PlantType.Fruit;
         }
     }
 
