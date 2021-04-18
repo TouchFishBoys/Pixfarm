@@ -3,6 +3,7 @@ pragma solidity ^0.8.0;
 
 import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
+import "./Pixfarmon.sol";
 
 abstract contract IEtherplantFactory {
     enum Quality {N, R, SR, SSR}
@@ -53,7 +54,7 @@ abstract contract IEtherplantFactory {
         returns (PlantType plantType);
 }
 
-contract EtherplantFactory is Ownable, IEtherplantFactory {
+contract EtherplantFactory is Ownable, IEtherplantFactory, Pixfarmon {
     function _generateDna(uint32 parent1, uint32 parent2)
         private
         pure
