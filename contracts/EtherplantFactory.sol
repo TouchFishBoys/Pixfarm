@@ -25,7 +25,7 @@ abstract contract IEtherplantFactory {
     //  ||   | |  |  def
     //  ||   | |  |  |  spd
     //  ||   | |  |  |  |
-    //  1110010001011100010
+    //  1110000001011100010
 
     function getPlantProperties(uint64 _dna)
         external
@@ -53,19 +53,13 @@ abstract contract IEtherplantFactory {
         virtual
         returns (PlantType plantType);
 
-    function getSeedDNA(
+    function getDNA(
         uint256 specie,
         uint256 hp,
         uint256 atk,
         uint256 def,
         uint256 spd
-        )
-        external
-        view
-        virtual
-        returns (uint256 dna);
-    
-
+    ) external view virtual returns (uint256 dna);
 }
 
 contract EtherplantFactory is Ownable, IEtherplantFactory, Pixfarmon {
@@ -148,30 +142,25 @@ contract EtherplantFactory is Ownable, IEtherplantFactory, Pixfarmon {
         }
     }
 
-    function getSeedDNA(
+    function getDNA(
         uint256 specie,
         uint256 hp,
         uint256 atk,
         uint256 def,
         uint256 spd
-        )
-        external
-        view
-        virtual
-        override
-        returns (uint256 dna){
-            uint256 _dna = specie;
-            _dna *= 32;
-            _dna += hp;
-            _dna *= 8;
-            _dna += atk;
-             _dna *= 8;
-            _dna += def;
-             _dna *= 8;
-            _dna += spd;
-            return _dna;
-        }
-        
+    ) external pure override returns (uint256 dna) {
+        uint256 _dna = specie;
+        _dna *= 32;
+        _dna += hp;
+        _dna *= 8;
+        _dna += atk;
+        _dna *= 8;
+        _dna += def;
+        _dna *= 8;
+        _dna += spd;
+        return _dna;
+    }
+
     function check(uint256 probability, uint256 decimal)
         public
         view
