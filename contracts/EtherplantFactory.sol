@@ -62,9 +62,10 @@ abstract contract IEtherplantFactory {
 }
 
 contract EtherplantFactory is Ownable, IEtherplantFactory, Pixfarmon {
+    Pixfarmon pixfarmon;
     function _generateDna(uint32 parent1, uint32 parent2)
         private
-        pure
+        view
         returns (uint32)
     {
         uint32 child;
@@ -74,6 +75,13 @@ contract EtherplantFactory is Ownable, IEtherplantFactory, Pixfarmon {
         child /= 4096;
         child = child - (child % 4); //clear quality
         //random give 0,1,2,3
+        if(pixfarmon.probabilityCheck(1, 100)){
+            child += 3;
+        }else if(pixfarmon.probabilityCheck(5, 99)){
+            child += 2;
+        }else if(pixfarmon.probabilityCheck(10, 94)){
+            child += 1;
+        }
         child = child * 4096 + propertiesData;
         return child;
     }
