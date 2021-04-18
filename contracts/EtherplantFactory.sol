@@ -7,7 +7,16 @@ import "./Pixfarmon.sol";
 
 abstract contract IEtherplantFactory {
     enum Quality {N, R, SR, SSR}
-    enum PlantType {Seed, Fruit}
+    enum Specie {RESERVED}
+
+    struct PlantPropertiesPacked {
+        Specie specie;
+        uint8 hp;
+        uint8 atk;
+        uint8 def;
+        uint8 spd;
+        Quality quality;
+    }
 
     struct Plant {
         string name;
@@ -149,6 +158,9 @@ contract EtherplantFactory is Ownable, IEtherplantFactory, Pixfarmon {
         uint256 def,
         uint256 spd
     ) external pure override returns (uint256 dna) {
+        uint256 _dna =
+            spd + (def << 3) + (atk << 6) + (hp << 9) + (specie << 12);
+        /*
         uint256 _dna = specie;
         _dna *= 32;
         _dna += hp;
@@ -158,6 +170,7 @@ contract EtherplantFactory is Ownable, IEtherplantFactory, Pixfarmon {
         _dna += def;
         _dna *= 8;
         _dna += spd;
+        */
         return _dna;
     }
 
