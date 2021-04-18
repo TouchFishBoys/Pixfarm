@@ -1,9 +1,11 @@
+// SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
 import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "./Pixfarmon.sol";
 import "./EtherplantFactory.sol";
+
 contract PlantShop {
     Pixfarmon pixfarmon;
     IEtherplantFactory plantFactory;
@@ -20,17 +22,16 @@ contract PlantShop {
         for (uint i=0; i<level; i++)
         {
             uint256 rnd = pixfarmon.getRandom(4);
-            if(rnd==0){
+            if (rnd == 0) {
                 hp++;
-            }else if(rnd==1){
+            } else if (rnd == 1) {
                 atk++;
-            }else if(rnd==2){
+            } else if (rnd == 2) {
                 def++;
-            }else if(rnd==3){
+            } else if (rnd == 3) {
                 spd++;
             }
         }
-        return plantFactory.getSeedDNA(specie, hp, atk, def, spd);
+        return plantFactory.getDNA(specie, hp, atk, def, spd);
     }
-   
 }

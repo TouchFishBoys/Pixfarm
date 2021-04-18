@@ -8,6 +8,7 @@ contract Pixfarmon {
                 keccak256(
                     abi.encodePacked(
                         msg.sender,
+                        gasleft(),
                         block.difficulty,
                         block.number,
                         keccak256(abi.encode(block.gaslimit))
