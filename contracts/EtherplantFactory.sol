@@ -57,8 +57,15 @@ contract EtherplantFactory is Ownable, IEtherplantFactory {
         pure
         returns (uint32)
     {
-        //TODO
-        return uint32((parent1 + parent2)/2);
+        uint32 child;
+        uint32 propertiesData;
+        child=(parent1 + parent2) / 2;
+        propertiesData = child % 4096;
+        child /= 4096;
+        child = child - (child % 4);  //clear quality
+        //random give 0,1,2,3
+        child = child * 4096 + propertiesData;
+        return child;
     }
 
     function getPlantProperties(uint64 _dna)
