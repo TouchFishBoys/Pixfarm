@@ -3,6 +3,7 @@ pragma solidity ^0.8.0;
 
 import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
+
 import "./Pixfarmon.sol";
 
 abstract contract IEtherplantFactory is Pixfarmon {
@@ -88,6 +89,9 @@ contract EtherplantFactory is Ownable, IEtherplantFactory {
         override
         returns (PlantPropertiesPacked memory)
     {
+        if (_dna > (1 << 12)) {
+            _dna <<= 5;
+        }
         PlantPropertiesPacked memory pack;
         pack.spd = uint8(_dna % 8);
         _dna /= 8;
