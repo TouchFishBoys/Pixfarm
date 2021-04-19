@@ -6,32 +6,31 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 import "./Pixfarmon.sol";
 import "./EtherplantFactory.sol";
 
-contract PlantShop {
-    Pixfarmon pixfarmon;
-    IEtherplantFactory plantFactory;
-
-    function buySeed(uint256 specie,uint256 level)
-    external 
-    view
-    returns(uint256 _dna){
-        require(level<=4,"illegal level");
-        uint256 hp = 0;
-        uint256 atk = 0;
-        uint256 def = 0;
-        uint256 spd = 0;
-        for (uint i=0; i<level; i++)
-        {
-            uint256 rnd = pixfarmon.getRandom(4);
+abstract contract PlantShop is Pixfarmon, IEtherplantFactory {
+    function buySeed(uint256 specie, uint256 level)
+        external
+        view
+        returns (uint256 _dna)
+    {
+        require(level <= 4, "illegal level");
+        PlantPropertiesPacked memory pack;
+        pack.specie = Specie(specie);
+        pack.hp = 0;
+        pack.atk = 0;
+        pack.def = 0;
+        pack.spd = 0;
+        for (uint256 i = 0; i < level; i++) {
+            uint256 rnd = getRandom(4);
             if (rnd == 0) {
-                hp++;
+                pack.hp++;
             } else if (rnd == 1) {
-                atk++;
+                pack.atk++;
             } else if (rnd == 2) {
-                def++;
+                pack.def++;
             } else if (rnd == 3) {
-                spd++;
+                pack.spd++;
             }
         }
-        return plantFactory.getDNA(specie, hp, atk, def, spd);
+        return getSeedTag(pack);
     }
 }

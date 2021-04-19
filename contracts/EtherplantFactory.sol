@@ -42,7 +42,7 @@ abstract contract IEtherplantFactory is Pixfarmon {
         returns (PlantPropertiesPacked calldata);
 
     ///@dev 计算DNA
-    function calDna(PlantPropertiesPacked calldata _pack)
+    function calDna(PlantPropertiesPacked memory _pack)
         public
         view
         virtual
@@ -50,17 +50,24 @@ abstract contract IEtherplantFactory is Pixfarmon {
 
     ///@dev 计算Tag
     function calTag(
-        PlantPropertiesPacked calldata _pack,
+        PlantPropertiesPacked memory _pack,
         Quality quality,
         ItemType itemType
     ) public pure virtual returns (uint256 tag);
 
     ///@dev 生成果实
-    function getFruitTag(uint256 _dna)
+    function getFruitTag(PlantPropertiesPacked memory _pack)
         public
         view
         virtual
-        returns (uint256 fruitTat);
+        returns (uint256 fruitTag);
+
+    ///@dev 生成种子
+    function getSeedTag(PlantPropertiesPacked memory _pack)
+        public
+        pure
+        virtual
+        returns (uint256 seedTag);
 }
 
 contract EtherplantFactory is Ownable, IEtherplantFactory {
@@ -74,13 +81,13 @@ contract EtherplantFactory is Ownable, IEtherplantFactory {
         return child;
     }
 
-    function getFruitTag(uint256 _dna)
+    function getFruitTag(PlantPropertiesPacked memory _pack)
         public
         view
         override
         returns (uint256 fruitTat)
     {
-        uint256 tag = _dna;
+        uint256 tag = calDna(_pack);
         tag << 2;
         if (probabilityCheck(1, 100)) {
             tag += 3;
@@ -91,6 +98,17 @@ contract EtherplantFactory is Ownable, IEtherplantFactory {
         }
         tag << 3;
         tag += 1;
+        return tag;
+    }
+
+    function getSeedTag(PlantPropertiesPacked memory _pack)
+        public
+        pure
+        override
+        returns (uint256 SeedTag)
+    {
+        uint256 tag = calDna(_pack);
+        tag << 5;
         return tag;
     }
 
@@ -115,7 +133,7 @@ contract EtherplantFactory is Ownable, IEtherplantFactory {
         return pack;
     }
 
-    function calDna(PlantPropertiesPacked calldata _pack)
+    function calDna(PlantPropertiesPacked memory _pack)
         public
         pure
         override
@@ -131,7 +149,7 @@ contract EtherplantFactory is Ownable, IEtherplantFactory {
     }
 
     function calTag(
-        PlantPropertiesPacked calldata _pack,
+        PlantPropertiesPacked memory _pack,
         Quality quality,
         ItemType itemType
     ) public pure override returns (uint256 tag) {
