@@ -7,6 +7,7 @@ import "./Pixfarmon.sol";
 import "./EtherplantFactory.sol";
 
 abstract contract PlantShop is Pixfarmon, IEtherplantFactory {
+
     function buySeed(uint256 specie, uint256 level)
         external
         view

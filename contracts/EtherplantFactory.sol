@@ -23,7 +23,7 @@ abstract contract IEtherplantFactory is Pixfarmon {
         uint32 dna; //4 bits for species and 3 bits for each properties
     }
 
-    //total:19 bits
+    //total:21 bits
     //  example:
     //  specie (4bits)
     //  |   hp (3bits)
@@ -35,8 +35,8 @@ abstract contract IEtherplantFactory is Pixfarmon {
     //  |   |  |  |  |       | |
     //  0011001010011100     01010
 
-    function getPlantProperties(uint64 _dna)
-        external
+    function getPlantProperties(uint256 _dna)
+        public
         view
         virtual
         returns (PlantPropertiesPacked calldata);
@@ -68,9 +68,15 @@ abstract contract IEtherplantFactory is Pixfarmon {
         pure
         virtual
         returns (uint256 seedTag);
+
+    ///@dev 分解果实
+    function disassembleFruit(uint256 _fruitTag)
+        public
+        virtual
+        returns (uint256 seedTag, bool getSpecialSeed);
 }
 
-contract EtherplantFactory is Ownable, IEtherplantFactory {
+abstract contract EtherplantFactory is Ownable, IEtherplantFactory {
     function _generateDna(uint256 Dna1, uint256 Dna2)
         private
         pure
@@ -112,8 +118,8 @@ contract EtherplantFactory is Ownable, IEtherplantFactory {
         return tag;
     }
 
-    function getPlantProperties(uint64 _dna)
-        external
+    function getPlantProperties(uint256 _dna)
+        public
         view
         virtual
         override
@@ -158,18 +164,44 @@ contract EtherplantFactory is Ownable, IEtherplantFactory {
         return _tag;
     }
 
-    function check(uint256 probability, uint256 decimal)
+    function disassembleFruit(uint256 _fruitTag)
         public
-        view
-        returns (bool)
+        override
+        returns (uint256 seedTag, bool getSpecialSeed)
     {
-        if (
-            uint256(keccak256(abi.encodePacked(block.timestamp, msg.sender))) %
-                decimal <
-            probability
-        ) {
-            return true;
+        uint256 specie = _fruitTag >> 17;
+        require(specie < 8, "");
+        uint256 dna = _fruitTag >> 3;
+        uint256 quality = dna % 4;
+        dna >> 2;
+        PlantPropertiesPacked memory pack = getPlantProperties(dna);
+        uint256 index;
+        uint256 value;
+        (index, value) = generateRandomAttribute(specie, quality);
+        if (index == 0) {
+            pack.hp += uint8(value);
+        } else if (index == 1) {
+            pack.atk += uint8(value);
+        } else if (index == 2) {
+            pack.def += uint8(value);
+        } else if (index == 3) {
+            pack.spd += uint8(value);
         }
-        return false;
+        bool check;
+        if (quality == 3) {
+            check = probabilityCheck(5, 100);
+        } else if (quality == 2) {
+            check = probabilityCheck(1, 100);
+        } else if (quality == 1) {
+            check = probabilityCheck(5, 1000);
+        } else {
+            check = probabilityCheck(1, 1000);
+        }
+        return (getSeedTag(pack), check);
     }
+
+    function generateRandomAttribute(uint256 _specie, uint256 _quality)
+        public
+        returns (uint256 index, uint256 value)
+    {}
 }
