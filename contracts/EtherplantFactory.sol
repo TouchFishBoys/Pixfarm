@@ -7,7 +7,7 @@ import "./Pixfarmon.sol";
 
 abstract contract IEtherplantFactory is Pixfarmon {
     enum Quality {N, R, SR, SSR}
-    enum Specie {RESERVED}
+    enum Specie {A, B, C, D, E, F, G, H, I, J, K, L}
 
     struct PlantPropertiesPacked {
         Specie specie;
@@ -15,13 +15,11 @@ abstract contract IEtherplantFactory is Pixfarmon {
         uint8 atk;
         uint8 def;
         uint8 spd;
-        ItemType plantType;
-        Quality quality;
     }
 
     struct Plant {
         string name;
-        uint32 dna; //1 bit to classfy seed and fruit 4 bits for species 2 bits for quality and 3 bits for each properties
+        uint32 dna; //4 bits for species and 3 bits for each properties
     }
 
     //total:19 bits
@@ -55,30 +53,44 @@ abstract contract IEtherplantFactory is Pixfarmon {
         Quality quality,
         ItemType itemType
     ) public pure virtual returns (uint256 tag);
+
+    ///@dev 生成果实
+    function getFruitTag(uint256 _dna)
+        public
+        view
+        virtual
+        returns (uint256 fruitTat);
 }
 
 contract EtherplantFactory is Ownable, IEtherplantFactory {
-    function _generateDna(uint32 parent1, uint32 parent2)
+    function _generateDna(uint256 Dna1, uint256 Dna2)
         private
-        view
-        returns (uint32)
+        pure
+        returns (uint256)
     {
-        uint32 child;
-        uint32 propertiesData;
-        child = (parent1 + parent2) / 2;
-        propertiesData = child % 4096;
-        child /= 4096;
-        child = child - (child % 4); //clear quality
-        //random give 0,1,2,3
-        if (probabilityCheck(1, 100)) {
-            child += 3;
-        } else if (probabilityCheck(5, 99)) {
-            child += 2;
-        } else if (probabilityCheck(10, 94)) {
-            child += 1;
-        }
-        child = child * 4096 + propertiesData;
+        uint256 child;
+        child = (Dna1 + Dna2) / 2;
         return child;
+    }
+
+    function getFruitTag(uint256 _dna)
+        public
+        view
+        override
+        returns (uint256 fruitTat)
+    {
+        uint256 tag = _dna;
+        tag << 2;
+        if (probabilityCheck(1, 100)) {
+            tag += 3;
+        } else if (probabilityCheck(5, 99)) {
+            tag += 2;
+        } else if (probabilityCheck(10, 94)) {
+            tag += 1;
+        }
+        tag << 3;
+        tag += 1;
+        return tag;
     }
 
     function getPlantProperties(uint64 _dna)
@@ -90,18 +102,12 @@ contract EtherplantFactory is Ownable, IEtherplantFactory {
     {
         PlantPropertiesPacked memory pack;
         pack.spd = uint8(_dna % 8);
-        _dna /= 8;
+        _dna >> 3;
         pack.def = uint8(_dna % 8);
-        _dna /= 8;
+        _dna >> 3;
         pack.atk = uint8(_dna % 8);
-        _dna /= 8;
-        pack.hp = uint8(_dna % 8);
-        _dna /= 8;
-        pack.quality = Quality(_dna % 4);
-        _dna /= 4;
-        pack.specie = Specie(_dna % 16);
-        _dna /= 16;
-        pack.plantType = ItemType(_dna);
+        pack.hp >> 3;
+        pack.specie = Specie(uint8(_dna % 16));
         return pack;
     }
 
