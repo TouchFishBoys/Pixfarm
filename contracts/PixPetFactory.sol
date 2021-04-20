@@ -12,10 +12,10 @@ abstract contract IPixPetFactory is PixPlant {
     //color(4bits)each
     //----------------DNA
     //吃到的属性值和等级
-    //hp(8bits)
-    //atk(8bits)
-    //def(8bits)
-    //spd(8bits)
+    //hp(11bits)
+    //atk(11bits)
+    //def(11bits)
+    //spd(11bits)
     //Level(5bits)
     struct PetPropertiesPacked {
         uint8 hp;
@@ -39,7 +39,7 @@ abstract contract IPixPetFactory is PixPlant {
         returns (uint256 dna);
 }
 
-abstract contract PixPetFactory is Ownable, IPixPetFactory {
+contract PixPetFactory is Ownable, IPixPetFactory {
     function getPetProperties(uint256 _dna)
         public
         view
