@@ -45,7 +45,7 @@ contract AuctionBase {
 
     modifier ownerOf(uint256 _token) {
         require(
-            tokens[_token].seller == msg.sender,
+            tokenToAuction[_token].seller == msg.sender,
             "You are not the owner of this auction"
         );
         _;
@@ -53,7 +53,7 @@ contract AuctionBase {
 
     modifier notOwnerOf(uint256 _token) {
         require(
-            tokens[_token].seller != msg.sender,
+            tokenToAuction[_token].seller != msg.sender,
             "You are not the owner of this auction"
         );
         _;
