@@ -1,7 +1,6 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
-import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 
 import "./PixfarmonBase.sol";
@@ -9,6 +8,17 @@ import "./PixfarmonBase.sol";
 abstract contract IPixFarmFactory is PixfarmonBase {
     enum Quality {N, R, SR, SSR}
     enum Specie {A, B, C, D, E, F, G, H, I, J, K, L}
+
+    int256[][] specieData = [
+        [int256(1), -1, -1, 1],
+        [int256(1), -1, -1, 1],
+        [int256(1), -1, 1, -1],
+        [int256(-1), 1, 1, -1],
+        [int256(-1), 1, -1, 1],
+        [int256(-1), -1, 1, 1],
+        [int256(1), 0, 0, 0],
+        [int256(0), 0, 0, 1]
+    ];
     struct PlantPropertiesPacked {
         Specie specie;
         uint8 hp;
@@ -191,5 +201,50 @@ abstract contract PixFarmFactory is Ownable, IPixFarmFactory {
     function generateRandomAttribute(
         PlantPropertiesPacked memory _pack,
         uint256 quality
-    ) public returns (PlantPropertiesPacked memory) {}
+    ) public view returns (PlantPropertiesPacked memory) {
+        if (quality == 3) {
+            return followSpecie(_pack);
+        } else if (quality == 2) {
+            if (probabilityCheck(50, 100)) {
+                return followSpecie(_pack);
+            }
+            return _pack;
+        } else if (quality == 1) {
+            if (probabilityCheck(30, 100)) {
+                return followSpecie(_pack);
+            }
+            return _pack;
+        } else {
+            if (probabilityCheck(10, 100)) {
+                return followSpecie(_pack);
+            }
+            return _pack;
+        }
+    }
+
+    function followSpecie(PlantPropertiesPacked memory _pack)
+        internal
+        view
+        returns (PlantPropertiesPacked memory)
+    {
+        uint256 rnd = getRandom(4);
+        if (rnd == 0) {
+            _pack.hp = uint8(
+                int8(_pack.hp) + int8(specieData[uint256(_pack.specie)][0])
+            );
+        } else if (rnd == 1) {
+            _pack.atk = uint8(
+                int8(_pack.atk) + int8(specieData[uint256(_pack.specie)][1])
+            );
+        } else if (rnd == 2) {
+            _pack.def = uint8(
+                int8(_pack.def) + int8(specieData[uint256(_pack.specie)][2])
+            );
+        } else {
+            _pack.spd = uint8(
+                int8(_pack.spd) + int8(specieData[uint256(_pack.specie)][3])
+            );
+        }
+        return _pack;
+    }
 }
