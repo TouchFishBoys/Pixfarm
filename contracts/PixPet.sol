@@ -2,10 +2,9 @@
 pragma solidity ^0.8.0;
 
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
-import "./PetFactory.sol";
-import "./Pixfarmon.sol";
+import "./PixPetFactory.sol";
 
-contract EtherMon is PetFactory, Pixfarmon {
+abstract contract PixPet is PixPetFactory {
     IERC20 private ERC20;
 
     mapping(address => PetAttribute[]) internal petList;

@@ -9,9 +9,11 @@
   "scripts": {
     "compile": "truffle compile",
     "migrate-localhost": "truffle migrate --network testNet",
-    "test": "truffle test"
+    "test": "truffle test",
+    "lint": "solium -d contracts/",
+    "lint-fix": "solium -d contracts/ --fix"
   },
-  "author": "",
+  "author": "Kerite,Square-X,okita-haruru",
   "license": "ISC",
   "dependencies": {
     "@babel/core": "^7.0.0",
