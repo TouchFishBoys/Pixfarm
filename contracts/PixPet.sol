@@ -54,12 +54,45 @@ abstract contract PixPet is PixPetFactory {
         uint256 _challengerIndex,
         address _defender,
         uint256 _defenderIndex
-    ) public {
+    ) public view returns (PetPropertiesPacked memory _winner) {
         PetPropertiesPacked memory challengerPet =
             petList[_challenger][_challengerIndex];
         PetPropertiesPacked memory defenderPet =
             petList[_defender][_defenderIndex];
 
-        while (challengerPet.hp >= 0 && defenderPet.hp >= 0) {}
+        uint256 round;
+        if (challengerPet.spd > defenderPet.spd) {
+            round = challengerPet.spd / defenderPet.spd;
+        } else {
+            round = defenderPet.spd / challengerPet.spd;
+        }
+
+        while (challengerPet.hp >= 0 && defenderPet.hp >= 0) {
+            if (challengerPet.spd >= defenderPet.spd) {
+                for (uint256 i = 1; i <= round; i++) {
+                    defenderPet.hp -=
+                        challengerPet.atk *
+                        (1 - (defenderPet.def / (100 + defenderPet.def)));
+                }
+                challengerPet.hp -=
+                    defenderPet.atk *
+                    (1 - (challengerPet.def / (100 + challengerPet.def)));
+            } else {
+                for (uint256 i = 1; i <= round; i++) {
+                    challengerPet.hp -=
+                        defenderPet.atk *
+                        (1 - (challengerPet.def / (100 + challengerPet.def)));
+                }
+                defenderPet.hp -=
+                    challengerPet.atk *
+                    (1 - (defenderPet.def / (100 + defenderPet.def)));
+            }
+        }
+
+        if (challengerPet.hp == 0) {
+            return (defenderPet);
+        } else {
+            return (challengerPet);
+        }
     }
 }
