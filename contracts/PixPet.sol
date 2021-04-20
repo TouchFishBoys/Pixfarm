@@ -7,13 +7,15 @@ import "./PixPetFactory.sol";
 abstract contract PixPet is PixPetFactory {
     IERC20 private ERC20;
 
-    mapping(address => PetAttribute[]) internal petList;
+    mapping(address => PetPropertiesPacked[]) internal petList;
 
     constructor(IERC20 _ERC20) {
         ERC20 = _ERC20;
     }
 
-    function addPet(address _owner, PetAttribute memory _newPet) internal {
+    function addPet(address _owner, PetPropertiesPacked memory _newPet)
+        internal
+    {
         //add pet into list
         petList[_owner].push(_newPet);
     }
@@ -27,7 +29,7 @@ abstract contract PixPet is PixPetFactory {
         uint256 _money
     ) public {
         ERC20.transferFrom(_getPetPerson, address(this), _money);
-        PetAttribute memory descendant;
+        PetPropertiesPacked memory descendant;
         descendant = getDescendant(
             petList[_getPetPerson][_fatherIndex],
             petList[_getMoneyPerson][_motherIndex]
@@ -37,10 +39,10 @@ abstract contract PixPet is PixPetFactory {
     }
 
     function getDescendant(
-        PetAttribute memory _fatherPet,
-        PetAttribute memory _motherPet
-    ) internal pure returns (PetAttribute memory _descendant) {
-        PetAttribute memory descendant;
+        PetPropertiesPacked memory _fatherPet,
+        PetPropertiesPacked memory _motherPet
+    ) internal pure returns (PetPropertiesPacked memory _descendant) {
+        PetPropertiesPacked memory descendant;
 
         //function
 
@@ -53,8 +55,11 @@ abstract contract PixPet is PixPetFactory {
         address _defender,
         uint256 _defenderIndex
     ) public {
-        PetAttribute memory challengerPet =
+        PetPropertiesPacked memory challengerPet =
             petList[_challenger][_challengerIndex];
-        PetAttribute memory defenderPet = petList[_defender][_defenderIndex];
+        PetPropertiesPacked memory defenderPet =
+            petList[_defender][_defenderIndex];
+
+        while (challengerPet.hp >= 0 && defenderPet.hp >= 0) {}
     }
 }
