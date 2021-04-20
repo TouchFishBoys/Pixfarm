@@ -44,6 +44,7 @@ abstract contract IPixFarmFactory is PixfarmonBase {
     //  |   |  |  |  |       | |
     //  0011001010011100     01010
 
+    ///@dev 计算属性
     function getPlantProperties(uint256 _dna)
         public
         view
@@ -85,7 +86,7 @@ abstract contract IPixFarmFactory is PixfarmonBase {
         returns (uint256 seedTag, bool getSpecialSeed);
 }
 
-abstract contract PixFarmFactory is Ownable, IPixFarmFactory {
+contract PixFarmFactory is Ownable, IPixFarmFactory {
     function _generateDna(uint256 Dna1, uint256 Dna2)
         private
         pure
