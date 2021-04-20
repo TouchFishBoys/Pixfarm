@@ -75,7 +75,7 @@ abstract contract IPixFarmFactory is PixfarmonBase {
         returns (uint256 seedTag, bool getSpecialSeed);
 }
 
-abstract contract PixFarmFactory is Ownable, IPixFarmFactory {
+contract PixFarmFactory is Ownable, IPixFarmFactory {
     function _generateDna(uint256 Dna1, uint256 Dna2)
         private
         pure

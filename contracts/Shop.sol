@@ -5,10 +5,21 @@ import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "./PixFarmFactory.sol";
 
-abstract contract Shop is IPixFarmFactory {
+interface IShop {
+    ///@dev buy a seed from shop
     function buySeed(uint256 specie, uint256 level)
         external
         view
+        returns (uint256 _dna);
+
+    function buyPet() external view returns (uint256 _dna);
+}
+
+contract Shop is PixFarmFactory, IShop {
+    function buySeed(uint256 specie, uint256 level)
+        external
+        view
+        override
         returns (uint256 _dna)
     {
         require(level <= 4, "illegal level");
@@ -29,7 +40,11 @@ abstract contract Shop is IPixFarmFactory {
             } else if (rnd == 3) {
                 pack.spd++;
             }
-        }
+        } 
         return getSeedTag(pack);
+    }
+
+    function buyPet() external view override returns (uint256 _dna) {
+        return 0;
     }
 }
