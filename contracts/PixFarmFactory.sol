@@ -395,6 +395,7 @@ contract PixFarmFactory is Ownable, IPixFarmFactory {
         override
         returns (PlantPropertiesPacked memory)
     {
+        require(_fruitTag % 8 == 1 || _fruitTag % 8 == 2);
         return getPlantProperties(_fruitTag >> 5);
     }
 }
