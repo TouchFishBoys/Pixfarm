@@ -3,12 +3,14 @@ pragma solidity ^0.8.0;
 
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import "./PixPetFactory.sol";
-import "./PixfarmonBase.sol";
+import "./PixFarmFactory.sol";
 
 abstract contract PixPet is PixPetFactory {
     IERC20 private ERC20;
 
     mapping(address => PetPropertiesPacked[]) internal petList;
+
+    uint8[] internal propertiesTrough = [0, 2, 4, 5, 7, 8, 9, 10, 10];
 
     constructor(IERC20 _ERC20) {
         ERC20 = _ERC20;
@@ -61,7 +63,10 @@ abstract contract PixPet is PixPetFactory {
         PetPropertiesPacked memory defenderPet =
             petList[_defender][_defenderIndex];
 
-        uint256 round;
+        uint8 round;
+        uint8 challengerOriginalHp = challengerPet.hp;
+        uint8 defenderOriginalHp = defenderPet.hp;
+
         if (challengerPet.spd > defenderPet.spd) {
             round = challengerPet.spd / defenderPet.spd;
         } else {
@@ -90,10 +95,55 @@ abstract contract PixPet is PixPetFactory {
             }
         }
 
+        // challengerPet.hp = challengerOriginalHp;
+        // defenderPet.hp = defenderOriginalHp;
+
         if (challengerPet.hp == 0) {
+            if (challengerPet.petExperience >= defenderPet.petExperience) {
+                petList[_defender][_defenderIndex].petExperience +=
+                    (challengerPet.petExperience * 1) /
+                    100 +
+                    100;
+            } else {
+                petList[_defender][_defenderIndex].petExperience +=
+                    (defenderPet.petExperience * 1) /
+                    100 +
+                    100;
+            }
             return (defenderPet);
         } else {
+            if (challengerPet.petExperience >= defenderPet.petExperience) {
+                petList[_challenger][_challengerIndex].petExperience +=
+                    (challengerPet.petExperience * 1) /
+                    100 +
+                    100;
+            } else {
+                petList[_challenger][_challengerIndex].petExperience +=
+                    (defenderPet.petExperience * 1) /
+                    100 +
+                    100;
+            }
             return (challengerPet);
+        }
+    }
+
+    function feedPet(uint256 _tag, uint256 _petIndex) public {
+        PlantPropertiesPacked memory pac = getPropertiesByFruitTag(_tag);
+        if (pac.specie < 8) {
+            petList[msg.sender][_petIndex].hp += pac.hp;
+            petList[msg.sender][_petIndex].atk += pac.atk;
+            petList[msg.sender][_petIndex].def += pac.def;
+            petList[msg.sender][_petIndex].spd += pac.spd;
+            petList[msg.sender][_petIndex]
+                .maxPropertiesTrough -= propertiesTrough[
+                pac.hp + pac.atk + pac.def + pac.spd
+            ];
+        } else {
+            petList[msg.sender][_petIndex].hp += pac.hp;
+            petList[msg.sender][_petIndex].atk += pac.atk;
+            petList[msg.sender][_petIndex].def += pac.def;
+            petList[msg.sender][_petIndex].spd += pac.spd;
+            petList[msg.sender][_petIndex].maxPropertiesTrough -= 1;
         }
     }
 }
