@@ -2,8 +2,9 @@
 pragma solidity ^0.8.0;
 
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
+import "./PixPet.sol";
 
-contract Auction {
+abstract contract Auction is PixPet {
     ERC20 private Erc20;
     struct Good {
         address owner; //卖家

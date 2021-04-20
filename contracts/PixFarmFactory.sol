@@ -4,12 +4,11 @@ pragma solidity ^0.8.0;
 import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 
-import "./Pixfarmon.sol";
+import "./PixfarmonBase.sol";
 
-abstract contract IEtherplantFactory is Pixfarmon {
+abstract contract IPixFarmFactory is PixfarmonBase {
     enum Quality {N, R, SR, SSR}
     enum Specie {A, B, C, D, E, F, G, H, I, J, K, L}
-
     struct PlantPropertiesPacked {
         Specie specie;
         uint8 hp;
@@ -76,7 +75,7 @@ abstract contract IEtherplantFactory is Pixfarmon {
         returns (uint256 seedTag, bool getSpecialSeed);
 }
 
-abstract contract EtherplantFactory is Ownable, IEtherplantFactory {
+abstract contract PixFarmFactory is Ownable, IPixFarmFactory {
     function _generateDna(uint256 Dna1, uint256 Dna2)
         private
         pure
@@ -175,33 +174,22 @@ abstract contract EtherplantFactory is Ownable, IEtherplantFactory {
         uint256 quality = dna % 4;
         dna >> 2;
         PlantPropertiesPacked memory pack = getPlantProperties(dna);
-        uint256 index;
-        uint256 value;
-        (index, value) = generateRandomAttribute(specie, quality);
-        if (index == 0) {
-            pack.hp += uint8(value);
-        } else if (index == 1) {
-            pack.atk += uint8(value);
-        } else if (index == 2) {
-            pack.def += uint8(value);
-        } else if (index == 3) {
-            pack.spd += uint8(value);
-        }
+        pack = generateRandomAttribute(pack, quality);
         bool check;
         if (quality == 3) {
             check = probabilityCheck(5, 100);
         } else if (quality == 2) {
-            check = probabilityCheck(1, 100);
+            check = probabilityCheck(1, 95);
         } else if (quality == 1) {
-            check = probabilityCheck(5, 1000);
+            check = probabilityCheck(5, 940);
         } else {
-            check = probabilityCheck(1, 1000);
+            check = probabilityCheck(1, 935);
         }
         return (getSeedTag(pack), check);
     }
 
-    function generateRandomAttribute(uint256 _specie, uint256 _quality)
-        public
-        returns (uint256 index, uint256 value)
-    {}
+    function generateRandomAttribute(
+        PlantPropertiesPacked memory _pack,
+        uint256 quality
+    ) public returns (PlantPropertiesPacked memory) {}
 }

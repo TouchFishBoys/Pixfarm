@@ -3,11 +3,9 @@ pragma solidity ^0.8.0;
 
 import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
-import "./Pixfarmon.sol";
-import "./EtherplantFactory.sol";
+import "./PixFarmFactory.sol";
 
-abstract contract PlantShop is Pixfarmon, IEtherplantFactory {
-
+abstract contract Shop is IPixFarmFactory {
     function buySeed(uint256 specie, uint256 level)
         external
         view

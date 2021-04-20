@@ -2,17 +2,18 @@
 pragma solidity ^0.8.0;
 
 import "@openzeppelin/contracts/access/Ownable.sol";
-import "./EtherplantFactory.sol";
+import "./PixFarmFactory.sol";
+import "./Shop.sol";
 
-contract Etherplant is Ownable, Pixfarmon {
+abstract contract PixPlant is Ownable, IPixFarmFactory, Shop {
     /// @dev contract of factory
-    IEtherplantFactory private factory;
+    IPixFarmFactory private factory;
     mapping(address => Item[]) internal accountStorage;
 
     /// @dev is value has permission to see key's storage
     mapping(address => mapping(address => bool)) internal _storageAllowence;
 
-    constructor(IEtherplantFactory _factory) {
+    constructor(IPixFarmFactory _factory) {
         factory = _factory;
     }
 
@@ -24,7 +25,7 @@ contract Etherplant is Ownable, Pixfarmon {
         _;
     }
 
-    function updateFactory(IEtherplantFactory _factory) public onlyOwner {
+    function updateFactory(IPixFarmFactory _factory) public onlyOwner {
         factory = _factory;
     }
 }
