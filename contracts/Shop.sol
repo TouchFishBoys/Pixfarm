@@ -2,7 +2,6 @@
 pragma solidity ^0.8.0;
 
 import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
-import "@openzeppelin/contracts/access/Ownable.sol";
 import "./PixFarmFactory.sol";
 
 interface IShop {
@@ -16,6 +15,8 @@ interface IShop {
 }
 
 contract Shop is PixFarmFactory, IShop {
+    mapping(address => uint256) public experience;
+
     function buySeed(uint256 specie, uint256 level)
         external
         view
@@ -40,7 +41,7 @@ contract Shop is PixFarmFactory, IShop {
             } else if (rnd == 3) {
                 pack.spd++;
             }
-        } 
+        }
         return getSeedTag(pack);
     }
 

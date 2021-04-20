@@ -1,7 +1,9 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
-contract PixfarmonBase {
+import "@openzeppelin/contracts/access/Ownable.sol";
+
+contract PixfarmonBase is Ownable {
     enum ItemType {Seed, Fruit, Feed} // 3bits for futher development
 
     struct Item {

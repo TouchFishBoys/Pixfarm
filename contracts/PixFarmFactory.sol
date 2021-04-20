@@ -27,11 +27,6 @@ abstract contract IPixFarmFactory is PixfarmonBase {
         uint8 spd;
     }
 
-    struct Plant {
-        string name;
-        uint32 dna; //4 bits for species and 3 bits for each properties
-    }
-
     //total:21 bits
     //  example:
     //  specie (4bits)

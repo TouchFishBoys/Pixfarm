@@ -1,16 +1,16 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
-import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
+import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "./PixPetFactory.sol";
 
-abstract contract PixPet is PixPetFactory {
-    IERC20 private ERC20;
+contract PixPet is PixPetFactory {
+    IERC20 private erc20;
 
     mapping(address => PetPropertiesPacked[]) internal petList;
 
-    constructor(IERC20 _ERC20) {
-        ERC20 = _ERC20;
+    constructor(IERC20 _erc20) {
+        erc20 = _erc20;
     }
 
     function addPet(address _owner, PetPropertiesPacked memory _newPet)
@@ -28,14 +28,14 @@ abstract contract PixPet is PixPetFactory {
         uint256 _motherIndex,
         uint256 _money
     ) public {
-        ERC20.transferFrom(_getPetPerson, address(this), _money);
+        erc20.transferFrom(_getPetPerson, address(this), _money);
         PetPropertiesPacked memory descendant;
         descendant = getDescendant(
             petList[_getPetPerson][_fatherIndex],
             petList[_getMoneyPerson][_motherIndex]
         );
         petList[_getPetPerson].push(descendant);
-        ERC20.transfer(_getMoneyPerson, (_money * 95) / 100);
+        erc20.transfer(_getMoneyPerson, (_money * 95) / 100);
     }
 
     function getDescendant(

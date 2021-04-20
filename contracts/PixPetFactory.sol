@@ -1,8 +1,9 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
-import "./PixPlant.sol";
 
-abstract contract IPixPetFactory is PixPlant {
+import "./PixFarm.sol";
+
+abstract contract IPixPetFactory {
     //成长值和各部位样式、颜色
     //hp(6bits)
     //atk(6bits)
