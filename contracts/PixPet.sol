@@ -3,6 +3,7 @@ pragma solidity ^0.8.0;
 
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import "./PixPetFactory.sol";
+import "./PixfarmonBase.sol";
 
 abstract contract PixPet is PixPetFactory {
     IERC20 private ERC20;
