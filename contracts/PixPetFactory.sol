@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
-import "./PixPlant.sol";
+import "./PixFarm.sol";
 
-abstract contract IPixPetFactory is PixPlant {
+abstract contract IPixPetFactory is PixFarm {
     //成长值和各部位样式、颜色
     //hp(6bits)
     //atk(6bits)
@@ -10,7 +10,7 @@ abstract contract IPixPetFactory is PixPlant {
     //spd(6bits)
     //shape(4bits)each
     //color(4bits)each
-    //----------------DNA
+    //-------------------DNA
     //吃到的属性值和等级
     //hp(11bits)
     //atk(11bits)
@@ -22,6 +22,9 @@ abstract contract IPixPetFactory is PixPlant {
         uint8 atk;
         uint8 def;
         uint8 spd;
+        uint32 petExperience;
+        uint9 maxPropertiesTrough;
+        uint7 fullDegree;
     }
 
     ///@dev 计算属性

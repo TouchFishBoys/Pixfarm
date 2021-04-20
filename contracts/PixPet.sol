@@ -10,7 +10,7 @@ abstract contract PixPet is PixPetFactory {
 
     mapping(address => PetPropertiesPacked[]) internal petList;
 
-    uint8[] internal propertiesTrough = [0, 2, 4, 5, 7, 8, 9, 10, 10];
+    uint8[] propertiesTrough = [0, 2, 4, 5, 7, 8, 9, 10, 10];
 
     constructor(IERC20 _ERC20) {
         ERC20 = _ERC20;
@@ -45,6 +45,20 @@ abstract contract PixPet is PixPetFactory {
         return descendant;
     }
 
+    function fullDegreeCheck(PetPropertiesPacked memory _pet)
+        returns (PetPropertiesPacked memory _petChecked)
+    {
+        if (_pet.fullDegree < 40) {
+            _pet.atk *= 70 / 100;
+            _pet.def *= 70 / 100;
+            _pet.hp *= 70 / 100;
+            _pet.spd *= 70 / 100;
+            return (_pet);
+        } else {
+            return _pet;
+        }
+    }
+
     function petFight(
         address _challenger,
         uint256 _challengerIndex,
@@ -52,9 +66,9 @@ abstract contract PixPet is PixPetFactory {
         uint256 _defenderIndex
     ) public view returns (PetPropertiesPacked memory _winner) {
         PetPropertiesPacked memory challengerPet =
-            petList[_challenger][_challengerIndex];
+            fullDegreeCheck(petList[_challenger][_challengerIndex]);
         PetPropertiesPacked memory defenderPet =
-            petList[_defender][_defenderIndex];
+            fullDegreeCheck(petList[_defender][_defenderIndex]);
 
         uint8 round;
         uint8 challengerOriginalHp = challengerPet.hp;
@@ -121,22 +135,44 @@ abstract contract PixPet is PixPetFactory {
     }
 
     function feedPet(uint256 _tag, uint256 _petIndex) public {
-        PlantPropertiesPacked memory pac = getPropertiesByFruitTag(_tag);
-        if (pac.specie < 8) {
-            petList[msg.sender][_petIndex].hp += pac.hp;
-            petList[msg.sender][_petIndex].atk += pac.atk;
-            petList[msg.sender][_petIndex].def += pac.def;
-            petList[msg.sender][_petIndex].spd += pac.spd;
-            petList[msg.sender][_petIndex]
-                .maxPropertiesTrough -= propertiesTrough[
-                pac.hp + pac.atk + pac.def + pac.spd
-            ];
+        if (_tag % 8 == 2) {
+            petList[msg.sender][_petIndex].fullDegree += 25;
+            correctFullDegree(petList[msg.sender][_petIndex].fullDegree);
         } else {
-            petList[msg.sender][_petIndex].hp += pac.hp;
-            petList[msg.sender][_petIndex].atk += pac.atk;
-            petList[msg.sender][_petIndex].def += pac.def;
-            petList[msg.sender][_petIndex].spd += pac.spd;
-            petList[msg.sender][_petIndex].maxPropertiesTrough -= 1;
+            PlantPropertiesPacked memory pac = getPropertiesByFruitTag(_tag);
+            if (pac.specie < 8) {
+                petList[msg.sender][_petIndex].hp += pac.hp;
+                petList[msg.sender][_petIndex].atk += pac.atk;
+                petList[msg.sender][_petIndex].def += pac.def;
+                petList[msg.sender][_petIndex].spd += pac.spd;
+                petList[msg.sender][_petIndex]
+                    .maxPropertiesTrough -= propertiesTrough[
+                    pac.hp + pac.atk + pac.def + pac.spd
+                ];
+                petList[msg.sender][_petIndex].fullDegree += specieFull[
+                    pac.specie
+                ];
+                correctFullDegree(petList[msg.sender][_petIndex].fullDegree);
+            } else {
+                petList[msg.sender][_petIndex].hp += pac.hp;
+                petList[msg.sender][_petIndex].atk += pac.atk;
+                petList[msg.sender][_petIndex].def += pac.def;
+                petList[msg.sender][_petIndex].spd += pac.spd;
+                petList[msg.sender][_petIndex].maxPropertiesTrough -= 1;
+                petList[msg.sender][_petIndex].fullDegree += specieFull[
+                    pac.specie
+                ];
+                correctFullDegree(petList[msg.sender][_petIndex].fullDegree);
+            }
+        }
+    }
+
+    function correctFullDegree(uint7 _fullDegree)
+        internal
+        returns (uint7 _correctDegree)
+    {
+        if (_fullDegree > 100) {
+            return (_fullDegree - (_fullDegree - 100));
         }
     }
 }
