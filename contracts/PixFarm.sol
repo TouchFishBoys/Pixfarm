@@ -22,6 +22,7 @@ abstract contract IPixFarm is IPixFarmFactory, Shop {
 
     function eradicating(uint256 _x, uint256 _y)
         public
+        view
         virtual
         returns (bool getSeed);
 
@@ -91,10 +92,23 @@ abstract contract PixFarm is Ownable, IPixFarm {
 
     function eradicating(uint256 _x, uint256 _y)
         public
+        view
         override
         returns (bool getSeed)
     {
-        if(block.timestamp-fields[msg.sender][_x][_y])
+        if (
+            block.timestamp -
+                (fields[msg.sender][_x][_y].sowingTime * 100) /
+                specieTime[
+                    getSpecieBySeed(fields[msg.sender][_x][_y].seedTag)
+                ] <
+            10
+        ) {
+            //退回种子
+            return true;
+        } else {
+            return false;
+        }
     }
 
     function stealing(
