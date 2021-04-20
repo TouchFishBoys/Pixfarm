@@ -9,22 +9,30 @@ abstract contract IPixFarm is IPixFarmFactory, Shop {
     mapping(address => uint256) farmExperience;
     mapping(address => address[]) public friends;
 
+    ///@dev 播种
     function sowing(
         uint256 _x,
         uint256 _y,
         uint256 _seedTag
     ) public virtual returns (bool);
 
+    ///@dev 收获
     function harvest(uint256 _x, uint256 _y)
         public
         virtual
-        returns (uint256 fruitTag, uint8 number);
+        returns (
+            bool,
+            uint256 fruitTag,
+            uint8 number
+        );
 
+    ///@dev 铲除
     function eradicating(uint256 _x, uint256 _y)
         public
         virtual
         returns (bool getSeed);
 
+    ///@dev 偷菜
     function stealing(
         address _friend,
         uint256 _x,
@@ -33,13 +41,6 @@ abstract contract IPixFarm is IPixFarmFactory, Shop {
 }
 
 abstract contract PixFarm is Ownable, IPixFarm {
-    /// @dev contract of factory
-    IPixFarmFactory private factory;
-    mapping(address => Item[]) internal accountStorage;
-
-    /// @dev is value has permission to see key's storage
-    mapping(address => mapping(address => bool)) internal _storageAllowence;
-
     mapping(address => field[][]) fields;
     struct field {
         bool unlocked;
@@ -49,22 +50,9 @@ abstract contract PixFarm is Ownable, IPixFarm {
         uint256 maturityTime;
     }
 
-    constructor(IPixFarmFactory _factory) {
-        factory = _factory;
-    }
-
-    modifier requireVisibility(address host, address visitor) {
-        require(
-            _storageAllowence[host][visitor],
-            "You have no permission to see this guy's storage"
-        );
-        _;
-    }
-
-    function updateFactory(IPixFarmFactory _factory) public onlyOwner {
-        factory = _factory;
-    }
-
+    //播种
+    //参数：uing256，uing256，uing256
+    //返回：bool
     function sowing(
         uint256 _x,
         uint256 _y,
@@ -74,29 +62,62 @@ abstract contract PixFarm is Ownable, IPixFarm {
             fields[msg.sender][_x][_y].unlocked == true,
             "The field is locked!"
         );
-        //移除背包种子，成功返回true，失败返回false
+        if (!removeItem(msg.sender, _seedTag, 1)) {
+            return false;
+        }
         fields[msg.sender][_x][_y].seedTag = _seedTag;
         fields[msg.sender][_x][_y].sowingTime = block.timestamp;
         fields[msg.sender][_x][_y].maturityTime =
             block.timestamp +
             specieTime[getSpecieBySeed(_seedTag)];
         fields[msg.sender][_x][_y].used = true;
+        return true;
     }
 
+    //收获
+    //参数：uing256，uing256
+    //返回：bool,uint256,uint8
     function harvest(uint256 _x, uint256 _y)
         public
         override
-        returns (uint256 fruitTag, uint8 number)
+        returns (
+            bool,
+            uint256 fruitTag,
+            uint8 number
+        )
     {}
 
+    //铲除
+    //参数：uing256，uing256
+    //返回：bool 为false为背包满
     function eradicating(uint256 _x, uint256 _y)
         public
         override
-        returns (bool getSeed)
+        returns (bool)
     {
-        if(block.timestamp-fields[msg.sender][_x][_y])
+        if (
+            block.timestamp -
+                (fields[msg.sender][_x][_y].sowingTime * 100) /
+                specieTime[
+                    getSpecieBySeed(fields[msg.sender][_x][_y].seedTag)
+                ] <
+            10
+        ) {
+            fields[msg.sender][_x][_y].used = false;
+            if (giveItem(msg.sender, fields[msg.sender][_x][_y].seedTag, 1)) {
+                return true;
+            } else {
+                fields[msg.sender][_x][_y].used = true;
+                return false;
+            }
+        } else {
+            return true;
+        }
     }
 
+    //偷菜
+    //参数：uing256，uing256
+    //返回：bool 为false为背包满
     function stealing(
         address _friend,
         uint256 _x,
