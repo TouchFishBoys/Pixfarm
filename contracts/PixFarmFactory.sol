@@ -44,6 +44,7 @@ abstract contract IPixFarmFactory is PixfarmonBase {
     //  |   |  |  |  |       | |
     //  0011001010011100     01010
 
+    ///@dev 计算属性
     function getPlantProperties(uint256 _dna)
         public
         view
@@ -173,8 +174,12 @@ contract PixFarmFactory is Ownable, IPixFarmFactory {
         return _tag;
     }
 
+    //分解果实
+    //参数：FruitTag
+    //返回：SeedTag、bool(是否获得梦幻种子)
     function disassembleFruit(uint256 _fruitTag)
         public
+        view
         override
         returns (uint256 seedTag, bool getSpecialSeed)
     {
@@ -198,6 +203,9 @@ contract PixFarmFactory is Ownable, IPixFarmFactory {
         return (getSeedTag(pack), check);
     }
 
+    //调整果实属性
+    //参数：PlantPropertiesPacked、Quality
+    //返回：PlantPropertiesPacked
     function generateRandomAttribute(
         PlantPropertiesPacked memory _pack,
         uint256 quality
@@ -222,6 +230,9 @@ contract PixFarmFactory is Ownable, IPixFarmFactory {
         }
     }
 
+    //根据植物偏向调整属性
+    //参数：PlantPropertiesPacked
+    //返回：PlantPropertiesPacked
     function followSpecie(PlantPropertiesPacked memory _pack)
         internal
         view
@@ -245,6 +256,93 @@ contract PixFarmFactory is Ownable, IPixFarmFactory {
                 int8(_pack.spd) + int8(specieData[uint256(_pack.specie)][3])
             );
         }
+        PropertiesLegelCheck(_pack);
         return _pack;
+    }
+
+    //全局随机调整属性
+    //参数：PlantPropertiesPacked
+    //返回：PlantPropertiesPacked
+    function followRandom(PlantPropertiesPacked memory _pack)
+        internal
+        view
+        returns (PlantPropertiesPacked memory)
+    {
+        _pack.hp = uint8(int8(_pack.hp) + getFollowRandom());
+        _pack.atk = uint8(int8(_pack.atk) + getFollowRandom());
+        _pack.def = uint8(int8(_pack.def) + getFollowRandom());
+        _pack.spd = uint8(int8(_pack.spd) + getFollowRandom());
+        PropertiesLegelCheck(_pack);
+        return _pack;
+    }
+
+    //获取随机调整值
+    //返回：int8
+    function getFollowRandom() internal view returns (int8) {
+        if (probabilityCheck(5, 100)) {
+            return 1;
+        } else if (probabilityCheck(5, 95)) {
+            return -1;
+        }
+        return 0;
+    }
+
+    //属性合法性检查
+    //参数：PlantPropertiesPacked
+    //返回：PlantPropertiesPacked
+    function PropertiesLegelCheck(PlantPropertiesPacked memory _pack)
+        internal
+        view
+        returns (PlantPropertiesPacked memory pack)
+    {
+        //处理uint超界导致的极大数
+        if (_pack.hp > 6) {
+            _pack.hp = 0;
+        }
+        if (_pack.atk > 6) {
+            _pack.atk = 0;
+        }
+        if (_pack.def > 6) {
+            _pack.def = 0;
+        }
+        if (_pack.spd > 6) {
+            _pack.spd = 0;
+        }
+        //处理单属性超界
+        if (_pack.hp == 6) {
+            _pack.hp--;
+        }
+        if (_pack.atk == 6) {
+            _pack.atk--;
+        }
+        if (_pack.def == 6) {
+            _pack.def--;
+        }
+        if (_pack.spd == 6) {
+            _pack.spd--;
+        }
+        //处理总属性和>8
+        uint256 rnd;
+        while (_pack.hp + _pack.atk + _pack.def + _pack.spd > 8) {
+            rnd = getRandom(4);
+            if (rnd == 0) {
+                if (_pack.hp > 0) {
+                    _pack.hp--;
+                }
+            } else if (rnd == 1) {
+                if (_pack.atk > 0) {
+                    _pack.atk--;
+                }
+            } else if (rnd == 2) {
+                if (_pack.def > 0) {
+                    _pack.def--;
+                }
+            } else {
+                if (_pack.spd > 0) {
+                    _pack.spd--;
+                }
+            }
+            return _pack;
+        }
     }
 }
