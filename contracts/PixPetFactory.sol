@@ -11,7 +11,7 @@ abstract contract IPixPetFactory {
     //spd(6bits)
     //shape(4bits)each
     //color(4bits)each
-    //----------------DNA
+    //-------------------DNA
     //吃到的属性值和等级
     //hp(11bits)
     //atk(11bits)
@@ -23,6 +23,9 @@ abstract contract IPixPetFactory {
         uint8 atk;
         uint8 def;
         uint8 spd;
+        uint32 petExperience;
+        uint16 maxPropertiesTrough;
+        uint8 fullDegree;
     }
 
     ///@dev 计算属性

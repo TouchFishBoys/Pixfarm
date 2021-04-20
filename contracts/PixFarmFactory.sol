@@ -19,6 +19,21 @@ abstract contract IPixFarmFactory is PixfarmonBase {
         [int256(1), 0, 0, 0],
         [int256(0), 0, 0, 1]
     ];
+    uint256[] specieTime = [
+        uint256(100),
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100
+    ];
+    uint256[] specieFull = [10, 10, 10, 10, 20, 20, 15, 15, 15, 15, 10, 15];
     struct PlantPropertiesPacked {
         Specie specie;
         uint8 hp;
@@ -79,6 +94,20 @@ abstract contract IPixFarmFactory is PixfarmonBase {
         public
         virtual
         returns (uint256 seedTag, bool getSpecialSeed);
+
+    ///@dev 根据种子Tag获得品种
+    function getSpecieBySeed(uint256 SeedTag)
+        public
+        pure
+        virtual
+        returns (uint256 specie);
+
+    ///@dev 根据果实Tag获得属性
+    function getPropertiesByFruitTag(uint256 _fruitTag)
+        public
+        view
+        virtual
+        returns (PlantPropertiesPacked memory);
 }
 
 contract PixFarmFactory is Ownable, IPixFarmFactory {
@@ -339,5 +368,30 @@ contract PixFarmFactory is Ownable, IPixFarmFactory {
             }
             return _pack;
         }
+    }
+
+    //根据种子Tag获得品种
+    //参数：uint256
+    //返回：uint256
+    function getSpecieBySeed(uint256 SeedTag)
+        public
+        pure
+        override
+        returns (uint256 specie)
+    {
+        return SeedTag >> 17;
+    }
+
+    //根据果实Tag获得属性
+    //参数：uint256
+    //返回：PlantPropertiesPacked
+    function getPropertiesByFruitTag(uint256 _fruitTag)
+        public
+        view
+        override
+        returns (PlantPropertiesPacked memory)
+    {
+        require(_fruitTag % 8 == 1 || _fruitTag % 8 == 2);
+        return getPlantProperties(_fruitTag >> 5);
     }
 }
