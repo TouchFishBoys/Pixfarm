@@ -5,7 +5,7 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 import "./PixFarmFactory.sol";
 import "./Shop.sol";
 
-abstract contract PixPlant is Ownable, IPixFarmFactory, Shop {
+contract PixFarm is Ownable, PixFarmFactory, Shop {
     /// @dev contract of factory
     IPixFarmFactory private factory;
     mapping(address => Item[]) internal accountStorage;
