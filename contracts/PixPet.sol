@@ -16,13 +16,6 @@ abstract contract PixPet is PixPetFactory {
         ERC20 = _ERC20;
     }
 
-    function addPet(address _owner, PetPropertiesPacked memory _newPet)
-        internal
-    {
-        //add pet into list
-        petList[_owner].push(_newPet);
-    }
-
     //pet trade
     function petBreed(
         address _getPetPerson,
