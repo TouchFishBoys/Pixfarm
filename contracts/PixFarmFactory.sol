@@ -33,17 +33,13 @@ abstract contract IPixFarmFactory is PixfarmonBase {
         100,
         100
     ];
+    uint256[] specieFull = [10, 10, 10, 10, 20, 20, 15, 15, 15, 15, 10, 15];
     struct PlantPropertiesPacked {
         Specie specie;
         uint8 hp;
         uint8 atk;
         uint8 def;
         uint8 spd;
-    }
-
-    struct Plant {
-        string name;
-        uint32 dna; //4 bits for species and 3 bits for each properties
     }
 
     //total:21 bits
