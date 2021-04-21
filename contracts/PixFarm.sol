@@ -20,11 +20,7 @@ abstract contract IPixFarm is IPixFarmFactory, Shop {
     function harvest(uint256 _x, uint256 _y)
         public
         virtual
-        returns (
-            bool,
-            uint256 fruitTag,
-            uint8 number
-        );
+        returns (bool, uint8 number);
 
     ///@dev 铲除
     function eradicating(uint256 _x, uint256 _y)
@@ -62,6 +58,10 @@ abstract contract PixFarm is Ownable, IPixFarm {
             fields[msg.sender][_x][_y].unlocked == true,
             "The field is locked!"
         );
+        require(
+            fields[msg.sender][_x][_y].used == false,
+            "THe field has been used!"
+        );
         if (!removeItem(msg.sender, _seedTag, 1)) {
             return false;
         }
@@ -80,12 +80,32 @@ abstract contract PixFarm is Ownable, IPixFarm {
     function harvest(uint256 _x, uint256 _y)
         public
         override
-        returns (
-            bool,
-            uint256 fruitTag,
-            uint8 number
-        )
-    {}
+        returns (bool, uint8 number)
+    {
+        require(
+            block.timestamp >= fields[msg.sender][_x][_y].maturityTime,
+            "can't be harvested"
+        );
+        fields[msg.sender][_x][_y].used = false;
+        uint32 num = 1;
+        if (probabilityCheck(5, 1000)) {
+            num = 3;
+        } else if (probabilityCheck(10, 995)) {
+            num = 2;
+        }
+        if (
+            giveItem(
+                msg.sender,
+                getFruitTag(fields[msg.sender][_x][_y].seedTag),
+                num
+            )
+        ) {
+            return (true, uint8(num));
+        } else {
+            fields[msg.sender][_x][_y].used = true;
+            return (false, uint8(num));
+        }
+    }
 
     //铲除
     //参数：uing256，uing256

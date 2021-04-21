@@ -76,7 +76,7 @@ abstract contract IPixFarmFactory is PixfarmonBase {
     ) public pure virtual returns (uint256 tag);
 
     ///@dev 生成果实
-    function getFruitTag(PlantPropertiesPacked memory _pack)
+    function getFruitTag(uint256 _seedTag)
         public
         view
         virtual
@@ -102,8 +102,8 @@ abstract contract IPixFarmFactory is PixfarmonBase {
         virtual
         returns (uint256 specie);
 
-    ///@dev 根据果实Tag获得属性
-    function getPropertiesByFruitTag(uint256 _fruitTag)
+    ///@dev 根据Tag获得属性
+    function getPropertiesByTag(uint256 tag)
         public
         view
         virtual
@@ -121,24 +121,22 @@ contract PixFarmFactory is Ownable, IPixFarmFactory {
         return child;
     }
 
-    function getFruitTag(PlantPropertiesPacked memory _pack)
+    function getFruitTag(uint256 _seedTag)
         public
         view
         override
-        returns (uint256 fruitTat)
+        returns (uint256 fruitTag)
     {
-        uint256 tag = calDna(_pack);
-        tag << 2;
+        PlantPropertiesPacked memory pack = getPropertiesByTag(_seedTag);
+        Quality quality;
         if (probabilityCheck(1, 100)) {
-            tag += 3;
+            quality = Quality(3);
         } else if (probabilityCheck(5, 99)) {
-            tag += 2;
+            quality = Quality(2);
         } else if (probabilityCheck(10, 94)) {
-            tag += 1;
+            quality = Quality(1);
         }
-        tag << 3;
-        tag += 1;
-        return tag;
+        return calTag(pack, quality, ItemType.Fruit);
     }
 
     function getSeedTag(PlantPropertiesPacked memory _pack)
@@ -382,16 +380,16 @@ contract PixFarmFactory is Ownable, IPixFarmFactory {
         return SeedTag >> 17;
     }
 
-    //根据果实Tag获得属性
+    //根据Tag获得属性
     //参数：uint256
     //返回：PlantPropertiesPacked
-    function getPropertiesByFruitTag(uint256 _fruitTag)
+    function getPropertiesByFruitTag(uint256 _tag)
         public
         view
         override
         returns (PlantPropertiesPacked memory)
     {
-        require(_fruitTag % 8 == 1 || _fruitTag % 8 == 2);
-        return getPlantProperties(_fruitTag >> 5);
+        require(_tag % 8 <= 2);
+        return getPlantProperties(_tag >> 5);
     }
 }
