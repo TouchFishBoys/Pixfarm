@@ -121,7 +121,7 @@ contract PixFarmFactory is IPixFarmFactory, PixfarmonBase {
         override
         returns (uint256 fruitTag)
     {
-        PlantPropertiesPacked memory pack = getPropertiesByFruitTag(_seedTag);
+        PlantPropertiesPacked memory pack = getPropertiesByTag(_seedTag);
         Quality quality;
         if (probabilityCheck(1, 100)) {
             quality = Quality(3);
