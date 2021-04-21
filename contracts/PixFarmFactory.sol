@@ -95,13 +95,6 @@ abstract contract IPixFarmFactory is PixfarmonBase {
         virtual
         returns (uint256 seedTag, bool getSpecialSeed);
 
-    ///@dev 根据种子Tag获得品种
-    function getSpecieBySeed(uint256 SeedTag)
-        public
-        pure
-        virtual
-        returns (uint256 specie);
-
     ///@dev 根据Tag获得属性
     function getPropertiesByTag(uint256 tag)
         public
@@ -366,18 +359,6 @@ contract PixFarmFactory is Ownable, IPixFarmFactory {
             }
             return _pack;
         }
-    }
-
-    //根据种子Tag获得品种
-    //参数：uint256
-    //返回：uint256
-    function getSpecieBySeed(uint256 SeedTag)
-        public
-        pure
-        override
-        returns (uint256 specie)
-    {
-        return SeedTag >> 17;
     }
 
     //根据Tag获得属性
