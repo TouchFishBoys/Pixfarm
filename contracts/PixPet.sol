@@ -137,7 +137,7 @@ contract PixPet is PixPetFactory {
             petList[msg.sender][_petIndex].fullDegree += 25;
             correctFullDegree(petList[msg.sender][_petIndex].fullDegree);
         } else {
-            PlantPropertiesPacked memory pac = getPropertiesByFruitTag(_tag);
+            PlantPropertiesPacked memory pac = getPropertiesByTag(_tag);
             if (pac.specie < 8) {
                 petList[msg.sender][_petIndex].hp += pac.hp;
                 petList[msg.sender][_petIndex].atk += pac.atk;
@@ -165,9 +165,9 @@ contract PixPet is PixPetFactory {
         }
     }
 
-    function correctFullDegree(uint7 _fullDegree)
+    function correctFullDegree(uint8 _fullDegree)
         internal
-        returns (uint7 _correctDegree)
+        returns (uint8 _correctDegree)
     {
         if (_fullDegree > 100) {
             return (_fullDegree - (_fullDegree - 100));

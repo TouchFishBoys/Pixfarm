@@ -383,7 +383,7 @@ contract PixFarmFactory is Ownable, IPixFarmFactory {
     //根据Tag获得属性
     //参数：uint256
     //返回：PlantPropertiesPacked
-    function getPropertiesByFruitTag(uint256 _tag)
+    function getPropertiesByTag(uint256 _tag)
         public
         view
         override

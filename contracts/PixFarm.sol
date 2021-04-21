@@ -8,6 +8,7 @@ import "./Shop.sol";
 abstract contract IPixFarm is IPixFarmFactory, Shop {
     mapping(address => uint256) farmExperience;
     mapping(address => address[]) public friends;
+    uint256 punishTime = 800;
 
     ///@dev 播种
     function sowing(
@@ -37,13 +38,16 @@ abstract contract IPixFarm is IPixFarmFactory, Shop {
 }
 
 abstract contract PixFarm is Ownable, IPixFarm {
-    mapping(address => field[][]) fields;
-    struct field {
+    mapping(address => Field[][]) fields;
+    struct Field {
         bool unlocked;
         bool used;
         uint256 seedTag;
         uint256 sowingTime;
         uint256 maturityTime;
+        bool stolen;
+        address firstThief;
+        address secondThief;
     }
 
     //播种
@@ -100,6 +104,7 @@ abstract contract PixFarm is Ownable, IPixFarm {
                 num
             )
         ) {
+            initField(fields[msg.sender][_x][_y]);
             return (true, uint8(num));
         } else {
             fields[msg.sender][_x][_y].used = true;
@@ -125,12 +130,14 @@ abstract contract PixFarm is Ownable, IPixFarm {
         ) {
             fields[msg.sender][_x][_y].used = false;
             if (giveItem(msg.sender, fields[msg.sender][_x][_y].seedTag, 1)) {
+                initField(fields[msg.sender][_x][_y]);
                 return true;
             } else {
                 fields[msg.sender][_x][_y].used = true;
                 return false;
             }
         } else {
+            initField(fields[msg.sender][_x][_y]);
             return true;
         }
     }
@@ -142,5 +149,67 @@ abstract contract PixFarm is Ownable, IPixFarm {
         address _friend,
         uint256 _x,
         uint256 _y
-    ) public override returns (bool) {}
+    ) public override returns (bool) {
+        require(
+            block.timestamp >= fields[_friend][_x][_y].maturityTime,
+            "can't be stolen"
+        );
+        //过宠物判定
+        if (!fields[_friend][_x][_y].stolen) {
+            //没被偷过
+            fields[_friend][_x][_y].stolen = true;
+            if (
+                giveItem(
+                    msg.sender,
+                    getFruitTag(fields[_friend][_x][_y].seedTag),
+                    1
+                )
+            ) {
+                //偷成功
+                fields[_friend][_x][_y].maturityTime =
+                    block.timestamp +
+                    punishTime;
+                fields[_friend][_x][_y].firstThief = msg.sender;
+                return true;
+            } else {
+                //偷失败
+                fields[_friend][_x][_y].stolen = false;
+                return false;
+            }
+        }
+        //被偷过
+        else {
+            Field memory _field = fields[_friend][_x][_y];
+            fields[_friend][_x][_y].used = false;
+            initField(fields[_friend][_x][_y]);
+            if (
+                giveItem(
+                    msg.sender,
+                    getFruitTag(fields[_friend][_x][_y].seedTag),
+                    1
+                )
+            ) {
+                //偷成功
+                fields[_friend][_x][_y].secondThief = msg.sender;
+                return true;
+            } else {
+                //偷失败
+                fields[_friend][_x][_y] = _field;
+                return false;
+            }
+        }
+    }
+
+    //初始化土地
+    //参数：(传址)field
+    function initField(Field storage _field) internal {
+        if (_field.used == false) {
+            _field.seedTag = 0;
+            _field.sowingTime = 0;
+            _field.maturityTime = 0;
+            _field.stolen = false;
+            _field.firstThief = address(0);
+            _field.secondThief = address(0);
+        }
+    }
 }
