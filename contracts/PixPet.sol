@@ -23,14 +23,23 @@ contract PixPet is PixPetFactory {
         uint256 _motherIndex,
         uint256 _money
     ) public {
-        erc20.transferFrom(_getPetPerson, address(this), _money);
+        bool isSuccess =
+            erc20.transferFrom(_getPetPerson, address(this), _money);
+        if (isSuccess == false) {
+            revert("Transfer failed");
+        }
+
         PetPropertiesPacked memory descendant;
         descendant = getDescendant(
             petList[_getPetPerson][_fatherIndex],
             petList[_getMoneyPerson][_motherIndex]
         );
         petList[_getPetPerson].push(descendant);
-        erc20.transfer(_getMoneyPerson, (_money * 95) / 100);
+
+        isSuccess = erc20.transfer(_getMoneyPerson, (_money * 95) / 100);
+        if (isSuccess == false) {
+            revert("Transfer failed");
+        }
     }
 
     function getDescendant(
