@@ -8,6 +8,7 @@ import "./PixFarmFactory.sol";
 contract PixPet is PixPetFactory {
     IERC20 private erc20;
 
+    /// @dev  宠物列表
     mapping(address => PetPropertiesPacked[]) internal petList;
 
     constructor(IERC20 _erc20) {
@@ -15,7 +16,7 @@ contract PixPet is PixPetFactory {
         uint8[] propertiesTrough = [0, 2, 4, 5, 7, 8, 9, 10, 10];
     }
 
-    //pet trade
+    /// @dev  宠物繁殖
     function petBreed(
         address _getPetPerson,
         uint256 _fatherIndex,
@@ -42,6 +43,7 @@ contract PixPet is PixPetFactory {
         }
     }
 
+    /// @dev  获得后代
     function getDescendant(
         PetPropertiesPacked memory _fatherPet,
         PetPropertiesPacked memory _motherPet
@@ -53,6 +55,7 @@ contract PixPet is PixPetFactory {
         return descendant;
     }
 
+    /// @dev  检查宠物是否处于饥饿状态，饥饿状态下全属性-30%
     function fullDegreeCheck(PetPropertiesPacked memory _pet)
         internal
         returns (PetPropertiesPacked memory _petChecked)
@@ -68,6 +71,7 @@ contract PixPet is PixPetFactory {
         }
     }
 
+    /// @dev  战斗轮
     function petFight(
         address _challenger,
         uint256 _challengerIndex,
@@ -141,6 +145,7 @@ contract PixPet is PixPetFactory {
         }
     }
 
+    /// @dev  宠物喂养
     function feedPet(uint256 _tag, uint256 _petIndex) public {
         if (_tag % 8 == 2) {
             petList[msg.sender][_petIndex].fullDegree += 25;
@@ -174,6 +179,7 @@ contract PixPet is PixPetFactory {
         }
     }
 
+    /// @dev  饱食度修正
     function correctFullDegree(uint8 _fullDegree)
         internal
         returns (uint8 _correctDegree)
