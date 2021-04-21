@@ -5,35 +5,13 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 
 import "./PixfarmonBase.sol";
 
-abstract contract IPixFarmFactory is PixfarmonBase {
+interface IPixFarmFactory {
+    /// @dev 品质
     enum Quality {N, R, SR, SSR}
+    /// @dev 物种
     enum Specie {A, B, C, D, E, F, G, H, I, J, K, L}
 
-    int256[][] specieData = [
-        [int256(1), -1, -1, 1],
-        [int256(1), -1, -1, 1],
-        [int256(1), -1, 1, -1],
-        [int256(-1), 1, 1, -1],
-        [int256(-1), 1, -1, 1],
-        [int256(-1), -1, 1, 1],
-        [int256(1), 0, 0, 0],
-        [int256(0), 0, 0, 1]
-    ];
-    uint256[] specieTime = [
-        uint256(100),
-        100,
-        100,
-        100,
-        100,
-        100,
-        100,
-        100,
-        100,
-        100,
-        100,
-        100
-    ];
-    uint256[] specieFull = [10, 10, 10, 10, 20, 20, 15, 15, 15, 15, 10, 15];
+    /// @dev 属性封包
     struct PlantPropertiesPacked {
         Specie specie;
         uint8 hp;
@@ -56,61 +34,83 @@ abstract contract IPixFarmFactory is PixfarmonBase {
 
     ///@dev 计算属性
     function getPlantProperties(uint256 _dna)
-        public
+        external
         view
-        virtual
         returns (PlantPropertiesPacked calldata);
 
     ///@dev 计算DNA
     function calDna(PlantPropertiesPacked memory _pack)
-        public
+        external
         view
-        virtual
         returns (uint256 dna);
 
     ///@dev 计算Tag
     function calTag(
         PlantPropertiesPacked memory _pack,
         Quality quality,
-        ItemType itemType
-    ) public pure virtual returns (uint256 tag);
+        PixfarmonBase.ItemType itemType
+    ) external pure returns (uint256 tag);
 
     ///@dev 生成果实
     function getFruitTag(PlantPropertiesPacked memory _pack)
-        public
+        external
         view
-        virtual
         returns (uint256 fruitTag);
 
     ///@dev 生成种子
     function getSeedTag(PlantPropertiesPacked memory _pack)
-        public
+        external
         pure
-        virtual
         returns (uint256 seedTag);
 
     ///@dev 分解果实
     function disassembleFruit(uint256 _fruitTag)
-        public
-        virtual
+        external
         returns (uint256 seedTag, bool getSpecialSeed);
 
     ///@dev 根据种子Tag获得品种
     function getSpecieBySeed(uint256 SeedTag)
-        public
+        external
         pure
-        virtual
         returns (uint256 specie);
 
     ///@dev 根据果实Tag获得属性
     function getPropertiesByFruitTag(uint256 _fruitTag)
-        public
+        external
         view
-        virtual
         returns (PlantPropertiesPacked memory);
 }
 
-contract PixFarmFactory is Ownable, IPixFarmFactory {
+contract PixFarmFactory is IPixFarmFactory, PixfarmonBase {
+    /// @dev 物种偏向
+    int256[][] specieData = [
+        [int256(1), -1, -1, 1],
+        [int256(1), -1, -1, 1],
+        [int256(1), -1, 1, -1],
+        [int256(-1), 1, 1, -1],
+        [int256(-1), 1, -1, 1],
+        [int256(-1), -1, 1, 1],
+        [int256(1), 0, 0, 0],
+        [int256(0), 0, 0, 1]
+    ];
+    /// @dev 作物成熟时间
+    uint256[] specieTime = [
+        uint256(100),
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100,
+        100
+    ];
+    /// @dev 果实饱食度
+    uint256[] specieFull = [10, 10, 10, 10, 20, 20, 15, 15, 15, 15, 10, 15];
+
     function _generateDna(uint256 Dna1, uint256 Dna2)
         private
         pure
@@ -121,7 +121,7 @@ contract PixFarmFactory is Ownable, IPixFarmFactory {
         return child;
     }
 
-    function getFruitTag(PlantPropertiesPacked memory _pack)
+    function getFruitTag(PlantPropertiesPacked calldata _pack)
         public
         view
         override
@@ -141,7 +141,7 @@ contract PixFarmFactory is Ownable, IPixFarmFactory {
         return tag;
     }
 
-    function getSeedTag(PlantPropertiesPacked memory _pack)
+    function getSeedTag(PlantPropertiesPacked calldata _pack)
         public
         pure
         override
@@ -155,25 +155,25 @@ contract PixFarmFactory is Ownable, IPixFarmFactory {
     function getPlantProperties(uint256 _dna)
         public
         view
-        virtual
         override
         returns (PlantPropertiesPacked memory)
     {
-        if (_dna > (1 << 12)) {
-            _dna <<= 5;
+        uint256 dna = _dna;
+        if (dna > (1 << 12)) {
+            dna <<= 5;
         }
         PlantPropertiesPacked memory pack;
-        pack.spd = uint8(_dna % 8);
-        _dna >> 3;
-        pack.def = uint8(_dna % 8);
-        _dna >> 3;
-        pack.atk = uint8(_dna % 8);
+        pack.spd = uint8(dna % 8);
+        dna >> 3;
+        pack.def = uint8(dna % 8);
+        dna >> 3;
+        pack.atk = uint8(dna % 8);
         pack.hp >> 3;
-        pack.specie = Specie(uint8(_dna % 16));
+        pack.specie = Specie(uint8(dna % 16));
         return pack;
     }
 
-    function calDna(PlantPropertiesPacked memory _pack)
+    function calDna(PlantPropertiesPacked calldata _pack)
         public
         pure
         override
@@ -189,10 +189,10 @@ contract PixFarmFactory is Ownable, IPixFarmFactory {
     }
 
     function calTag(
-        PlantPropertiesPacked memory _pack,
+        PlantPropertiesPacked calldata _pack,
         Quality quality,
-        ItemType itemType
-    ) public pure override returns (uint256 tag) {
+        PixfarmonBase.ItemType itemType
+    ) external pure override returns (uint256 tag) {
         uint256 _tag =
             (calDna(_pack) << 5) + (uint256(quality) << 3) + uint256(itemType);
         return _tag;
@@ -391,7 +391,7 @@ contract PixFarmFactory is Ownable, IPixFarmFactory {
         override
         returns (PlantPropertiesPacked memory)
     {
-        require(_fruitTag % 8 == 1 || _fruitTag % 8 == 2);
+        require(_fruitTag % 8 == 1 || _fruitTag % 8 == 2, "No properties");
         return getPlantProperties(_fruitTag >> 5);
     }
 }

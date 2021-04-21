@@ -5,21 +5,17 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 import "./PixFarmFactory.sol";
 import "./Shop.sol";
 
-abstract contract IPixFarm is IPixFarmFactory, Shop {
-    mapping(address => uint256) farmExperience;
-    mapping(address => address[]) public friends;
-
+interface IPixFarm {
     ///@dev 播种
     function sowing(
         uint256 _x,
         uint256 _y,
         uint256 _seedTag
-    ) public virtual returns (bool);
+    ) external returns (bool);
 
     ///@dev 收获
     function harvest(uint256 _x, uint256 _y)
-        public
-        virtual
+        external
         returns (
             bool,
             uint256 fruitTag,
@@ -28,8 +24,7 @@ abstract contract IPixFarm is IPixFarmFactory, Shop {
 
     ///@dev 铲除
     function eradicating(uint256 _x, uint256 _y)
-        public
-        virtual
+        external
         returns (bool getSeed);
 
     ///@dev 偷菜
@@ -37,11 +32,13 @@ abstract contract IPixFarm is IPixFarmFactory, Shop {
         address _friend,
         uint256 _x,
         uint256 _y
-    ) public virtual returns (bool);
+    ) external returns (bool);
 }
 
-abstract contract PixFarm is Ownable, IPixFarm {
-    mapping(address => field[][]) fields;
+contract PixFarm is Ownable, IPixFarm, PixFarmFactory {
+    mapping(address => uint256) farmExperience;
+    mapping(address => address[]) public friends;
+    mapping(address => field[6][6]) fields;
     struct field {
         bool unlocked;
         bool used;
@@ -57,7 +54,7 @@ abstract contract PixFarm is Ownable, IPixFarm {
         uint256 _x,
         uint256 _y,
         uint256 _seedTag
-    ) public override returns (bool) {
+    ) external override returns (bool) {
         require(
             fields[msg.sender][_x][_y].unlocked == true,
             "The field is locked!"
@@ -78,7 +75,7 @@ abstract contract PixFarm is Ownable, IPixFarm {
     //参数：uing256，uing256
     //返回：bool,uint256,uint8
     function harvest(uint256 _x, uint256 _y)
-        public
+        external
         override
         returns (
             bool,
@@ -91,13 +88,12 @@ abstract contract PixFarm is Ownable, IPixFarm {
     //参数：uing256，uing256
     //返回：bool 为false为背包满
     function eradicating(uint256 _x, uint256 _y)
-        public
+        external
         override
         returns (bool)
     {
         if (
-            block.timestamp -
-                (fields[msg.sender][_x][_y].sowingTime * 100) /
+            ((block.timestamp - fields[msg.sender][_x][_y].sowingTime) * 100) /
                 specieTime[
                     getSpecieBySeed(fields[msg.sender][_x][_y].seedTag)
                 ] <
@@ -108,7 +104,7 @@ abstract contract PixFarm is Ownable, IPixFarm {
                 return true;
             } else {
                 fields[msg.sender][_x][_y].used = true;
-                return false;
+                revert("Repository is full");
             }
         } else {
             return true;
@@ -122,5 +118,8 @@ abstract contract PixFarm is Ownable, IPixFarm {
         address _friend,
         uint256 _x,
         uint256 _y
-    ) public override returns (bool) {}
+    ) external view override returns (bool) {
+        //TODO
+        return false;
+    }
 }
