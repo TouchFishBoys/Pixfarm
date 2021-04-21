@@ -52,7 +52,7 @@ interface IPixFarmFactory {
     ) external pure returns (uint256 tag);
 
     ///@dev 生成果实
-    function getFruitTag(PlantPropertiesPacked memory _pack)
+    function getFruitTag(uint256 _seedTag)
         external
         view
         returns (uint256 fruitTag);
@@ -121,27 +121,25 @@ contract PixFarmFactory is IPixFarmFactory, PixfarmonBase {
         return child;
     }
 
-    function getFruitTag(PlantPropertiesPacked calldata _pack)
+    function getFruitTag(uint256 _seedTag)
         public
         view
         override
-        returns (uint256 fruitTat)
+        returns (uint256 fruitTag)
     {
-        uint256 tag = calDna(_pack);
-        tag << 2;
+        PlantPropertiesPacked memory pack = getPropertiesByFruitTag(_seedTag);
+        Quality quality;
         if (probabilityCheck(1, 100)) {
-            tag += 3;
+            quality = Quality(3);
         } else if (probabilityCheck(5, 99)) {
-            tag += 2;
+            quality = Quality(2);
         } else if (probabilityCheck(10, 94)) {
-            tag += 1;
+            quality = Quality(1);
         }
-        tag << 3;
-        tag += 1;
-        return tag;
+        return calTag(pack, quality, ItemType.Fruit);
     }
 
-    function getSeedTag(PlantPropertiesPacked calldata _pack)
+    function getSeedTag(PlantPropertiesPacked memory _pack)
         public
         pure
         override
@@ -173,7 +171,7 @@ contract PixFarmFactory is IPixFarmFactory, PixfarmonBase {
         return pack;
     }
 
-    function calDna(PlantPropertiesPacked calldata _pack)
+    function calDna(PlantPropertiesPacked memory _pack)
         public
         pure
         override
@@ -189,10 +187,10 @@ contract PixFarmFactory is IPixFarmFactory, PixfarmonBase {
     }
 
     function calTag(
-        PlantPropertiesPacked calldata _pack,
+        PlantPropertiesPacked memory _pack,
         Quality quality,
         PixfarmonBase.ItemType itemType
-    ) external pure override returns (uint256 tag) {
+    ) public pure override returns (uint256 tag) {
         uint256 _tag =
             (calDna(_pack) << 5) + (uint256(quality) << 3) + uint256(itemType);
         return _tag;
@@ -382,16 +380,16 @@ contract PixFarmFactory is IPixFarmFactory, PixfarmonBase {
         return SeedTag >> 17;
     }
 
-    //根据果实Tag获得属性
+    //根据Tag获得属性
     //参数：uint256
     //返回：PlantPropertiesPacked
-    function getPropertiesByFruitTag(uint256 _fruitTag)
+    function getPropertiesByFruitTag(uint256 _tag)
         public
         view
         override
         returns (PlantPropertiesPacked memory)
     {
-        require(_fruitTag % 8 == 1 || _fruitTag % 8 == 2, "No properties");
-        return getPlantProperties(_fruitTag >> 5);
+        require(_tag % 8 <= 2);
+        return getPlantProperties(_tag >> 5);
     }
 }

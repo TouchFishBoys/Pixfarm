@@ -6,10 +6,7 @@ import "./PixFarmFactory.sol";
 
 interface IShop {
     ///@dev buy a seed from shop
-    function buySeed(uint256 specie, uint256 level)
-        external
-        view
-        returns (uint256 _dna);
+    function buySeed(uint256 specie, uint256 level) external returns (bool);
 
     function buyPet() external view returns (uint256 _dna);
 }
@@ -19,9 +16,8 @@ contract Shop is PixFarmFactory, IShop {
 
     function buySeed(uint256 specie, uint256 level)
         external
-        view
         override
-        returns (uint256 _dna)
+        returns (bool)
     {
         require(level <= 4, "illegal level");
         PlantPropertiesPacked memory pack;
@@ -42,7 +38,11 @@ contract Shop is PixFarmFactory, IShop {
                 pack.spd++;
             }
         }
-        return getSeedTag(pack);
+        uint256 seedTag = getSeedTag(pack);
+        if (giveItem(msg.sender, seedTag, 1)) {
+            return true;
+        }
+        return false;
     }
 
     function buyPet() external view override returns (uint256 _dna) {
