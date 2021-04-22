@@ -68,14 +68,8 @@ interface IPixFarmFactory {
         external
         returns (uint256 seedTag, bool getSpecialSeed);
 
-    ///@dev 根据种子Tag获得品种
-    function getSpecieBySeed(uint256 SeedTag)
-        external
-        pure
-        returns (uint256 specie);
-
-    ///@dev 根据果实Tag获得属性
-    function getPropertiesByFruitTag(uint256 _fruitTag)
+    ///@dev 根据Tag获得属性
+    function getPropertiesByTag(uint256 tag)
         external
         view
         returns (PlantPropertiesPacked memory);
@@ -127,7 +121,7 @@ contract PixFarmFactory is IPixFarmFactory, PixfarmonBase {
         override
         returns (uint256 fruitTag)
     {
-        PlantPropertiesPacked memory pack = getPropertiesByFruitTag(_seedTag);
+        PlantPropertiesPacked memory pack = getPropertiesByTag(_seedTag);
         Quality quality;
         if (probabilityCheck(1, 100)) {
             quality = Quality(3);
@@ -368,22 +362,10 @@ contract PixFarmFactory is IPixFarmFactory, PixfarmonBase {
         }
     }
 
-    //根据种子Tag获得品种
-    //参数：uint256
-    //返回：uint256
-    function getSpecieBySeed(uint256 SeedTag)
-        public
-        pure
-        override
-        returns (uint256 specie)
-    {
-        return SeedTag >> 17;
-    }
-
     //根据Tag获得属性
     //参数：uint256
     //返回：PlantPropertiesPacked
-    function getPropertiesByFruitTag(uint256 _tag)
+    function getPropertiesByTag(uint256 _tag)
         public
         view
         override

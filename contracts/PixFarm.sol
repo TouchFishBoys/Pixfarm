@@ -70,7 +70,7 @@ contract PixFarm is Ownable, IPixFarm, PixFarmFactory {
         fields[msg.sender][_x][_y].sowingTime = block.timestamp;
         fields[msg.sender][_x][_y].maturityTime =
             block.timestamp +
-            specieTime[getSpecieBySeed(_seedTag)];
+            specieTime[getPropertiesByTag(_seedTag).specie];
         fields[msg.sender][_x][_y].used = true;
         return true;
     }
@@ -120,7 +120,7 @@ contract PixFarm is Ownable, IPixFarm, PixFarmFactory {
         if (
             ((block.timestamp - fields[msg.sender][_x][_y].sowingTime) * 100) /
                 specieTime[
-                    getSpecieBySeed(fields[msg.sender][_x][_y].seedTag)
+                    getPropertiesByTag(fields[msg.sender][_x][_y].specie)
                 ] <
             10
         ) {
