@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
-import "./AuctionBase.sol";
+import "./PixPet.sol";
+import "./PixFarm.sol";
 
-abstract contract Pixfarmon is Auction {}
+abstract contract Pixfarmon is PixPet, PixFarm {}

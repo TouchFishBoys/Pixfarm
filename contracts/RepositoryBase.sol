@@ -3,8 +3,12 @@ pragma solidity ^0.8.0;
 
 import "@openzeppelin/contracts/access/Ownable.sol";
 
-contract PixfarmonBase is Ownable {
+contract RepositoryBase is Ownable {
+    // 定义了物品的类型
     enum ItemType {Seed, Fruit, Feed} // 3bits for futher development
+
+    /// @dev 玩家的仓库
+    mapping(ItemType => mapping(address => Item[])) internal repository;
 
     struct Item {
         ItemType itemType;
@@ -12,47 +16,53 @@ contract PixfarmonBase is Ownable {
         uint32 tag;
         uint32 stack;
     }
-    mapping(address => Item[]) internal accountStorage;
 
     /// @dev is value has permission to see key's storage
     mapping(address => mapping(address => bool)) internal _storageAllowence;
 
     function giveItem(
-        address _guy,
-        uint256 _ItemTag,
+        address _receiver,
+        ItemType _itemType,
+        uint256 _itemTag,
         uint32 _amount
     ) public returns (bool) {
-        for (uint256 i = 0; i < accountStorage[_guy].length; i++) {
-            if (accountStorage[_guy][i].tag == _ItemTag) {
-                accountStorage[_guy][i].stack += _amount;
+        for (uint256 i = 0; i < repository[_itemType][_receiver].length; i++) {
+            if (repository[_itemType][_receiver][i].tag == _itemTag) {
+                repository[_itemType][_receiver][i].stack += _amount;
                 return true;
             }
         }
-        accountStorage[_guy][findFirstPlace(_guy)].tag == _ItemTag;
-        accountStorage[_guy][findFirstPlace(_guy)].stack == _amount;
+        repository[_itemType][_receiver][findFirstPlace(_receiver, _itemType)]
+            .tag == _itemTag;
+        repository[_itemType][_receiver][findFirstPlace(_receiver, _itemType)]
+            .stack == _amount;
         return true;
     }
 
-    function findFirstPlace(address _guy) internal view returns (uint256) {
-        for (uint256 i = 0; i < accountStorage[_guy].length; i++) {
-            if (accountStorage[_guy][i].stack == 0) {
+    function findFirstPlace(address _receiver, ItemType _itemType)
+        internal
+        view
+        returns (uint256)
+    {
+        for (uint256 i = 0; i < repository[_itemType][_receiver].length; i++) {
+            if (repository[_itemType][_receiver][i].stack == 0) {
                 return i;
             }
         }
-        return accountStorage[_guy].length;
+        return repository[_itemType][_receiver].length;
     }
 
     function removeItem(
-        address _guy,
+        address _receiver,
         uint256 _ItemTag,
         uint32 _amount
     ) public returns (bool) {
-        for (uint256 i = 0; i < accountStorage[_guy].length; i++) {
-            if (accountStorage[_guy][i].tag == _ItemTag) {
-                if (_amount > accountStorage[_guy][i].stack) {
+        for (uint256 i = 0; i < repository[_itemType][_receiver].length; i++) {
+            if (repository[_itemType][_receiver][i].tag == _ItemTag) {
+                if (_amount > repository[_itemType][_receiver][i].stack) {
                     return false;
                 } else {
-                    accountStorage[_guy][i].stack -= _amount;
+                    repository[_itemType][_receiver][i].stack -= _amount;
                     return true;
                 }
             }
@@ -63,7 +73,7 @@ contract PixfarmonBase is Ownable {
     modifier requireVisibility(address host, address visitor) {
         require(
             _storageAllowence[host][visitor],
-            "You have no permission to see this guy's storage"
+            "You have no permission to see this receiver's storage"
         );
         _;
     }

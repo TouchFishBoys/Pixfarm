@@ -2,16 +2,21 @@
 pragma solidity ^0.8.0;
 
 import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
-import "./PixFarmFactory.sol";
 
 interface IShop {
+    function _buy() external returns (uint256);
+
+    function _sell() external;
+
+    function _upgrade() external;
+
     ///@dev buy a seed from shop
     function buySeed(uint256 specie, uint256 level) external returns (bool);
 
     function buyPet() external view returns (uint256 _dna);
 }
 
-contract Shop is PixFarmFactory, IShop {
+contract ShopBase is IShop {
     mapping(address => uint256) public experience;
 
     function buySeed(uint256 specie, uint256 level)
