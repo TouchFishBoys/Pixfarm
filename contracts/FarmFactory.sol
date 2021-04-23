@@ -11,15 +11,6 @@ interface IFarmFactory {
     /// @dev 物种
     enum Specie {A, B, C, D, E, F, G, H, I, J, K, L}
 
-    /// @dev 属性封包
-    struct PlantPropertiesPacked {
-        Specie specie;
-        uint8 hp;
-        uint8 atk;
-        uint8 def;
-        uint8 spd;
-    }
-
     //total:21 bits
     //  example:
     //  specie (4bits)
@@ -75,7 +66,7 @@ interface IFarmFactory {
         returns (PlantPropertiesPacked memory);
 }
 
-contract FarmFactory is IPixFarmFactory, PixfarmonBase {
+contract FarmFactory is IPixFarmFactory, FarmBase {
     /// @dev 物种偏向
     int256[][] specieData = [
         [int256(1), -1, -1, 1],
