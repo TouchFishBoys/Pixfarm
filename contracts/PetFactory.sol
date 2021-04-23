@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
-import "./PixFarm.sol";
+import "./PetBase.sol";
 
-abstract contract IPixPetFactory {
+abstract contract IPetFactory {
     //成长值和各部位样式、颜色
     //hp(6bits)
     //atk(6bits)
@@ -43,7 +43,7 @@ abstract contract IPixPetFactory {
         returns (uint256 dna);
 }
 
-contract PixPetFactory is Ownable, IPixPetFactory {
+contract PetFactory is Ownable, IPixPetFactory {
     function getPetProperties(uint256 _dna)
         public
         view

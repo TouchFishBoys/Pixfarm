@@ -2,8 +2,7 @@
 pragma solidity ^0.8.0;
 
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
-import "./PixPetFactory.sol";
-import "./PixFarmFactory.sol";
+import "./PetFactory.sol";
 import "./PetMarket.sol"
 
 contract PixPet is PixPetFactory, PetMarket {

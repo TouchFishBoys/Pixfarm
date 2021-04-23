@@ -3,9 +3,9 @@ pragma solidity ^0.8.0;
 
 import "@openzeppelin/contracts/access/Ownable.sol";
 
-import "./PixfarmonBase.sol";
+import "./FarmBase.sol";
 
-interface IPixFarmFactory {
+interface IFarmFactory {
     /// @dev 品质
     enum Quality {N, R, SR, SSR}
     /// @dev 物种
@@ -75,7 +75,7 @@ interface IPixFarmFactory {
         returns (PlantPropertiesPacked memory);
 }
 
-contract PixFarmFactory is IPixFarmFactory, PixfarmonBase {
+contract FarmFactory is IPixFarmFactory, PixfarmonBase {
     /// @dev 物种偏向
     int256[][] specieData = [
         [int256(1), -1, -1, 1],
