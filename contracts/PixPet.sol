@@ -6,15 +6,7 @@ import "./PetFactory.sol";
 import "./PetMarket.sol"
 
 contract PixPet is PixPetFactory, PetMarket {
-    IERC20 private erc20;
 
-    /// @dev  宠物列表
-    mapping(address => PetPropertiesPacked[]) internal petList;
-
-    constructor(IERC20 _erc20) {
-        erc20 = _erc20;
-        uint8[] propertiesTrough = [0, 2, 4, 5, 7, 8, 9, 10, 10];
-    }
 
     /// @dev  宠物繁殖
     function petBreed(
