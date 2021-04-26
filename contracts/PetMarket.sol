@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
-import "MarketBase.sol";
-import "PixPet.sol";
+import "./MarketBase.sol";
+import "./PixPet.sol";
 
 interface IPetMarket {
     /// @dev 向商店出售宠物

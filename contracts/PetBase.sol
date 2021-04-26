@@ -34,5 +34,6 @@ contract PetBase {
         uint32 petExperience;
         uint16 maxPropertiesTrough;
         uint8 fullDegree;
+        uint256 zeroTime;
     }
 }
