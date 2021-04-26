@@ -8,10 +8,9 @@ contract RepositoryBase is Ownable {
     enum ItemType {Seed, Fruit, Feed} // 3bits for futher development
 
     /// @dev 玩家的仓库
-    mapping(ItemType => mapping(address => Item[])) internal repository;
+    mapping(ItemType => mapping(address => Item[])) internal _repository;
 
     struct Item {
-        ItemType itemType;
         bool usable;
         uint32 tag;
         uint32 stack;
@@ -20,49 +19,79 @@ contract RepositoryBase is Ownable {
     /// @dev is value has permission to see key's storage
     mapping(address => mapping(address => bool)) internal _storageAllowence;
 
-    function giveItem(
-        address _receiver,
+    /// @dev 删除某人的某个格子的道具
+    function _remove(
+        ItemType _type,
+        address _player,
+        uint256 _slot
+    ) internal {
+        delete _repository[_type][_player][_slot];
+    }
+
+    ///@dev 获取玩家在某个槽的物品
+    function _get(
+        ItemType _type,
+        address _player,
+        uint256 _slot
+    ) internal returns (Item memory) {
+        return _repository[_type][_player][_slot];
+    }
+
+    /// @dev 获取玩家拥有的物品列表
+    function _getAll(ItemType _type, address _player)
+        internal
+        returns (Item[] memory)
+    {
+        return _repository[_type][_player];
+    }
+
+    ///@dev 添加指定数量的道具
+    function _add(
         ItemType _itemType,
-        uint256 _itemTag,
-        uint32 _amount
+        address _player,
+        Item memory _item
     ) public returns (bool) {
-        for (uint256 i = 0; i < repository[_itemType][_receiver].length; i++) {
-            if (repository[_itemType][_receiver][i].tag == _itemTag) {
-                repository[_itemType][_receiver][i].stack += _amount;
+        // TODO 溢出处理
+        for (uint256 i = 0; i < _repository[_itemType][_player].length; i++) {
+            if (_repository[_itemType][_player][i].tag == _item.tag) {
+                _repository[_itemType][_player][i].stack += _item.stack;
                 return true;
             }
         }
-        repository[_itemType][_receiver][findFirstPlace(_receiver, _itemType)]
-            .tag == _itemTag;
-        repository[_itemType][_receiver][findFirstPlace(_receiver, _itemType)]
-            .stack == _amount;
+        _repository[_itemType][_player][_findFirstPlace(_player, _itemType)]
+            .tag == _item.tag;
+        _repository[_itemType][_player][_findFirstPlace(_player, _itemType)]
+            .stack == _item.stack;
         return true;
     }
 
-    function findFirstPlace(address _receiver, ItemType _itemType)
+    /// @dev 找到对应仓库的第一个空位
+    function _findFirstPlace(address _receiver, ItemType _itemType)
         internal
         view
         returns (uint256)
     {
-        for (uint256 i = 0; i < repository[_itemType][_receiver].length; i++) {
-            if (repository[_itemType][_receiver][i].stack == 0) {
+        for (uint256 i = 0; i < _repository[_itemType][_receiver].length; i++) {
+            if (_repository[_itemType][_receiver][i].stack == 0) {
                 return i;
             }
         }
-        return repository[_itemType][_receiver].length;
+        return _repository[_itemType][_receiver].length;
     }
 
+    /// @dev 删除指定 tag 的物品 _amount 个
     function removeItem(
-        address _receiver,
-        uint256 _ItemTag,
+        address _player,
+        ItemType _itemType,
+        uint256 _tag,
         uint32 _amount
     ) public returns (bool) {
-        for (uint256 i = 0; i < repository[_itemType][_receiver].length; i++) {
-            if (repository[_itemType][_receiver][i].tag == _ItemTag) {
-                if (_amount > repository[_itemType][_receiver][i].stack) {
+        for (uint256 i = 0; i < _repository[_itemType][_player].length; i++) {
+            if (_repository[_itemType][_player][i].tag == _tag) {
+                if (_amount > _repository[_itemType][_player][i].stack) {
                     return false;
                 } else {
-                    repository[_itemType][_receiver][i].stack -= _amount;
+                    _repository[_itemType][_player][i].stack -= _amount;
                     return true;
                 }
             }
