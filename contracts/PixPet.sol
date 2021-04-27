@@ -9,7 +9,7 @@ contract PixPet is PixPetFactory, PetMarket {
 
 
     /// @dev  宠物繁殖
-    function petBreed(
+    function breed(
         address _getPetPerson,
         uint256 _fatherIndex,
         address _getMoneyPerson,
@@ -23,7 +23,7 @@ contract PixPet is PixPetFactory, PetMarket {
         }
 
         PetPropertiesPacked memory descendant;
-        descendant = getDescendant(
+        descendant = _getDescendant(
             petList[_getPetPerson][_fatherIndex],
             petList[_getMoneyPerson][_motherIndex]
         );
@@ -36,7 +36,7 @@ contract PixPet is PixPetFactory, PetMarket {
     }
 
     /// @dev  获得后代
-    function getDescendant(
+    function _getDescendant(
         PetPropertiesPacked memory _fatherPet,
         PetPropertiesPacked memory _motherPet
     ) internal pure returns (PetPropertiesPacked memory _descendant) {
@@ -48,7 +48,7 @@ contract PixPet is PixPetFactory, PetMarket {
     }
 
     /// @dev  检查宠物是否处于饥饿状态，饥饿状态下全属性-30%
-    function fullDegreeCheck(PetPropertiesPacked memory _pet)
+    function _isHungry(PetPropertiesPacked memory _pet)
         internal
         returns (PetPropertiesPacked memory _petChecked)
     {
@@ -64,16 +64,16 @@ contract PixPet is PixPetFactory, PetMarket {
     }
 
     /// @dev  战斗轮
-    function petFight(
+    function fight(
         address _challenger,
         uint256 _challengerIndex,
         address _defender,
         uint256 _defenderIndex
     ) public view returns (PetPropertiesPacked memory _winner) {
         PetPropertiesPacked memory challengerPet =
-            fullDegreeCheck(petList[_challenger][_challengerIndex]);
+            _isHungry(petList[_challenger][_challengerIndex]);
         PetPropertiesPacked memory defenderPet =
-            fullDegreeCheck(petList[_defender][_defenderIndex]);
+            _isHungry(petList[_defender][_defenderIndex]);
 
         uint8 round;
 
@@ -138,10 +138,10 @@ contract PixPet is PixPetFactory, PetMarket {
     }
 
     /// @dev  宠物喂养
-    function feedPet(uint256 _tag, uint256 _petIndex) public {
+    function feed(uint256 _tag, uint256 _petIndex) public {
         if (_tag % 8 == 2) {
             petList[msg.sender][_petIndex].fullDegree += 25;
-            petList[msg.sender][_petIndex].fullDegree=correctFullDegree(petList[msg.sender][_petIndex].fullDegree);
+            petList[msg.sender][_petIndex].fullDegree=correctHunger(petList[msg.sender][_petIndex].fullDegree);
         } else {
             PlantPropertiesPacked memory pac = getPropertiesByTag(_tag);
             if (pac.specie < 8) {
@@ -156,7 +156,7 @@ contract PixPet is PixPetFactory, PetMarket {
                 petList[msg.sender][_petIndex].fullDegree += specieFull[
                     pac.specie
                 ];
-                petList[msg.sender][_petIndex].fullDegree=correctFullDegree(petList[msg.sender][_petIndex].fullDegree);
+                petList[msg.sender][_petIndex].fullDegree=correctHunger(petList[msg.sender][_petIndex].fullDegree);
             } else {
                 petList[msg.sender][_petIndex].hp += pac.hp;
                 petList[msg.sender][_petIndex].atk += pac.atk;
@@ -166,30 +166,30 @@ contract PixPet is PixPetFactory, PetMarket {
                 petList[msg.sender][_petIndex].fullDegree += specieFull[
                     pac.specie
                 ];
-                petList[msg.sender][_petIndex].fullDegree=correctFullDegree(petList[msg.sender][_petIndex].fullDegree);
+                petList[msg.sender][_petIndex].fullDegree=correctHunger(petList[msg.sender][_petIndex].fullDegree);
             }
         }
     }
 
     /// @dev  饱食度修正
-    function correctFullDegree(uint8 _fullDegree)
+    function correctHunger(uint8 _hunger)
         internal
         returns (uint8 _correctDegree)
     {
-        if (_fullDegree > 100) {
-            return (_fullDegree - (_fullDegree - 100));
-        }else if(_fullDegree < 0){
+        if (_hunger > 100) {
+            return (_hunger - (_hunger - 100));
+        }else if(_hunger < 0){
             return 0;
         }else{
-            return _fullDegree;
+            return _hunger;
         }
     }
 
     /// @dev  饱食度减少    1点饱食度 = 360秒   100点 = 10小时
-    function fullDegreeDecrease(uint256 _petIndex) returns (uint8 _fullDegree){
+    function decreaseHunger(uint256 _petIndex) returns (uint8 _hunger){
         if(petList[msg.sender][_petIndex].fullDegree > 0 && petList[msg.sender][_petIndex].zeroTime >= block.timestamp){
             petList[msg.sender][_petList].fullDegree-=(petList[msg.sender][_petIndex].zeroTime-block.timestamp)/360;
-            petList[msg.sender][_petList].fullDegree=correctFullDegree(petList[msg.sender][_petList].fullDegree);
+            petList[msg.sender][_petList].fullDegree=correctHunger(petList[msg.sender][_petList].fullDegree);
         }else{
             petList[msg.sender][_petList].fullDegree=0;
         }
