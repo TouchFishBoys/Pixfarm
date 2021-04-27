@@ -2,6 +2,7 @@
 pragma solidity ^0.8.0;
 
 import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
+import "./FarmBase.sol";
 
 interface IShop {
     function _buy() external returns (uint256);

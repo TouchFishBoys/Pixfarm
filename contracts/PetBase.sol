@@ -1,4 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 import "./RespositoryBase.sol"
-contract PetBase {}
+
+contract PetBase {
+    struct PackedPetProperties {}
+}

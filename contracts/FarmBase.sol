@@ -10,4 +10,15 @@ contract FarmBase {
         uint8 def;
         uint8 spd;
     }
+
+    struct Field {
+        bool unlocked;
+        bool used;
+        uint256 seedTag;
+        uint256 sowingTime;
+        uint256 maturityTime;
+        bool stolen;
+        address firstThief;
+        address secondThief;
+    }
 }

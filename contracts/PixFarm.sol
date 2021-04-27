@@ -37,16 +37,6 @@ contract PixFarm is Ownable, IPixFarm, PixFarmFactory {
     mapping(address => uint256) farmExperience;
     mapping(address => address[]) public friends;
     mapping(address => field[6][6]) fields;
-    struct field {
-        bool unlocked;
-        bool used;
-        uint256 seedTag;
-        uint256 sowingTime;
-        uint256 maturityTime;
-        bool stolen;
-        address firstThief;
-        address secondThief;
-    }
 
     //播种
     //参数：uing256，uing256，uing256
