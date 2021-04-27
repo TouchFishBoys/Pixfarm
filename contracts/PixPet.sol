@@ -6,15 +6,7 @@ import "./PetFactory.sol";
 import "./PetMarket.sol"
 
 contract PixPet is PixPetFactory, PetMarket {
-    IERC20 private erc20;
 
-    /// @dev  宠物列表
-    mapping(address => PetPropertiesPacked[]) internal petList;
-
-    constructor(IERC20 _erc20) {
-        erc20 = _erc20;
-        uint8[] propertiesTrough = [0, 2, 4, 5, 7, 8, 9, 10, 10];
-    }
 
     /// @dev  宠物繁殖
     function petBreed(
@@ -149,7 +141,7 @@ contract PixPet is PixPetFactory, PetMarket {
     function feedPet(uint256 _tag, uint256 _petIndex) public {
         if (_tag % 8 == 2) {
             petList[msg.sender][_petIndex].fullDegree += 25;
-            correctFullDegree(petList[msg.sender][_petIndex].fullDegree);
+            petList[msg.sender][_petIndex].fullDegree=correctFullDegree(petList[msg.sender][_petIndex].fullDegree);
         } else {
             PlantPropertiesPacked memory pac = getPropertiesByTag(_tag);
             if (pac.specie < 8) {
@@ -164,7 +156,7 @@ contract PixPet is PixPetFactory, PetMarket {
                 petList[msg.sender][_petIndex].fullDegree += specieFull[
                     pac.specie
                 ];
-                correctFullDegree(petList[msg.sender][_petIndex].fullDegree);
+                petList[msg.sender][_petIndex].fullDegree=correctFullDegree(petList[msg.sender][_petIndex].fullDegree);
             } else {
                 petList[msg.sender][_petIndex].hp += pac.hp;
                 petList[msg.sender][_petIndex].atk += pac.atk;
@@ -174,7 +166,7 @@ contract PixPet is PixPetFactory, PetMarket {
                 petList[msg.sender][_petIndex].fullDegree += specieFull[
                     pac.specie
                 ];
-                correctFullDegree(petList[msg.sender][_petIndex].fullDegree);
+                petList[msg.sender][_petIndex].fullDegree=correctFullDegree(petList[msg.sender][_petIndex].fullDegree);
             }
         }
     }
@@ -186,6 +178,27 @@ contract PixPet is PixPetFactory, PetMarket {
     {
         if (_fullDegree > 100) {
             return (_fullDegree - (_fullDegree - 100));
+        }else if(_fullDegree < 0){
+            return 0;
+        }else{
+            return _fullDegree;
         }
+    }
+
+    /// @dev  饱食度减少    1点饱食度 = 360秒   100点 = 10小时
+    function fullDegreeDecrease(uint256 _petIndex) returns (uint8 _fullDegree){
+        if(petList[msg.sender][_petIndex].fullDegree > 0 && petList[msg.sender][_petIndex].zeroTime >= block.timestamp){
+            petList[msg.sender][_petList].fullDegree-=(petList[msg.sender][_petIndex].zeroTime-block.timestamp)/360;
+            petList[msg.sender][_petList].fullDegree=correctFullDegree(petList[msg.sender][_petList].fullDegree);
+        }else{
+            petList[msg.sender][_petList].fullDegree=0;
+        }
+        return petList[msg.sender][_petList].fullDegree;
+    }
+
+    /// @dev  得到饱食度归零时间
+    function getZerTime(uint _petIndex) returns (uint256 _zeroTime){
+        petList[msg.sender][_petIndex].zeroTime=block.timestamp+petList[msg.sender][_petIndex].fullDegree*360;
+        return petList[msg.sender][_petIndex].zeroTime;
     }
 }
