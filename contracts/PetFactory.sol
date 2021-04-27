@@ -3,23 +3,21 @@ pragma solidity ^0.8.0;
 
 import "./PetBase.sol";
 
-abstract contract IPetFactory {
+interface IPetFactory {
     ///@dev 计算属性
     function getPetProperties(uint256 _dna)
-        public
+        external
         view
-        virtual
-        returns (PetPropertiesPacked calldata);
+        returns (PetBase.PetPropertiesPacked calldata);
 
     ///@dev 计算DNA
-    function calDna(PetPropertiesPacked memory _pack)
-        public
+    function calDna(PetBase.PetPropertiesPacked memory _pack)
+        external
         view
-        virtual
         returns (uint256 dna);
 }
 
-contract PetFactory is Ownable, IPixPetFactory {
+contract PetFactory is Ownable, PetBase, IPetFactory {
     function getPetProperties(uint256 _dna)
         public
         view

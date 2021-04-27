@@ -1,6 +1,8 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
-import "./RespositoryBase.sol"
+
+import "./RepositoryBase.sol";
+
 contract FarmBase {
     /// @dev 属性封包
     struct PlantPropertiesPacked {
@@ -21,7 +23,7 @@ contract FarmBase {
         address firstThief;
         address secondThief;
     }
-     /// @dev 品质
+    /// @dev 品质
     enum Quality {N, R, SR, SSR}
     /// @dev 物种
     enum Specie {A, B, C, D, E, F, G, H, I, J, K, L}

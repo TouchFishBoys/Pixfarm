@@ -3,31 +3,28 @@ pragma solidity ^0.8.0;
 
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "./PetFactory.sol";
-import "./PetMarket.sol"
+import "./PetMarket.sol";
 
 contract PixPet is PixPetFactory, PetMarket {
-
-
     /// @dev  宠物繁殖
     function breed(
-        address _getPetPerson,
+        address _petOwner,
         uint256 _fatherIndex,
         address _getMoneyPerson,
         uint256 _motherIndex,
         uint256 _money
     ) public {
-        bool isSuccess =
-            erc20.transferFrom(_getPetPerson, address(this), _money);
+        bool isSuccess = erc20.transferFrom(_petOwner, address(this), _money);
         if (isSuccess == false) {
             revert("Transfer failed");
         }
 
         PetPropertiesPacked memory descendant;
         descendant = _getDescendant(
-            petList[_getPetPerson][_fatherIndex],
+            petList[_petOwner][_fatherIndex],
             petList[_getMoneyPerson][_motherIndex]
         );
-        petList[_getPetPerson].push(descendant);
+        petList[_petOwner].push(descendant);
 
         isSuccess = erc20.transfer(_getMoneyPerson, (_money * 95) / 100);
         if (isSuccess == false) {
@@ -141,7 +138,9 @@ contract PixPet is PixPetFactory, PetMarket {
     function feed(uint256 _tag, uint256 _petIndex) public {
         if (_tag % 8 == 2) {
             petList[msg.sender][_petIndex].fullDegree += 25;
-            petList[msg.sender][_petIndex].fullDegree=correctHunger(petList[msg.sender][_petIndex].fullDegree);
+            petList[msg.sender][_petIndex].fullDegree = correctHunger(
+                petList[msg.sender][_petIndex].fullDegree
+            );
         } else {
             PlantPropertiesPacked memory pac = getPropertiesByTag(_tag);
             if (pac.specie < 8) {
@@ -156,7 +155,9 @@ contract PixPet is PixPetFactory, PetMarket {
                 petList[msg.sender][_petIndex].fullDegree += specieFull[
                     pac.specie
                 ];
-                petList[msg.sender][_petIndex].fullDegree=correctHunger(petList[msg.sender][_petIndex].fullDegree);
+                petList[msg.sender][_petIndex].fullDegree = correctHunger(
+                    petList[msg.sender][_petIndex].fullDegree
+                );
             } else {
                 petList[msg.sender][_petIndex].hp += pac.hp;
                 petList[msg.sender][_petIndex].atk += pac.atk;
@@ -166,7 +167,9 @@ contract PixPet is PixPetFactory, PetMarket {
                 petList[msg.sender][_petIndex].fullDegree += specieFull[
                     pac.specie
                 ];
-                petList[msg.sender][_petIndex].fullDegree=correctHunger(petList[msg.sender][_petIndex].fullDegree);
+                petList[msg.sender][_petIndex].fullDegree = correctHunger(
+                    petList[msg.sender][_petIndex].fullDegree
+                );
             }
         }
     }
@@ -178,27 +181,37 @@ contract PixPet is PixPetFactory, PetMarket {
     {
         if (_hunger > 100) {
             return (_hunger - (_hunger - 100));
-        }else if(_hunger < 0){
+        } else if (_hunger < 0) {
             return 0;
-        }else{
+        } else {
             return _hunger;
         }
     }
 
     /// @dev  饱食度减少    1点饱食度 = 360秒   100点 = 10小时
-    function decreaseHunger(uint256 _petIndex) returns (uint8 _hunger){
-        if(petList[msg.sender][_petIndex].fullDegree > 0 && petList[msg.sender][_petIndex].zeroTime >= block.timestamp){
-            petList[msg.sender][_petList].fullDegree-=(petList[msg.sender][_petIndex].zeroTime-block.timestamp)/360;
-            petList[msg.sender][_petList].fullDegree=correctHunger(petList[msg.sender][_petList].fullDegree);
-        }else{
-            petList[msg.sender][_petList].fullDegree=0;
+    function decreaseHunger(uint256 _petIndex) public returns (uint8 _hunger) {
+        if (
+            petList[msg.sender][_petIndex].fullDegree > 0 &&
+            petList[msg.sender][_petIndex].zeroTime >= block.timestamp
+        ) {
+            petList[msg.sender][_petList].fullDegree -=
+                (petList[msg.sender][_petIndex].zeroTime - block.timestamp) /
+                360;
+            petList[msg.sender][_petList].fullDegree = correctHunger(
+                petList[msg.sender][_petList].fullDegree
+            );
+        } else {
+            petList[msg.sender][_petList].fullDegree = 0;
         }
         return petList[msg.sender][_petList].fullDegree;
     }
 
     /// @dev  得到饱食度归零时间
-    function getZerTime(uint _petIndex) returns (uint256 _zeroTime){
-        petList[msg.sender][_petIndex].zeroTime=block.timestamp+petList[msg.sender][_petIndex].fullDegree*360;
+    function getZerTime(uint256 _petIndex) public returns (uint256 _zeroTime) {
+        petList[msg.sender][_petIndex].zeroTime =
+            block.timestamp +
+            petList[msg.sender][_petIndex].fullDegree *
+            360;
         return petList[msg.sender][_petIndex].zeroTime;
     }
 }

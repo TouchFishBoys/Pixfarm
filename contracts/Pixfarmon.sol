@@ -4,4 +4,4 @@ pragma solidity ^0.8.0;
 import "./PixPet.sol";
 import "./PixFarm.sol";
 
-abstract contract Pixfarmon is PixPet, PixFarm {}
+contract Pixfarmon is PixPet, PixFarm {}
