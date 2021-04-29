@@ -134,10 +134,9 @@ contract PixFarm is Ownable, IPixFarm, FarmFactory {
 
     /// @notice 偷菜
     /// @dev 返回false则为背包满
-    /// @param owner 被偷的人
+    /// @param _owner 被偷的人
     /// @param _x 菜地的x坐标
     /// @param _y 菜地的y坐标
-    /// @return 背包是否已满
     function stealPlant(
         address _owner,
         uint256 _x,
