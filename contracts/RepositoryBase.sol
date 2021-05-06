@@ -7,14 +7,32 @@ contract RepositoryBase is Ownable {
     // 定义了物品的类型
     enum ItemType {Seed, Fruit, Feed} // 3bits for futher development
 
+    /// @dev 所有玩家名字
+    string[] playersName;
+    mapping(string => address) nameToAddress;
+    mapping(address => string) addressToName;
     /// @dev 玩家的仓库
     mapping(ItemType => mapping(address => Item[])) internal _repository;
+
+    /// @dev 好友
+    struct friend {
+        string friendName;
+        address friendAddress;
+    }
+    mapping(address => friend[]) friendList;
 
     struct Item {
         bool usable;
         uint32 tag;
         uint32 stack;
     }
+
+    struct request {
+        string senderName;
+        address senderAddress;
+    }
+
+    mapping(address => request[]) requestList;
 
     /// @dev is value has permission to see key's storage
     mapping(address => mapping(address => bool)) internal _storageAllowence;
@@ -131,5 +149,76 @@ contract RepositoryBase is Ownable {
                     )
                 )
             ) % decimal;
+    }
+
+    function playerCreate(string memory _name) public returns (bool) {
+        if (!isNameExist(_name)) {
+            playersName.push(_name);
+            addressToName[msg.sender] = _name;
+            nameToAddress[_name] = msg.sender;
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    function isNameExist(string memory _name) internal view returns (bool) {
+        for (uint256 i = 0; i < playersName.length; i++) {
+            if (hashCompare(_name, playersName[i])) {
+                return true;
+            }
+        }
+    }
+
+    /// @dev 比较两个字符串
+    function hashCompare(string memory a, string memory b)
+        internal
+        pure
+        returns (bool)
+    {
+        return keccak256(abi.encodePacked(a)) == keccak256(abi.encodePacked(b));
+    }
+
+    function addFriendByName(string memory _name) public returns (bool) {
+        if (!isNameExist(_name)) {
+            return false;
+        } else {
+            request memory newRequest;
+            newRequest.senderAddress = msg.sender;
+            newRequest.senderName = addressToName[msg.sender];
+            requestList[nameToAddress[_name]].push(newRequest);
+            return true;
+        }
+    }
+
+    function addFriendByAddress(address _address) public returns (bool) {
+        if (!isNameExist(addressToName[_address])) {
+            return false;
+        } else {
+            request memory newRequest;
+            newRequest.senderAddress = msg.sender;
+            newRequest.senderName = addressToName[msg.sender];
+            requestList[_address].push(newRequest);
+            return true;
+        }
+    }
+
+    function acceptFriend(uint256 _index) public {
+        friend memory newFriend;
+        newFriend.friendName = requestList[msg.sender][_index].senderName;
+        newFriend.friendAddress = requestList[msg.sender][_index].senderAddress;
+        friendList[msg.sender].push(newFriend);
+
+        for (uint256 i = _index; i < requestList[msg.sender].length; i++) {
+            requestList[msg.sender][i] = requestList[msg.sender][i + 1];
+        }
+        delete requestList[msg.sender][requestList[msg.sender].length - 1];
+    }
+
+    function refuseFriend(uint256 _index) public {
+        for (uint256 i = _index; i < requestList[msg.sender].length; i++) {
+            requestList[msg.sender][i] = requestList[msg.sender][i + 1];
+        }
+        delete requestList[msg.sender][requestList[msg.sender].length - 1];
     }
 }
