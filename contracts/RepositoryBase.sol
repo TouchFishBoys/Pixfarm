@@ -210,6 +210,13 @@ contract RepositoryBase is Ownable {
         newFriend.friendAddress = requestList[msg.sender][_index].senderAddress;
         friendList[msg.sender].push(newFriend);
 
+        friend memory receiver;
+        receiver.friendName = addressToName[msg.sender];
+        receiver.friendAddress = msg.sender;
+        friendList[requestList[msg.sender][_index].senderAddress].push(
+            receiver
+        );
+
         for (uint256 i = _index; i < requestList[msg.sender].length; i++) {
             requestList[msg.sender][i] = requestList[msg.sender][i + 1];
         }
