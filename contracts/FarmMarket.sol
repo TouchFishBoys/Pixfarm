@@ -45,14 +45,30 @@ contract FarmMarket is MarketBase {
                 pack.spd++;
             }
         }
-        uint256 _price;
+        uint256 _price = getSeedValue(specie, level);
         uint256 seedTag = getSeedTag(pack);
         _buySeed(seedTag, _amount, _price);
         giveItem(msg.sender, seedTag, 1);
     }
 
     /// @dev 计算种子价格
-    function getSeedValue() internal {}
+    function getSeedValue(uint256 specie, uint256 level)
+        internal
+        returns (uint256)
+    {
+        return PirceForSpecie[specie] + PirceForLevel[level];
+    }
+
+    /// @dev 计算果实价格
+    function getFruitValue(uint256 specie, uint256 level)
+        internal
+        returns (uint256)
+    {
+        require(specie < 8, "Dreamy Fruit can't be saled");
+        return
+            (PirceForSpecie[specie] + PirceForLevel[level]) *
+            (100 + RateForBenefit[specie] / 100);
+    }
 
     function _sellSeed(
         ItemType _type,

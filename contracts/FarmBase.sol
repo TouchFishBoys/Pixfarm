@@ -23,6 +23,9 @@ contract FarmBase {
         address firstThief;
         address secondThief;
     }
+    mapping(address => uint256) farmExperience;
+    mapping(address => address[]) public owners;
+    mapping(address => Field[6][6]) fields;
     /// @dev 品质
     enum Quality {N, R, SR, SSR}
     /// @dev 物种
@@ -53,18 +56,18 @@ contract FarmBase {
     ];
     /// @dev 作物成熟时间
     uint256[] specieTime = [
-        uint256(100),
-        100,
-        100,
-        100,
-        100,
-        100,
-        100,
-        100,
-        100,
-        100,
-        100,
-        100
+        uint256(300),
+        600,
+        1800,
+        3600,
+        7200,
+        18000,
+        28800,
+        43200,
+        86400,
+        86400,
+        86400,
+        86400
     ];
     /// @dev 果实饱食度
     uint256[] specieFull = [10, 10, 10, 10, 20, 20, 15, 15, 15, 15, 10, 15];

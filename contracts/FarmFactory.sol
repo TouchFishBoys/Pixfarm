@@ -10,7 +10,7 @@ interface IFarmFactory {
     function getPlantProperties(uint256 _dna)
         external
         view
-        returns (PlantPropertiesPacked calldata);
+        returns (PlantPropertiesPacked memory);
 
     ///@dev 计算DNA
     function calDna(PlantPropertiesPacked memory _pack)
@@ -47,6 +47,35 @@ interface IFarmFactory {
         external
         view
         returns (PlantPropertiesPacked memory);
+
+    ///@dev 获得梦幻种子tag
+    function getDreamySeedTag() external view returns (uint256);
+
+    ///@dev 获得杂交种子tag
+    function getHybridizedSeedTag(uint256 parent1, uint256 parent2)
+        external
+        view
+        returns (uint256);
+
+    ///@dev 获得收获果实tag
+    function getHarvestFruitTag(uint256 parent1, uint256 parent2)
+        external
+        view
+        returns (uint256);
+
+    ///@dev 杂交检查
+    function HybridizationCheck(
+        address _owner,
+        uint8 _x,
+        uint8 _y
+    ) external view returns (uint256);
+
+    ///@dev 随机杂交
+    function randomHybridize(
+        address _owner,
+        uint8 _x,
+        uint8 _y
+    ) external view returns (uint8);
 }
 
 contract FarmFactory is IPixFarmFactory, FarmBase {
@@ -322,5 +351,138 @@ contract FarmFactory is IPixFarmFactory, FarmBase {
     {
         require(_tag % 8 <= 2);
         return getPlantProperties(_tag >> 5);
+    }
+
+    //获得梦幻种子tag
+    //返回：uint256
+    function getDreamySeedTag() public view override returns (uint256) {
+        PlantPropertiesPacked memory pack;
+        uint256 rnd = getRandom(4);
+        if (rnd == 0) {
+            pack.specie = 8;
+            pack.hp = 5;
+        } else if (rnd == 1) {
+            pack.specie = 9;
+            pack.atk = 5;
+        } else if (rnd == 2) {
+            pack.specie = 10;
+            pack.def = 5;
+        } else {
+            pack.specie = 11;
+            pack.spd = 5;
+        }
+        return getSeedTag(pack);
+    }
+
+    //获得杂交种子tag
+    //参数：uint256 p1, uint256 p2
+    //返回：uint256
+    function getHybridizedSeedTag(uint256 parent1, uint256 parent2)
+        public
+        view
+        override
+        returns (uint256)
+    {
+        return (parent1 + parent2) / 2;
+    }
+
+    //获得收获果实tag
+    //参数：uint256 p1, uint256 p2
+    //返回：uint256
+    function getHarvestFruitTag(uint256 parent1, uint256 parent2)
+        public
+        view
+        override
+        returns (uint256)
+    {
+        if (probabilityCheck(10, 20)) {
+            return getFruitTag(parent1);
+        } else {
+            return getFruitTag(getHybridizedSeedTag(parent1, parent2));
+        }
+    }
+
+    //杂交检查
+    //参数：address _owner, uint8 _x,uint8 _y
+    //返回：uint8 count,uint256
+    function HybridizationCheck(
+        address _owner,
+        uint8 _x,
+        uint8 _y
+    ) public view override returns (uint8, uint256) {
+        uint256 specie = frields[_owner][_x][_y].seedTag >> 17;
+        uint256 sign;
+        uint8 count;
+        //up
+        if (
+            y < 5 &&
+            frields[_owner][_x][_y + 1].seedTag >> 17 == specie &&
+            block.timestamp >= frields[_owner][_x][_y + 1].maturityTime
+        ) {
+            sign = (sign << 1) + 1;
+            count++;
+        }
+        //down
+        if (
+            y > 0 &&
+            frields[_owner][_x][_y - 1].seedTag >> 17 == specie &&
+            block.timestamp >= frields[_owner][_x][_y - 1].maturityTime
+        ) {
+            sign = (sign << 1) + 1;
+            count++;
+        }
+        //left
+        if (
+            x > 0 &&
+            frields[_owner][_x - 1][_y].seedTag >> 17 == specie &&
+            block.timestamp >= frields[_owner][_x - 1][_y].maturityTime
+        ) {
+            sign = (sign << 1) + 1;
+            count++;
+        }
+        //right
+        if (
+            x < 5 &&
+            frields[_owner][_x + 1][_y].seedTag >> 17 == specie &&
+            block.timestamp >= frields[_owner][_x + 1][_y].maturityTime
+        ) {
+            sign = (sign << 1) + 1;
+            count++;
+        }
+        return (count, sign);
+    }
+
+    //随机杂交
+    //参数：address _owner, uint8 _x,uint8 _y
+    //返回：uint8
+    function randomHybridize(
+        address _owner,
+        uint8 _x,
+        uint8 _y
+    ) external view returns (uint8) {
+        uint8 count;
+        uint256 sign;
+        (count, sign) = HybridizationCheck(_owner, _x, _y);
+        if (count == 0) {
+            return 0;
+        }
+        uint256 rnd = getRandom(count);
+        uint8[] temp;
+        if (sign % 2 == 1) {
+            temp.push(4);
+        }
+        sign /= 2;
+        if (sign % 2 == 1) {
+            temp.push(3);
+        }
+        sign /= 2;
+        if (sign % 2 == 1) {
+            temp.push(2);
+        }
+        sign /= 2;
+        if (sign % 2 == 1) {
+            temp.push(1);
+        }
+        return temp[rnd];
     }
 }

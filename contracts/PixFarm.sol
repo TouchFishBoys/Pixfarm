@@ -31,10 +31,6 @@ interface IPixFarm {
 }
 
 contract PixFarm is Ownable, IPixFarm, FarmFactory {
-    mapping(address => uint256) farmExperience;
-    mapping(address => address[]) public owners;
-    mapping(address => field[6][6]) fields;
-
     event SeedPlanted(address owner, uint8 x, uint8 y);
 
     /// @notice 播种
@@ -88,13 +84,37 @@ contract PixFarm is Ownable, IPixFarm, FarmFactory {
         } else if (probabilityCheck(10, 995)) {
             num = 2;
         }
-        if (
-            giveItem(
-                msg.sender,
-                getFruitTag(fields[msg.sender][_x][_y].seedTag),
-                num
-            )
-        ) {
+        uint256 fruitTag;
+        uint8 sign = randomHybridize(msg.sender, _x, _y);
+        if (sign == 0) {
+            fruitTag = getFruitTag(fields[msg.sender][_x][_y].seedTag);
+        } else if (sign == 1) {
+            //up
+            fruitTag = getHarvestFruitTag(
+                fields[msg.sender][_x][_y].seedTag,
+                fields[msg.sender][_x][_y + 1].seedTag
+            );
+        } else if (sign == 2) {
+            //down
+            fruitTag = getHarvestFruitTag(
+                fields[msg.sender][_x][_y].seedTag,
+                fields[msg.sender][_x][_y - 1].seedTag
+            );
+        } else if (sign == 3) {
+            //left
+            fruitTag = getHarvestFruitTag(
+                fields[msg.sender][_x][_y].seedTag,
+                fields[msg.sender][_x - 1][_y].seedTag
+            );
+        } else {
+            //right
+            fruitTag = getHarvestFruitTag(
+                fields[msg.sender][_x][_y].seedTag,
+                fields[msg.sender][_x + 1][_y].seedTag
+            );
+        }
+
+        if (giveItem(msg.sender, fruitTag, num)) {
             _initField(fields[msg.sender][_x][_y]);
             return (true, uint8(num));
         } else {
