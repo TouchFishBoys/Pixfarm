@@ -171,6 +171,10 @@ contract FarmFactory is IPixFarmFactory, FarmBase {
         PlantPropertiesPacked memory _pack,
         uint256 quality
     ) public view returns (PlantPropertiesPacked memory) {
+
+        if(probabilityCheck(2,10)){
+            _pack=followRandom(_pack);
+        }
         if (quality == 3) {
             return followSpecie(_pack);
         } else if (quality == 2) {
