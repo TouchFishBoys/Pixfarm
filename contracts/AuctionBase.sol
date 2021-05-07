@@ -3,8 +3,9 @@ pragma solidity ^0.8.0;
 
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
+import "./Money.sol";
 
-contract AuctionBase is Ownable {
+contract AuctionBase is Ownable, Money {
     enum AuctionStatus {
         PENDING, // 还未创建
         RUNNING, // 可以出价或者时间到了
@@ -197,4 +198,6 @@ contract AuctionBase is Ownable {
             status[_token] = AuctionStatus.PENDING;
         }
     }
+
+    function
 }

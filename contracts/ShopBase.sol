@@ -3,6 +3,7 @@ pragma solidity ^0.8.0;
 
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "./FarmBase.sol";
+import "./Money.sol";
 
 interface ShopBase {
     function _buy() external returns (uint256);

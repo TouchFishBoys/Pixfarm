@@ -11,7 +11,6 @@ contract RepositoryBase is Ownable {
     string[] playersName;
     mapping(string => address) nameToAddress;
     mapping(address => string) addressToName;
-    mapping(address => uint256) money;
 
     /// @dev 玩家的仓库
     mapping(ItemType => mapping(address => Item[])) internal _repository;

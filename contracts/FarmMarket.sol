@@ -3,7 +3,7 @@ pragma solidity ^0.8.0;
 
 import "./MarketBase.sol";
 
-contract FarmMarket is MarketBase {
+abstract contract FarmMarket is MarketBase {
     event SeedSoldFromShop(
         address buyer,
         uint256 tag,
@@ -17,7 +17,15 @@ contract FarmMarket is MarketBase {
         uint256 _price
     ) internal {
         // Something
-        _buy(_price);
+        _buy(_tag, _amount, _price);
         emit SeedSoldFromShop(msg.sender, _tag, _amount, _price);
+    }
+
+    function _sellSeed(
+        ItemType _type,
+        uint256 _index,
+        uint256 _amount
+    ) {
+        _sell(_type, _index, _amount);
     }
 }
