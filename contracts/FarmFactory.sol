@@ -175,6 +175,7 @@ contract FarmFactory is IPixFarmFactory, FarmBase {
         if(probabilityCheck(2,10)){
             _pack=followRandom(_pack);
         }
+        PropertiesLegelCheck(_pack);
         if (quality == 3) {
             return followSpecie(_pack);
         } else if (quality == 2) {
