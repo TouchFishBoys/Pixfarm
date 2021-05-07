@@ -50,7 +50,7 @@ abstract contract IFarmFactory is FarmBase {
     ///@dev 根据Tag获得属性
     function getPropertiesByTag(uint256 tag)
         public
-        view
+        pure
         virtual
         returns (PlantPropertiesPacked memory);
 
@@ -60,7 +60,7 @@ abstract contract IFarmFactory is FarmBase {
     ///@dev 获得杂交种子tag
     function getHybridizedSeedTag(uint256 parent1, uint256 parent2)
         public
-        view
+        pure
         virtual
         returns (uint256);
 
@@ -128,7 +128,7 @@ contract FarmFactory is IFarmFactory {
 
     function getPlantProperties(uint256 _dna)
         public
-        view
+        pure
         override
         returns (PlantPropertiesPacked memory)
     {
@@ -387,7 +387,7 @@ contract FarmFactory is IFarmFactory {
     //返回：uint256
     function getHybridizedSeedTag(uint256 parent1, uint256 parent2)
         public
-        view
+        pure
         override
         returns (uint256)
     {
