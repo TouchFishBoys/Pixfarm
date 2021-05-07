@@ -181,7 +181,7 @@ contract RepositoryBase is Ownable {
         return keccak256(abi.encodePacked(a)) == keccak256(abi.encodePacked(b));
     }
 
-    function addFriendByName(string memory _name) public returns (bool) {
+    function _addFriendByName(string memory _name) public returns (bool) {
         if (!isNameExist(_name)) {
             return false;
         } else {
@@ -193,7 +193,7 @@ contract RepositoryBase is Ownable {
         }
     }
 
-    function addFriendByAddress(address _address) public returns (bool) {
+    function _addFriendByAddress(address _address) public returns (bool) {
         if (!isNameExist(addressToName[_address])) {
             return false;
         } else {
