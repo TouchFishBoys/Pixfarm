@@ -353,7 +353,7 @@ contract FarmFactory is IFarmFactory {
     //返回：PlantPropertiesPacked
     function getPropertiesByTag(uint256 _tag)
         public
-        view
+        pure
         override
         returns (PlantPropertiesPacked memory)
     {
