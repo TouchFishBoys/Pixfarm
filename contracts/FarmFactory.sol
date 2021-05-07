@@ -5,62 +5,70 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 
 import "./FarmBase.sol";
 
-interface IFarmFactory {
+abstract contract IFarmFactory is FarmBase {
     ///@dev 计算属性
     function getPlantProperties(uint256 _dna)
-        external
+        public
         view
+        virtual
         returns (PlantPropertiesPacked memory);
 
     ///@dev 计算DNA
     function calDna(PlantPropertiesPacked memory _pack)
-        external
+        public
         view
+        virtual
         returns (uint256 dna);
 
     ///@dev 计算Tag
     function calTag(
         PlantPropertiesPacked memory _pack,
         Quality quality,
-        PixfarmonBase.ItemType itemType
-    ) external pure returns (uint256 tag);
+        ItemType itemType
+    ) public pure virtual returns (uint256 tag);
 
     ///@dev 生成果实
     function getFruitTag(uint256 _seedTag)
-        external
+        public
         view
+        virtual
         returns (uint256 fruitTag);
 
     ///@dev 生成种子
     function getSeedTag(PlantPropertiesPacked memory _pack)
-        external
+        public
         pure
+        virtual
         returns (uint256 seedTag);
 
     ///@dev 分解果实
     function disassembleFruit(uint256 _fruitTag)
-        external
+        public
+        virtual
         returns (uint256 seedTag, bool getSpecialSeed);
 
     ///@dev 根据Tag获得属性
     function getPropertiesByTag(uint256 tag)
-        external
+        public
         view
+        virtual
         returns (PlantPropertiesPacked memory);
 
     ///@dev 获得梦幻种子tag
-    function getDreamySeedTag() external view returns (uint256);
+    function getDreamySeedTag() public view virtual returns (uint256);
 
     ///@dev 获得杂交种子tag
     function getHybridizedSeedTag(uint256 parent1, uint256 parent2)
-        external
+        public
         view
+        virtual
         returns (uint256);
 
     ///@dev 获得收获果实tag
     function getHarvestFruitTag(uint256 parent1, uint256 parent2)
-        external
+        public
         view
+        virtual
         returns (uint256);
 
     ///@dev 杂交检查
@@ -68,17 +76,17 @@ interface IFarmFactory {
         address _owner,
         uint8 _x,
         uint8 _y
-    ) external view returns (uint256);
+    ) public view virtual returns (uint8, uint256);
 
     ///@dev 随机杂交
     function randomHybridize(
         address _owner,
         uint8 _x,
         uint8 _y
-    ) external view returns (uint8);
+    ) public view virtual returns (uint8);
 }
 
-contract FarmFactory is IPixFarmFactory, FarmBase {
+contract FarmFactory is IFarmFactory {
     function _generateDna(uint256 Dna1, uint256 Dna2)
         private
         pure
@@ -157,7 +165,7 @@ contract FarmFactory is IPixFarmFactory, FarmBase {
     function calTag(
         PlantPropertiesPacked memory _pack,
         Quality quality,
-        PixfarmonBase.ItemType itemType
+        ItemType itemType
     ) public pure override returns (uint256 tag) {
         uint256 _tag =
             (calDna(_pack) << 5) + (uint256(quality) << 3) + uint256(itemType);
@@ -359,16 +367,16 @@ contract FarmFactory is IPixFarmFactory, FarmBase {
         PlantPropertiesPacked memory pack;
         uint256 rnd = getRandom(4);
         if (rnd == 0) {
-            pack.specie = 8;
+            pack.specie = Specie(8);
             pack.hp = 5;
         } else if (rnd == 1) {
-            pack.specie = 9;
+            pack.specie = Specie(9);
             pack.atk = 5;
         } else if (rnd == 2) {
-            pack.specie = 10;
+            pack.specie = Specie(10);
             pack.def = 5;
         } else {
-            pack.specie = 11;
+            pack.specie = Specie(11);
             pack.spd = 5;
         }
         return getSeedTag(pack);
@@ -410,41 +418,41 @@ contract FarmFactory is IPixFarmFactory, FarmBase {
         uint8 _x,
         uint8 _y
     ) public view override returns (uint8, uint256) {
-        uint256 specie = frields[_owner][_x][_y].seedTag >> 17;
+        uint256 specie = fields[_owner][_x][_y].seedTag >> 17;
         uint256 sign;
         uint8 count;
         //up
         if (
-            y < 5 &&
-            frields[_owner][_x][_y + 1].seedTag >> 17 == specie &&
-            block.timestamp >= frields[_owner][_x][_y + 1].maturityTime
+            _y < 5 &&
+            fields[_owner][_x][_y + 1].seedTag >> 17 == specie &&
+            block.timestamp >= fields[_owner][_x][_y + 1].maturityTime
         ) {
             sign = (sign << 1) + 1;
             count++;
         }
         //down
         if (
-            y > 0 &&
-            frields[_owner][_x][_y - 1].seedTag >> 17 == specie &&
-            block.timestamp >= frields[_owner][_x][_y - 1].maturityTime
+            _y > 0 &&
+            fields[_owner][_x][_y - 1].seedTag >> 17 == specie &&
+            block.timestamp >= fields[_owner][_x][_y - 1].maturityTime
         ) {
             sign = (sign << 1) + 1;
             count++;
         }
         //left
         if (
-            x > 0 &&
-            frields[_owner][_x - 1][_y].seedTag >> 17 == specie &&
-            block.timestamp >= frields[_owner][_x - 1][_y].maturityTime
+            _x > 0 &&
+            fields[_owner][_x - 1][_y].seedTag >> 17 == specie &&
+            block.timestamp >= fields[_owner][_x - 1][_y].maturityTime
         ) {
             sign = (sign << 1) + 1;
             count++;
         }
         //right
         if (
-            x < 5 &&
-            frields[_owner][_x + 1][_y].seedTag >> 17 == specie &&
-            block.timestamp >= frields[_owner][_x + 1][_y].maturityTime
+            _x < 5 &&
+            fields[_owner][_x + 1][_y].seedTag >> 17 == specie &&
+            block.timestamp >= fields[_owner][_x + 1][_y].maturityTime
         ) {
             sign = (sign << 1) + 1;
             count++;
@@ -459,29 +467,34 @@ contract FarmFactory is IPixFarmFactory, FarmBase {
         address _owner,
         uint8 _x,
         uint8 _y
-    ) external view returns (uint8) {
+    ) public view override returns (uint8) {
         uint8 count;
         uint256 sign;
+        uint8 p;
         (count, sign) = HybridizationCheck(_owner, _x, _y);
         if (count == 0) {
             return 0;
         }
         uint256 rnd = getRandom(count);
-        uint8[] temp;
+        uint8[] memory temp;
         if (sign % 2 == 1) {
-            temp.push(4);
+            temp[p] = 4;
+            p++;
         }
         sign /= 2;
         if (sign % 2 == 1) {
-            temp.push(3);
+            temp[p] = 3;
+            p++;
         }
         sign /= 2;
         if (sign % 2 == 1) {
-            temp.push(2);
+            temp[p] = 2;
+            p++;
         }
         sign /= 2;
         if (sign % 2 == 1) {
-            temp.push(1);
+            temp[p] = 1;
+            p++;
         }
         return temp[rnd];
     }

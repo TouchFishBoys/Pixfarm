@@ -3,7 +3,7 @@ pragma solidity ^0.8.0;
 
 import "./RepositoryBase.sol";
 
-contract FarmBase {
+contract FarmBase is RepositoryBase {
     /// @dev 属性封包
     struct PlantPropertiesPacked {
         Specie specie;

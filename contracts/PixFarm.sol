@@ -4,6 +4,7 @@ pragma solidity ^0.8.0;
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "./FarmFactory.sol";
 import "./FarmMarket.sol";
+import "./Repository.sol"
 
 interface IPixFarm {
     ///@dev 播种
@@ -28,9 +29,12 @@ interface IPixFarm {
         uint256 _x,
         uint256 _y
     ) external returns (bool);
+
+    ///@dev 分解果实
+    function disassembling(uint256 _fruitTag) external returns (bool);
 }
 
-contract PixFarm is Ownable, IPixFarm, FarmFactory {
+contract PixFarm is Ownable, IPixFarm, FarmFactory, FarmMarket {
     event SeedPlanted(address owner, uint8 x, uint8 y);
 
     /// @notice 播种
@@ -210,6 +214,19 @@ contract PixFarm is Ownable, IPixFarm, FarmFactory {
                 return false;
             }
         }
+    }
+
+    /// @notice 分解果实
+    /// @dev 返回false则为背包满
+    /// @param _fruitTag果实Tag
+    function disassembling(uint256 _fruitTag) public returns (bool) {
+        bool check;
+        uint256 seedTag;
+        Money[msg.sender] -= getFruitValue(_fruitTag);
+        (seedTag, check) = disassembleFruit(_fruitTag);
+        PlantPropertiesPacked memory pack = getPropertiesByTag(_fruitTag);
+        uint256 level = pack.hp + pack.atk + pack.def + pack.spd;
+        uint256 value = getFruitValue(pack.specie, level);
     }
 
     /// @dev 初始化土地

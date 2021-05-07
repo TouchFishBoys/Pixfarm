@@ -61,7 +61,7 @@ contract FarmMarket is MarketBase {
 
     /// @dev 计算果实价格
     function getFruitValue(uint256 specie, uint256 level)
-        internal
+        public
         returns (uint256)
     {
         require(specie < 8, "Dreamy Fruit can't be saled");

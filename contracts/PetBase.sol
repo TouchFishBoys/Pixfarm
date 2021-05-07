@@ -3,7 +3,7 @@ pragma solidity ^0.8.0;
 
 import "./RepositoryBase.sol";
 
-contract PetBase {
+contract PetBase is RepositoryBase {
     /// @dev  宠物列表
     mapping(address => PetPropertiesPacked[]) internal petList;
 
