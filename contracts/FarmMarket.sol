@@ -3,7 +3,7 @@ pragma solidity ^0.8.0;
 
 import "./MarketBase.sol";
 
-abstract contract FarmMarket is MarketBase {
+contract FarmMarket is MarketBase {
     event SeedSoldFromShop(
         address buyer,
         uint256 tag,
@@ -20,6 +20,39 @@ abstract contract FarmMarket is MarketBase {
         _buy(_tag, _amount, _price);
         emit SeedSoldFromShop(msg.sender, _tag, _amount, _price);
     }
+
+    function buySeed(
+        uint256 specie,
+        uint256 level,
+        uint256 _amount
+    ) external {
+        require(level <= 4, "Illegal level");
+        PlantPropertiesPacked memory pack;
+        pack.specie = Specie(specie);
+        pack.hp = 0;
+        pack.atk = 0;
+        pack.def = 0;
+        pack.spd = 0;
+        for (uint256 i = 0; i < level; i++) {
+            uint256 rnd = getRandom(4);
+            if (rnd == 0) {
+                pack.hp++;
+            } else if (rnd == 1) {
+                pack.atk++;
+            } else if (rnd == 2) {
+                pack.def++;
+            } else if (rnd == 3) {
+                pack.spd++;
+            }
+        }
+        uint256 _price;
+        uint256 seedTag = getSeedTag(pack);
+        _buySeed(seedTag, _amount, _price);
+        giveItem(msg.sender, seedTag, 1);
+    }
+
+    /// @dev 计算种子价格
+    function getSeedValue() internal {}
 
     function _sellSeed(
         ItemType _type,

@@ -203,28 +203,4 @@ contract PixFarm is Ownable, IPixFarm, FarmFactory {
             _field.secondThief = address(0);
         }
     }
-
-    function buySeed(uint256 specie, uint256 level) external {
-        require(level <= 4, "Illegal level");
-        PlantPropertiesPacked memory pack;
-        pack.specie = Specie(specie);
-        pack.hp = 0;
-        pack.atk = 0;
-        pack.def = 0;
-        pack.spd = 0;
-        for (uint256 i = 0; i < level; i++) {
-            uint256 rnd = getRandom(4);
-            if (rnd == 0) {
-                pack.hp++;
-            } else if (rnd == 1) {
-                pack.atk++;
-            } else if (rnd == 2) {
-                pack.def++;
-            } else if (rnd == 3) {
-                pack.spd++;
-            }
-        }
-        uint256 seedTag = getSeedTag(pack);
-        giveItem(msg.sender, seedTag, 1);
-    }
 }
