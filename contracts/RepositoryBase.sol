@@ -65,7 +65,7 @@ contract RepositoryBase is Ownable {
     }
 
     ///@dev 添加指定数量的道具
-    function _add(
+    function addItem(
         ItemType _itemType,
         address _player,
         Item memory _item

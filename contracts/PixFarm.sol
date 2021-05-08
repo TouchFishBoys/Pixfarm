@@ -227,6 +227,21 @@ contract PixFarm is Ownable, IPixFarm, FarmFactory, FarmMarket {
         PlantPropertiesPacked memory pack = getPropertiesByTag(_fruitTag);
         uint256 level = pack.hp + pack.atk + pack.def + pack.spd;
         uint256 value = getFruitValue(pack.specie, level);
+        transferToShop(value/10);
+        Item seed;
+        seed.usable=true;
+        seed.stack=1;
+        seed.tag=seedTag;
+        addItem(ItemType.Seed,msg.sender,i);
+        if(check)
+        {
+            Item dreamy;
+            dreamy.usable=true;
+            dream.stack=1;
+            dream.tag=getDreamySeedTag();
+            addItem(ItemType.Seed,msg.sender,dreamy);
+        }
+
     }
 
     /// @dev 初始化土地
