@@ -72,7 +72,7 @@ contract AuctionBase is Ownable, Money {
         );
     }
 
-    function _findFirstAuctionSlot() internal view returns (uint256) {
+    function _findFirstAuctionSlot() internal pure returns (uint256) {
         // 条件：状态不为RUNNING，
         return 0;
     }

@@ -7,43 +7,43 @@ import "./FarmFactory.sol";
 
 abstract contract PixPet is PetFactory, IERC20, IFarmFactory {
     /// @dev  宠物繁殖
-    function breed(
-        address _petOwner,
-        uint256 _fatherIndex,
-        address _getMoneyPerson,
-        uint256 _motherIndex,
-        uint256 _money
-    ) public {
-        // bool isSuccess = erc20.transferFrom(_petOwner, address(this), _money);
-        // if (isSuccess == false) {
-        //     revert("Transfer failed");
-        // }
-        transferToShop(msg.sender, _money);
-        PetPropertiesPacked memory descendant;
-        descendant = _getDescendant(
-            petList[_petOwner][_fatherIndex],
-            petList[_getMoneyPerson][_motherIndex]
-        );
-        petList[_petOwner].push(descendant);
+    // function breed(
+    //     address _petOwner,
+    //     uint256 _fatherIndex,
+    //     address _getMoneyPerson,
+    //     uint256 _motherIndex,
+    //     uint256 _money
+    // ) public {
+    //     // bool isSuccess = erc20.transferFrom(_petOwner, address(this), _money);
+    //     // if (isSuccess == false) {
+    //     //     revert("Transfer failed");
+    //     // }
+    //     transferToShop(msg.sender, _money);
+    //     PetPropertiesPacked memory descendant;
+    //     // descendant = _getDescendant(
+    //     //     petList[_petOwner][_fatherIndex],
+    //     //     petList[_getMoneyPerson][_motherIndex]
+    //     // );
+    //     petList[_petOwner].push(descendant);
 
-        // isSuccess = erc20.transfer(_getMoneyPerson, (_money * 95) / 100);
-        // if (isSuccess == false) {
-        //     revert("Transfer failed");
-        // }
-        getMoneyFromShop(_getMoneyPerson, (_money * 95) / 100);
-    }
+    //     // isSuccess = erc20.transfer(_getMoneyPerson, (_money * 95) / 100);
+    //     // if (isSuccess == false) {
+    //     //     revert("Transfer failed");
+    //     // }
+    //     getMoneyFromShop(_getMoneyPerson, (_money * 95) / 100);
+    // }
 
     /// @dev  获得后代
-    function _getDescendant(
-        PetPropertiesPacked memory _fatherPet,
-        PetPropertiesPacked memory _motherPet
-    ) internal pure returns (PetPropertiesPacked memory _descendant) {
-        PetPropertiesPacked memory descendant;
+    // function _getDescendant(
+    //     PetPropertiesPacked memory _fatherPet,
+    //     PetPropertiesPacked memory _motherPet
+    // ) internal pure returns (PetPropertiesPacked memory _descendant) {
+    //     PetPropertiesPacked memory descendant;
 
-        //function
+    //     //function
 
-        return descendant;
-    }
+    //     return descendant;
+    // }
 
     /// @dev  检查宠物是否处于饥饿状态，饥饿状态下全属性-30%
     function _isHungry(PetPropertiesPacked memory _pet)

@@ -73,7 +73,7 @@ abstract contract Pixfarmon is PixPet, PixFarm {
     }
 
     /// @dev 拍卖
-    function auction() public returns (uint256[] memory) {
+    function auction() public view returns (uint256[] memory) {
         return getTokensList();
     }
 }
