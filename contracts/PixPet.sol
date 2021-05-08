@@ -3,9 +3,9 @@ pragma solidity ^0.8.0;
 
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "./PetFactory.sol";
-import "./PetMarket.sol";
+import "./FarmFactory.sol";
 
-contract PixPet is PixPetFactory, PetMarket {
+abstract contract PixPet is PetFactory, IERC20, IFarmFactory {
     /// @dev  宠物繁殖
     function breed(
         address _petOwner,
@@ -14,11 +14,11 @@ contract PixPet is PixPetFactory, PetMarket {
         uint256 _motherIndex,
         uint256 _money
     ) public {
-        bool isSuccess = erc20.transferFrom(_petOwner, address(this), _money);
-        if (isSuccess == false) {
-            revert("Transfer failed");
-        }
-
+        // bool isSuccess = erc20.transferFrom(_petOwner, address(this), _money);
+        // if (isSuccess == false) {
+        //     revert("Transfer failed");
+        // }
+        transferToShop(msg.sender, _money);
         PetPropertiesPacked memory descendant;
         descendant = _getDescendant(
             petList[_petOwner][_fatherIndex],
@@ -26,10 +26,11 @@ contract PixPet is PixPetFactory, PetMarket {
         );
         petList[_petOwner].push(descendant);
 
-        isSuccess = erc20.transfer(_getMoneyPerson, (_money * 95) / 100);
-        if (isSuccess == false) {
-            revert("Transfer failed");
-        }
+        // isSuccess = erc20.transfer(_getMoneyPerson, (_money * 95) / 100);
+        // if (isSuccess == false) {
+        //     revert("Transfer failed");
+        // }
+        getMoneyFromShop(_getMoneyPerson, (_money * 95) / 100);
     }
 
     /// @dev  获得后代
@@ -47,13 +48,14 @@ contract PixPet is PixPetFactory, PetMarket {
     /// @dev  检查宠物是否处于饥饿状态，饥饿状态下全属性-30%
     function _isHungry(PetPropertiesPacked memory _pet)
         internal
+        pure
         returns (PetPropertiesPacked memory _petChecked)
     {
         if (_pet.fullDegree < 40) {
-            _pet.atk *= 70 / 100;
-            _pet.def *= 70 / 100;
-            _pet.hp *= 70 / 100;
-            _pet.spd *= 70 / 100;
+            _pet.atk = (_pet.atk * 70) / 100;
+            _pet.def = (_pet.def * 70) / 100;
+            _pet.hp = (_pet.hp * 70) / 100;
+            _pet.spd = (_pet.spd * 70) / 100;
             return (_pet);
         } else {
             return _pet;
@@ -66,7 +68,7 @@ contract PixPet is PixPetFactory, PetMarket {
         uint256 _challengerIndex,
         address _defender,
         uint256 _defenderIndex
-    ) public view returns (PetPropertiesPacked memory _winner) {
+    ) public returns (PetPropertiesPacked memory _winner) {
         PetPropertiesPacked memory challengerPet =
             _isHungry(petList[_challenger][_challengerIndex]);
         PetPropertiesPacked memory defenderPet =
@@ -143,7 +145,7 @@ contract PixPet is PixPetFactory, PetMarket {
             );
         } else {
             PlantPropertiesPacked memory pac = getPropertiesByTag(_tag);
-            if (pac.specie < 8) {
+            if (uint8(pac.specie) < 8) {
                 petList[msg.sender][_petIndex].hp += pac.hp;
                 petList[msg.sender][_petIndex].atk += pac.atk;
                 petList[msg.sender][_petIndex].def += pac.def;
@@ -152,9 +154,9 @@ contract PixPet is PixPetFactory, PetMarket {
                     .maxPropertiesTrough -= propertiesTrough[
                     pac.hp + pac.atk + pac.def + pac.spd
                 ];
-                petList[msg.sender][_petIndex].fullDegree += specieFull[
-                    pac.specie
-                ];
+                petList[msg.sender][_petIndex].fullDegree += uint8(
+                    specieFull[uint8(pac.specie)]
+                );
                 petList[msg.sender][_petIndex].fullDegree = correctHunger(
                     petList[msg.sender][_petIndex].fullDegree
                 );
@@ -164,9 +166,9 @@ contract PixPet is PixPetFactory, PetMarket {
                 petList[msg.sender][_petIndex].def += pac.def;
                 petList[msg.sender][_petIndex].spd += pac.spd;
                 petList[msg.sender][_petIndex].maxPropertiesTrough -= 1;
-                petList[msg.sender][_petIndex].fullDegree += specieFull[
-                    pac.specie
-                ];
+                petList[msg.sender][_petIndex].fullDegree += uint8(
+                    specieFull[uint8(pac.specie)]
+                );
                 petList[msg.sender][_petIndex].fullDegree = correctHunger(
                     petList[msg.sender][_petIndex].fullDegree
                 );
@@ -177,6 +179,7 @@ contract PixPet is PixPetFactory, PetMarket {
     /// @dev  饱食度修正
     function correctHunger(uint8 _hunger)
         internal
+        pure
         returns (uint8 _correctDegree)
     {
         if (_hunger > 100) {
@@ -194,16 +197,17 @@ contract PixPet is PixPetFactory, PetMarket {
             petList[msg.sender][_petIndex].fullDegree > 0 &&
             petList[msg.sender][_petIndex].zeroTime >= block.timestamp
         ) {
-            petList[msg.sender][_petList].fullDegree -=
+            petList[msg.sender][_petIndex].fullDegree -= uint8(
                 (petList[msg.sender][_petIndex].zeroTime - block.timestamp) /
-                360;
-            petList[msg.sender][_petList].fullDegree = correctHunger(
-                petList[msg.sender][_petList].fullDegree
+                    360
+            );
+            petList[msg.sender][_petIndex].fullDegree = correctHunger(
+                petList[msg.sender][_petIndex].fullDegree
             );
         } else {
-            petList[msg.sender][_petList].fullDegree = 0;
+            petList[msg.sender][_petIndex].fullDegree = 0;
         }
-        return petList[msg.sender][_petList].fullDegree;
+        return petList[msg.sender][_petIndex].fullDegree;
     }
 
     /// @dev  得到饱食度归零时间

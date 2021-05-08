@@ -4,7 +4,6 @@ pragma solidity ^0.8.0;
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "./FarmFactory.sol";
 import "./FarmMarket.sol";
-import "./Repository.sol"
 
 interface IPixFarm {
     ///@dev 播种
@@ -15,10 +14,7 @@ interface IPixFarm {
     ) external returns (bool);
 
     ///@dev 收获
-    function harvest(uint256 _x, uint256 _y)
-        public
-        virtual
-        returns (bool, uint8 number);
+    function harvest(uint256 _x, uint256 _y) external returns (uint8 number);
 
     ///@dev 铲除
     function eradicate(uint256 _x, uint256 _y) external returns (bool getSeed);
@@ -34,7 +30,7 @@ interface IPixFarm {
     function disassembling(uint256 _fruitTag) external returns (bool);
 }
 
-contract PixFarm is Ownable, IPixFarm, FarmFactory, FarmMarket {
+abstract contract PixFarm is Ownable, IPixFarm, FarmFactory, FarmMarket {
     event SeedPlanted(address owner, uint8 x, uint8 y);
 
     /// @notice 播种
@@ -46,7 +42,7 @@ contract PixFarm is Ownable, IPixFarm, FarmFactory, FarmMarket {
         uint256 _x,
         uint256 _y,
         uint256 _seedTag
-    ) external override {
+    ) external override returns (bool) {
         require(
             fields[msg.sender][_x][_y].unlocked == true,
             "The field is locked!"
@@ -55,14 +51,14 @@ contract PixFarm is Ownable, IPixFarm, FarmFactory, FarmMarket {
             fields[msg.sender][_x][_y].used == false,
             "THe field has been used!"
         );
-        if (!removeItem(msg.sender, _seedTag, 1)) {
+        if (!removeItem(msg.sender, ItemType.Seed, _seedTag, 1)) {
             return false;
         }
         fields[msg.sender][_x][_y].seedTag = _seedTag;
         fields[msg.sender][_x][_y].sowingTime = block.timestamp;
         fields[msg.sender][_x][_y].maturityTime =
             block.timestamp +
-            specieTime[getPropertiesByTag(_seedTag).specie];
+            specieTime[uint8(getPropertiesByTag(_seedTag).specie)];
         fields[msg.sender][_x][_y].used = true;
         return true;
     }
@@ -89,7 +85,7 @@ contract PixFarm is Ownable, IPixFarm, FarmFactory, FarmMarket {
             num = 2;
         }
         uint256 fruitTag;
-        uint8 sign = randomHybridize(msg.sender, _x, _y);
+        uint8 sign = randomHybridize(msg.sender, uint8(_x), uint8(_y));
         if (sign == 0) {
             fruitTag = getFruitTag(fields[msg.sender][_x][_y].seedTag);
         } else if (sign == 1) {
@@ -118,13 +114,18 @@ contract PixFarm is Ownable, IPixFarm, FarmFactory, FarmMarket {
             );
         }
 
-        if (giveItem(msg.sender, fruitTag, num)) {
-            _initField(fields[msg.sender][_x][_y]);
-            return (true, uint8(num));
-        } else {
-            fields[msg.sender][_x][_y].used = true;
-            return (false, uint8(num));
-        }
+        // if (giveItem(ItemType.Fruit,msg.sender, fruitTag, num)) {
+        //     _initField(fields[msg.sender][_x][_y]);
+        //     return (true, uint8(num));
+        // } else {
+        //     fields[msg.sender][_x][_y].used = true;
+        //     return (false, uint8(num));
+        // }
+        Item memory item;
+        item.usable = true;
+        item.tag = uint32(fruitTag);
+        item.stack = num;
+        addItem(ItemType.Fruit, msg.sender, item);
     }
 
     event PlantEradicated(address owner, uint8 x, uint8 y);
@@ -132,22 +133,35 @@ contract PixFarm is Ownable, IPixFarm, FarmFactory, FarmMarket {
     /// @notice 铲除某地的植物
     /// @param _x 被铲除的x坐标
     /// @param _y 被铲除的y坐标
-    function eradicate(uint256 _x, uint256 _y) external override {
+    function eradicate(uint256 _x, uint256 _y)
+        external
+        override
+        returns (bool)
+    {
         if (
             ((block.timestamp - fields[msg.sender][_x][_y].sowingTime) * 100) /
                 specieTime[
-                    getPropertiesByTag(fields[msg.sender][_x][_y].specie)
+                    uint8(
+                        getPropertiesByTag(fields[msg.sender][_x][_y].seedTag)
+                            .specie
+                    )
                 ] <
             10
         ) {
             fields[msg.sender][_x][_y].used = false;
-            if (giveItem(msg.sender, fields[msg.sender][_x][_y].seedTag, 1)) {
-                _initField(fields[msg.sender][_x][_y]);
-                return true;
-            } else {
-                fields[msg.sender][_x][_y].used = true;
-                revert("Repository is full");
-            }
+            // if (giveItem(msg.sender, fields[msg.sender][_x][_y].seedTag, 1)) {
+            //     _initField(fields[msg.sender][_x][_y]);
+            //     return true;
+            // } else {
+            //     fields[msg.sender][_x][_y].used = true;
+            //     revert("Repository is full");
+            // }
+            Item memory item;
+            item.stack = 1;
+            item.usable = true;
+            item.tag = uint32(fields[msg.sender][_x][_y].seedTag);
+            addItem(ItemType.Seed, msg.sender, item);
+            return true;
         } else {
             _initField(fields[msg.sender][_x][_y]);
             return true;
@@ -165,7 +179,7 @@ contract PixFarm is Ownable, IPixFarm, FarmFactory, FarmMarket {
         address _owner,
         uint256 _x,
         uint256 _y
-    ) public override {
+    ) public override returns (bool) {
         require(
             block.timestamp >= fields[_owner][_x][_y].maturityTime,
             "can't be stolen"
@@ -174,74 +188,77 @@ contract PixFarm is Ownable, IPixFarm, FarmFactory, FarmMarket {
         if (!fields[_owner][_x][_y].stolen) {
             //没被偷过
             fields[_owner][_x][_y].stolen = true;
-            if (
-                giveItem(
-                    msg.sender,
-                    getFruitTag(fields[_owner][_x][_y].seedTag),
-                    1
-                )
-            ) {
-                //偷成功
-                fields[_owner][_x][_y].maturityTime =
-                    block.timestamp +
-                    punishTime;
-                fields[_owner][_x][_y].firstThief = msg.sender;
-                return true;
-            } else {
-                //偷失败
-                fields[_owner][_x][_y].stolen = false;
-                return false;
-            }
+            // if (
+            //     giveItem(
+            //         msg.sender,
+            //         getFruitTag(fields[_owner][_x][_y].seedTag),
+            //         1
+            //     )
+            // ) {
+            //偷成功
+            Item memory item;
+            item.stack = 1;
+            item.usable = true;
+            item.tag = uint32(getFruitTag(fields[_owner][_x][_y].seedTag));
+            addItem(ItemType.Fruit, msg.sender, item);
+            fields[_owner][_x][_y].maturityTime = block.timestamp + 1800;
+            fields[_owner][_x][_y].firstThief = msg.sender;
+            return true;
+            // } else {
+            //     //偷失败
+            //     fields[_owner][_x][_y].stolen = false;
+            //     return false;
+            // }
         }
         //被偷过
         else {
             Field memory _field = fields[_owner][_x][_y];
             fields[_owner][_x][_y].used = false;
             _initField(fields[_owner][_x][_y]);
-            if (
-                giveItem(
-                    msg.sender,
-                    getFruitTag(fields[_owner][_x][_y].seedTag),
-                    1
-                )
-            ) {
-                //偷成功
-                fields[_owner][_x][_y].secondThief = msg.sender;
-                return true;
-            } else {
-                //偷失败
-                fields[_owner][_x][_y] = _field;
-                return false;
-            }
+            // if (
+            //     giveItem(
+            //         msg.sender,
+            //         getFruitTag(fields[_owner][_x][_y].seedTag),
+            //         1
+            //     )
+            // ) {
+            //偷成功
+            Item memory item;
+            item.stack = 1;
+            item.usable = true;
+            item.tag = uint32(getFruitTag(fields[_owner][_x][_y].seedTag));
+            addItem(ItemType.Fruit, msg.sender, item);
+            fields[_owner][_x][_y].secondThief = msg.sender;
+            return true;
+            // } else {
+            //     //偷失败
+            //     fields[_owner][_x][_y] = _field;
+            //     return false;
+            // }
         }
     }
 
     /// @notice 分解果实
     /// @dev 返回false则为背包满
     /// @param _fruitTag果实Tag
-    function disassembling(uint256 _fruitTag) public returns (bool) {
+    function disassembling(uint256 _fruitTag) public override returns (bool) {
         bool check;
         uint256 seedTag;
-        Money[msg.sender] -= getFruitValue(_fruitTag);
         (seedTag, check) = disassembleFruit(_fruitTag);
-        PlantPropertiesPacked memory pack = getPropertiesByTag(_fruitTag);
-        uint256 level = pack.hp + pack.atk + pack.def + pack.spd;
-        uint256 value = getFruitValue(pack.specie, level);
-        transferToShop(value/10);
-        Item seed;
-        seed.usable=true;
-        seed.stack=1;
-        seed.tag=seedTag;
-        addItem(ItemType.Seed,msg.sender,i);
-        if(check)
-        {
-            Item dreamy;
-            dreamy.usable=true;
-            dream.stack=1;
-            dream.tag=getDreamySeedTag();
-            addItem(ItemType.Seed,msg.sender,dreamy);
+        uint256 value = getFruitValueByTag(_fruitTag) / 10;
+        require(transferToShop(msg.sender, value));
+        Item memory seed;
+        seed.usable = true;
+        seed.stack = 1;
+        seed.tag = uint32(seedTag);
+        addItem(ItemType.Seed, msg.sender, seed);
+        if (check) {
+            Item memory dreamy;
+            dreamy.usable = true;
+            dreamy.stack = 1;
+            dreamy.tag = uint32(getDreamySeedTag());
+            addItem(ItemType.Seed, msg.sender, dreamy);
         }
-
     }
 
     /// @dev 初始化土地
@@ -264,30 +281,4 @@ contract PixFarm is Ownable, IPixFarm, FarmFactory, FarmMarket {
     function addFriendByAddress(address _address) public {
         _addFriendByAddress(_address);
     }
-
-    /// @dev 氪金
-    function rechargeMoney(uint256 _money) public {
-        _rechargeMoney(_value);
-    }
-
-    /// @dev 买种子
-    function buySeedFromShop(
-        uint256 specie,
-        uint256 level,
-        uint256 _amount
-    ) public {
-        buySeed(specie, level, _amount);
-    }
-
-    /// @dev 卖果实
-    function sellSeedToShop(
-        ItemType _type,
-        uint256 _index,
-        uint256 _amount
-    ) public {
-        _sellSeed(_type, _index, _amount);
-    }
-
-    /// @dev 拍卖
-    function auction() public {}
 }

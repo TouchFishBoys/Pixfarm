@@ -109,7 +109,7 @@ contract AuctionBase is Ownable, Money {
                 startTime: block.timestamp,
                 duration: _endTime
             });
-        uint256 token = _findFirstAuctionSlot();
+        token = _findFirstAuctionSlot();
         tokenToAuction[token] = _auction;
         status[token] = AuctionStatus.RUNNING;
         emit AuctionCreated(token, _startPrice, block.timestamp, _endTime);
@@ -198,6 +198,4 @@ contract AuctionBase is Ownable, Money {
             status[_token] = AuctionStatus.PENDING;
         }
     }
-
-    function
 }

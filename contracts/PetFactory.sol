@@ -20,7 +20,7 @@ interface IPetFactory {
 contract PetFactory is Ownable, PetBase, IPetFactory {
     function getPetProperties(uint256 _dna)
         public
-        view
+        pure
         override
         returns (PetPropertiesPacked memory)
     {
@@ -31,7 +31,7 @@ contract PetFactory is Ownable, PetBase, IPetFactory {
 
     function calDna(PetPropertiesPacked memory _pack)
         public
-        view
+        pure
         override
         returns (uint256)
     {

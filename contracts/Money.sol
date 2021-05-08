@@ -8,19 +8,30 @@ contract Money {
     IERC20 internal contrac;
 
     /// @dev 向商店给钱
-    function transferToShop(uint256 _value) public {
-        money[msg.sender] = money[msg.sender] - _value;
+    function transferToShop(address _person, uint256 _value)
+        public
+        returns (bool)
+    {
+        if (_value > money[_person]) {
+            return false;
+        }
+        money[_person] = money[_person] - _value;
+        return true;
     }
 
     /// @dev 收钱
-    function getMoneyFromShop(uint256 _value) public {
-        money[msg.sender] = money[msg.sender] + _value;
+    function getMoneyFromShop(address _person, uint256 _value) public {
+        money[_person] = money[_person] + _value;
     }
 
     /// @dev 玩家间交易
-    function transferTo(address _receiver, uint256 _value) public {
-        money[msg.sender] = money[msg.sender] - _value;
-        money[_receiver] = money[_receiver] + _value;
+    function transferTo(
+        address p1,
+        address p2,
+        uint256 _value
+    ) public {
+        money[p1] = money[p1] - _value;
+        money[p2] = money[p2] + _value;
     }
 
     ///充值
