@@ -259,6 +259,7 @@ abstract contract PixFarm is Ownable, IPixFarm, FarmFactory, FarmMarket {
             dreamy.tag = uint32(getDreamySeedTag());
             addItem(ItemType.Seed, msg.sender, dreamy);
         }
+        return check;
     }
 
     /// @dev 初始化土地

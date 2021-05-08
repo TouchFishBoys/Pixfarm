@@ -146,8 +146,8 @@ contract AuctionBase is Ownable, Money {
             _money > _auction.highestBid,
             "You cannot bid less than current highest bid"
         );
-        uint64 previousBid = _auction.highestBid;
-        address previousBidder = _auction.highestBidder;
+        //uint64 previousBid = _auction.highestBid;
+        //address previousBidder = _auction.highestBidder;
 
         _auction.highestBid = _money;
         _auction.highestBidder = msg.sender;
@@ -183,7 +183,7 @@ contract AuctionBase is Ownable, Money {
 
         uint64 amount = bidderBids[msg.sender][_token];
 
-        uint64 previousRemain = bidderBids[msg.sender][_token];
+        //uint64 previousRemain = bidderBids[msg.sender][_token];
         bidderBids[msg.sender][_token] = 0;
         // 先把在这个拍卖剩余的钱置 0
         // bool isSuccess = ercToken.transfer(msg.sender, amount);
