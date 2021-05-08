@@ -52,13 +52,14 @@ contract RepositoryBase is Ownable {
         ItemType _type,
         address _player,
         uint256 _slot
-    ) internal returns (Item memory) {
+    ) internal view returns (Item memory) {
         return _repository[_type][_player][_slot];
     }
 
     /// @dev 获取玩家拥有的物品列表
     function _getAll(ItemType _type, address _player)
         internal
+        view
         returns (Item[] memory)
     {
         return _repository[_type][_player];
