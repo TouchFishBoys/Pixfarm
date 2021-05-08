@@ -1,5 +1,5 @@
 const Money = artifacts.require("Money")
-const RespostoryBase = artifacts.require("RespostoryBase")
+const RepostoryBase = artifacts.require("RepostoryBase")
 const AuctionBase = artifacts.require("AuctionBase")
 const FarmBase = artifacts.require("FarmBase")
 const FarmFactory = artifacts.require("FarmFactory")
@@ -14,7 +14,7 @@ const ShopBase = artifacts.require("ShopBase")
 const Pixfarmon = artifacts.require("Pixfarmon")
 module.exports = function (deployer) {
     deployer.deploy(Money);
-    deployer.deploy(RespostoryBase);
+    deployer.deploy(RepostoryBase);
     deployer.deploy(AuctionBase);
     deployer.deploy(FarmBase);
     deployer.deploy(FarmFactory);
