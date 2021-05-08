@@ -151,14 +151,14 @@ contract AuctionBase is Ownable, Money {
 
         _auction.highestBid = _money;
         _auction.highestBidder = msg.sender;
-        bool isSuccess =
-            ercToken.transferFrom(msg.sender, address(this), _money);
-
-        if (!isSuccess) {
-            _auction.highestBid = previousBid;
-            _auction.highestBidder = previousBidder;
-            revert("Transfer erc token failed");
-        }
+        // bool isSuccess =
+        //     ercToken.transferFrom(msg.sender, address(this), _money);
+        // if (!isSuccess) {
+        //     _auction.highestBid = previousBid;
+        //     _auction.highestBidder = previousBidder;
+        //     revert("Transfer erc token failed");
+        // }
+        transferTo(msg.sender, address(this), _money);
 
         tokenToMoneyRemain[_token] += _money;
         bidderBids[msg.sender][_token] += _money;
@@ -186,11 +186,12 @@ contract AuctionBase is Ownable, Money {
         uint64 previousRemain = bidderBids[msg.sender][_token];
         bidderBids[msg.sender][_token] = 0;
         // 先把在这个拍卖剩余的钱置 0
-        bool isSuccess = ercToken.transfer(msg.sender, amount);
-        if (!isSuccess) {
-            bidderBids[msg.sender][_token] = previousRemain;
-            revert("Transfer failed");
-        }
+        // bool isSuccess = ercToken.transfer(msg.sender, amount);
+        // if (!isSuccess) {
+        //     bidderBids[msg.sender][_token] = previousRemain;
+        //     revert("Transfer failed");
+        // }
+        transferTo(address(this), msg.sender, amount);
         tokenToMoneyRemain[_token] -= amount;
         emit BidWithdrew(_token, msg.sender, amount, _token);
         if (tokenToMoneyRemain[_token] == 0) {
