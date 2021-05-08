@@ -14,7 +14,7 @@ interface IPixFarm {
     ) external returns (bool);
 
     ///@dev 收获
-    function harvest(uint256 _x, uint256 _y) external returns (uint8 number);
+    function harvest(uint256 _x, uint256 _y) external;
 
     ///@dev 铲除
     function eradicate(uint256 _x, uint256 _y) external returns (bool getSeed);
@@ -68,11 +68,7 @@ abstract contract PixFarm is Ownable, IPixFarm, FarmFactory, FarmMarket {
     /// @notice 收获
     /// @param _x x坐标
     /// @param _y y坐标
-    function harvest(uint256 _x, uint256 _y)
-        external
-        override
-        returns (uint8 number)
-    {
+    function harvest(uint256 _x, uint256 _y) external override {
         require(
             block.timestamp >= fields[msg.sender][_x][_y].maturityTime,
             "Can't be harvested"
@@ -213,7 +209,8 @@ abstract contract PixFarm is Ownable, IPixFarm, FarmFactory, FarmMarket {
         //被偷过
         else {
             Field memory _field = fields[_owner][_x][_y];
-            fields[_owner][_x][_y].used = false;
+            // fields[_owner][_x][_y].used = false;
+            _field.used = false;
             _initField(fields[_owner][_x][_y]);
             // if (
             //     giveItem(
