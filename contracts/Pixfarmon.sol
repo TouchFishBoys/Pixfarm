@@ -4,7 +4,9 @@ pragma solidity ^0.8.0;
 import "./PixPet.sol";
 import "./PixFarm.sol";
 
-contract Pixfarmon is PixPet, PixFarm {
+//import "./RepositoryBase.sol";
+
+abstract contract Pixfarmon is PixPet, PixFarm {
     /// @dev 添加好友
     function AddFriendByName(string memory _name) public {
         _addFriendByName(_name);
@@ -16,7 +18,7 @@ contract Pixfarmon is PixPet, PixFarm {
 
     /// @dev 氪金
     function RechargeMoney(uint256 _money) public {
-        _rechargeMoney(_value);
+        _rechargeMoney(_money);
     }
 
     /// @dev 买种子
@@ -37,24 +39,24 @@ contract Pixfarmon is PixPet, PixFarm {
         _sellSeed(_type, _index, _amount);
     }
 
-    /// @dev 播种
-    function Sowing(
-        uint256 _x,
-        uint256 _y,
-        uint256 _tag
-    ) public {
-        sowing(_x, _y, _tag);
-    }
+    // /// @dev 播种
+    // function Sowing(
+    //     uint256 _x,
+    //     uint256 _y,
+    //     uint256 _tag
+    // ) public {
+    //     sowing(_x, _y, _tag);
+    // }
 
-    /// @dev 收获
-    function Harvest(uint256 _x, uint256 _y) public returns (uint256) {
-        return harvest(_x, _y);
-    }
+    // /// @dev 收获
+    // function Harvest(uint256 _x, uint256 _y) public returns (uint256) {
+    //     return harvest(_x, _y);
+    // }
 
-    /// @dev 铲除
-    function Eradicate(uint256 _x, uint256 _y) public {
-        eradicate(_x, _y);
-    }
+    // /// @dev 铲除
+    // function Eradicate(uint256 _x, uint256 _y) public {
+    //     eradicate(_x, _y);
+    // }
 
     /// @dev 偷菜
     function Steal(
@@ -71,5 +73,7 @@ contract Pixfarmon is PixPet, PixFarm {
     }
 
     /// @dev 拍卖
-    function auction() public {}
+    function auction() public returns (uint256[] memory) {
+        return getTokensList();
+    }
 }

@@ -199,4 +199,8 @@ contract AuctionBase is Ownable, Money {
             status[_token] = AuctionStatus.PENDING;
         }
     }
+
+    function getTokensList() public view returns (uint256[] memory) {
+        return tokens;
+    }
 }
