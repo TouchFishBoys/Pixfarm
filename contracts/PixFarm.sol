@@ -30,7 +30,7 @@ interface IPixFarm {
     function disassembling(uint256 _fruitTag) external returns (bool);
 }
 
-abstract contract PixFarm is Ownable, IPixFarm, FarmFactory, FarmMarket {
+contract PixFarm is Ownable, IPixFarm, FarmFactory, FarmMarket {
     event SeedPlanted(address owner, uint8 x, uint8 y);
 
     /// @notice 播种
@@ -274,12 +274,12 @@ abstract contract PixFarm is Ownable, IPixFarm, FarmFactory, FarmMarket {
         }
     }
 
-    /// @dev 添加好友
-    function addFriendByName(string memory _name) public {
-        _addFriendByName(_name);
-    }
+    // /// @dev 添加好友
+    // function addFriendByName(string memory _name) public {
+    //     _addFriendByName(_name);
+    // }
 
-    function addFriendByAddress(address _address) public {
-        _addFriendByAddress(_address);
-    }
+    // function addFriendByAddress(address _address) public {
+    //     _addFriendByAddress(_address);
+    // }
 }

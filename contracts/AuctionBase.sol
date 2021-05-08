@@ -13,8 +13,6 @@ contract AuctionBase is Ownable, Money {
         CANCELED // 拍卖被卖家取消
     }
 
-    IERC20 private ercToken;
-
     struct Auction {
         address seller; //卖家
         uint64 startingPrice; //起拍价
@@ -38,11 +36,6 @@ contract AuctionBase is Ownable, Money {
     mapping(uint256 => AuctionStatus) private status;
 
     event AuctionEnded(address seller, address winner, uint64 dealPrice);
-
-    constructor(IERC20 _token) {
-        ercToken = _token;
-    }
-
     modifier ownerOf(uint256 _token) {
         require(
             tokenToAuction[_token].seller == msg.sender,

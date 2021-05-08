@@ -10,10 +10,10 @@ interface ShopBase {
 
     function _sell() external;
 
-    function _upgrade() external;
+    //function _upgrade() external;
 
     ///@dev buy a seed from shop
-    function buySeed(uint256 specie, uint256 level) external returns (bool);
+    //function buySeed(uint256 specie, uint256 level) external returns (bool);
 
-    function buyPet() external view returns (uint256 _dna);
+    //function buyPet() external view returns (uint256 _dna);
 }

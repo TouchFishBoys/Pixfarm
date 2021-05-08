@@ -4,7 +4,7 @@ pragma solidity ^0.8.0;
 import "./MarketBase.sol";
 import "./FarmFactory.sol";
 
-abstract contract FarmMarket is MarketBase, FarmFactory {
+contract FarmMarket is MarketBase, FarmFactory {
     event SeedSoldFromShop(
         address buyer,
         uint256 tag,
@@ -92,7 +92,8 @@ abstract contract FarmMarket is MarketBase, FarmFactory {
         ItemType _type,
         uint256 _index,
         uint256 _amount
-    ) public {
+    ) public returns (bool) {
         _sell(_type, _index, uint32(_amount));
+        return true;
     }
 }

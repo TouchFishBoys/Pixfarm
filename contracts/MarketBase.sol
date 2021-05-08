@@ -4,10 +4,8 @@ pragma solidity ^0.8.0;
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "./AuctionBase.sol";
 import "./RepositoryBase.sol";
-import "./ShopBase.sol";
 
-abstract contract MarketBase is AuctionBase, ShopBase, RepositoryBase {
-    IERC20 internal bank;
+contract MarketBase is AuctionBase, RepositoryBase {
     /// @dev 等级附加售价
     uint256[] PirceForLevel = [
         uint256(100),
@@ -34,9 +32,9 @@ abstract contract MarketBase is AuctionBase, ShopBase, RepositoryBase {
     /// @dev 作物收益
     uint256[] RateForBenefit = [uint256(1), 1, 2, 3, 5, 10, 15, 20];
 
-    function _setBankAddress(address bankAddress) public onlyOwner {
-        bank = IERC20(bankAddress);
-    }
+    // function _setBankAddress(address bankAddress) public onlyOwner {
+    //     bank = IERC20(bankAddress);
+    // }
 
     /// @dev 仅用于付费，获取（生成）商品信息在调用的函数中生成
     function _buy(

@@ -6,7 +6,7 @@ import "./PixFarm.sol";
 
 //import "./RepositoryBase.sol";
 
-abstract contract Pixfarmon is PixPet, PixFarm {
+contract Pixfarmon is PixPet, PixFarm {
     /// @dev 添加好友
     function AddFriendByName(string memory _name) public {
         _addFriendByName(_name);

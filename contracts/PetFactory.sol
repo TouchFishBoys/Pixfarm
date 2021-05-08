@@ -4,20 +4,19 @@ pragma solidity ^0.8.0;
 import "./PetBase.sol";
 
 interface IPetFactory {
-    ///@dev 计算属性
-    function getPetProperties(uint256 _dna)
-        external
-        view
-        returns (PetBase.PetPropertiesPacked calldata);
-
-    ///@dev 计算DNA
-    function calDna(PetBase.PetPropertiesPacked memory _pack)
-        external
-        view
-        returns (uint256 dna);
+    // ///@dev 计算属性
+    // function getPetProperties(uint256 _dna)
+    //     external
+    //     view
+    //     returns (PetBase.PetPropertiesPacked calldata);
+    // ///@dev 计算DNA
+    // function calDna(PetBase.PetPropertiesPacked memory _pack)
+    //     external
+    //     view
+    //     returns (uint256 dna);
 }
 
-abstract contract PetFactory is Ownable, PetBase, IPetFactory {
+contract PetFactory is Ownable, PetBase, IPetFactory {
     // function getPetProperties(uint256 _dna)
     //     public
     //     pure
