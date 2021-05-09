@@ -29,7 +29,20 @@ contract FarmBase is RepositoryBase {
     /// @dev 品质
     enum Quality {N, R, SR, SSR}
     /// @dev 物种
-    enum Specie {A, B, C, D, E, F, G, H, I, J, K, L}
+    enum Specie {
+        spirel,
+        zebrot,
+        branut,
+        moonbean,
+        malener,
+        sunberry,
+        barner,
+        thorner,
+        quernom,
+        demute,
+        charis,
+        peento
+    }
 
     //total:21 bits
     //  example:
