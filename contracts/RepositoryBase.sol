@@ -274,4 +274,18 @@ contract RepositoryBase is Ownable, Money {
         }
         return flag;
     }
+
+    function getUsername(address _person)
+        public
+        view
+        returns (bool, string memory)
+    {
+        string memory name;
+        name = "";
+        name = addressToName[_person];
+        if (hashCompare(name, "")) {
+            return (false, name);
+        }
+        return (false, name);
+    }
 }

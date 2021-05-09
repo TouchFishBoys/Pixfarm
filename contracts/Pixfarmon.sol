@@ -97,7 +97,7 @@ contract Pixfarmon {
     }
 
     /// @dev 检查是否已注册
-    function isregister(address _person) public returns (bool) {
+    function isregister(address _person) public view returns (bool) {
         return rb._isregister(_person);
     }
 }
