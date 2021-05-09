@@ -7,6 +7,11 @@ import "./FarmFactory.sol";
 
 contract FarmMarket is MarketBase, FarmBase {
     FarmFactory fc;
+
+    constructor(FarmFactory _fc) {
+        fc = _fc;
+    }
+
     event SeedSoldFromShop(
         address buyer,
         uint256 tag,
