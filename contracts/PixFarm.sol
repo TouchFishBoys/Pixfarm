@@ -74,6 +74,10 @@ contract PixFarm is Ownable, IPixFarm, FarmFactory, FarmMarket {
         returns (uint8 number)
     {
         require(
+            fields[msg.sender][_x][_y].unlocked == true,
+            "The field is locked!"
+        );
+        require(
             block.timestamp >= fields[msg.sender][_x][_y].maturityTime,
             "Can't be harvested"
         );
@@ -126,6 +130,7 @@ contract PixFarm is Ownable, IPixFarm, FarmFactory, FarmMarket {
         item.tag = uint32(fruitTag);
         item.stack = num;
         addItem(ItemType.Fruit, msg.sender, item);
+        farmExperience[msg.sender] += getFruitValueByTag(fruitTag) / 10;
         return uint8(num);
     }
 
@@ -139,6 +144,15 @@ contract PixFarm is Ownable, IPixFarm, FarmFactory, FarmMarket {
         override
         returns (bool)
     {
+        require(
+            fields[msg.sender][_x][_y].unlocked == true,
+            "The field is locked!"
+        );
+        require(
+            fields[msg.sender][_x][_y].used == true,
+            "Nothing can be eradicated!"
+        );
+
         if (
             ((block.timestamp - fields[msg.sender][_x][_y].sowingTime) * 100) /
                 specieTime[
@@ -182,7 +196,12 @@ contract PixFarm is Ownable, IPixFarm, FarmFactory, FarmMarket {
         uint256 _y
     ) public override returns (bool) {
         require(
-            block.timestamp >= fields[_owner][_x][_y].maturityTime,
+            fields[msg.sender][_x][_y].unlocked == true,
+            "The field is locked!"
+        );
+        require(
+            fields[msg.sender][_x][_y].used == true &&
+                block.timestamp >= fields[_owner][_x][_y].maturityTime,
             "can't be stolen"
         );
         require(friendCheck(msg.sender, _owner), "can't be stolen");
@@ -261,6 +280,7 @@ contract PixFarm is Ownable, IPixFarm, FarmFactory, FarmMarket {
             dreamy.tag = uint32(getDreamySeedTag());
             addItem(ItemType.Seed, msg.sender, dreamy);
         }
+        farmExperience[msg.sender] += value;
         return check;
     }
 
