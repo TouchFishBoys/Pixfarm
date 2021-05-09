@@ -95,4 +95,9 @@ contract Pixfarmon {
         fb.upgradeLand(1);
         mon.getMoneyFromShop(msg.sender, 1000);
     }
+
+    /// @dev 检查是否已注册
+    function isregister(address _person) public returns (bool) {
+        rb._isregister(_person);
+    }
 }

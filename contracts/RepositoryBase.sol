@@ -9,7 +9,7 @@ contract RepositoryBase is Ownable, Money {
     enum ItemType {Seed, Fruit, Feed} // 3bits for futher development
 
     /// @dev 所有玩家名字
-    string[] playersName;
+    address[] playersAddress;
     mapping(string => address) nameToAddress;
     mapping(address => string) addressToName;
 
@@ -156,7 +156,7 @@ contract RepositoryBase is Ownable, Money {
 
     function playerCreate(string memory _name) public returns (bool) {
         if (!isNameExist(_name)) {
-            playersName.push(_name);
+            playersAddress.push(msg.sender);
             addressToName[msg.sender] = _name;
             nameToAddress[_name] = msg.sender;
             return true;
@@ -166,12 +166,11 @@ contract RepositoryBase is Ownable, Money {
     }
 
     function isNameExist(string memory _name) internal view returns (bool) {
-        for (uint256 i = 0; i < playersName.length; i++) {
-            if (hashCompare(_name, playersName[i])) {
-                return true;
-            }
+        if (nameToAddress[_name] != address(0)) {
+            return true;
+        } else {
+            return false;
         }
-        return false;
     }
 
     /// @dev 比较两个字符串
@@ -260,8 +259,19 @@ contract RepositoryBase is Ownable, Money {
 
     /// @dev 注册
     function _registration(string memory _name) public {
-        playersName.push(_name);
+        playersAddress.push(msg.sender);
         nameToAddress[_name] = msg.sender;
         addressToName[msg.sender] = _name;
     }
+
+    /// @dev 是否已注册
+    function _isregister(address _person) public returns (bool) {
+        bool flag = false;
+        for(uint256 i=0;i<playersAddress.length;i++){
+            if(playersAddress[i] == _person){
+                flag=true;
+            }
+        }
+        return flag;
+
 }
