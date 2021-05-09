@@ -31,12 +31,12 @@ contract Pixfarmon is PixPet, PixFarm {
     }
 
     /// @dev 卖果实
-    function SellSeedToShop(
+    function SellFruitToShop(
         ItemType _type,
         uint256 _index,
         uint256 _amount
     ) public {
-        _sellSeed(_type, _index, _amount);
+        _sellFruit(_type, _index, _amount);
     }
 
     // /// @dev 播种

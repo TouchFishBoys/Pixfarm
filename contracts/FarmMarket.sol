@@ -12,16 +12,6 @@ contract FarmMarket is MarketBase, FarmFactory {
         uint256 cost
     );
 
-    function _buySeed(
-        uint256 _tag,
-        uint256 _amount,
-        uint256 _price
-    ) internal {
-        // Something
-        _buy(_tag, _amount, _price);
-        emit SeedSoldFromShop(msg.sender, _tag, _amount, _price);
-    }
-
     function buySeed(
         uint256 specie,
         uint256 level,
@@ -49,7 +39,8 @@ contract FarmMarket is MarketBase, FarmFactory {
         }
         uint256 _price = getSeedValue(specie, level);
         uint256 seedTag = getSeedTag(pack);
-        _buySeed(seedTag, _amount, _price);
+        _buy(seedTag, _amount, _price);
+        emit SeedSoldFromShop(msg.sender, seedTag, _amount, _price);
     }
 
     /// @dev 计算种子价格
@@ -84,12 +75,8 @@ contract FarmMarket is MarketBase, FarmFactory {
             (100 + RateForBenefit[specie] / 100);
     }
 
-    function _sellSeed(
-        ItemType _type,
-        uint256 _index,
-        uint256 _amount
-    ) public returns (bool) {
-        _sell(_type, _index, uint32(_amount));
+    function _sellFruit(uint256 _tag, uint256 _amount) public returns (bool) {
+        sell(ItemType.Fruit, _tag, uint32(_amount), getFruitValueByTag(_tag));
         return true;
     }
 }

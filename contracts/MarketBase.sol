@@ -52,18 +52,21 @@ contract MarketBase is AuctionBase, RepositoryBase {
         addItem(ItemType(_tag >> 17), msg.sender, newItem);
     }
 
-    function _sell(
+    function sell(
         ItemType _type,
-        uint256 _index,
-        uint32 _amount
+        uint256 _tag,
+        uint32 _amount,
+        uint256 _value
     ) internal {
         //bank.transfer(msg.sender, _amount);
-        _repository[_type][msg.sender][_index].stack =
-            _repository[_type][msg.sender][_index].stack -
-            _amount;
-        uint256 _price;
-        _price = _repository[_type][msg.sender][_index].tag >> 17; //收购价 = 作物种类（x%）* 总属性对应价
-        getMoneyFromShop(msg.sender, _amount);
+        // _repository[_type][msg.sender][_index].stack =
+        //     _repository[_type][msg.sender][_index].stack -
+        //     _amount;
+        // uint256 _price;
+        // _price = _repository[_type][msg.sender][_index].tag >> 17; //收购价 = 作物种类（x%）* 总属性对应价
+        // getMoneyFromShop(msg.sender, _amount);
+        require(removeItem(msg.sender, _type, _tag, _amount));
+        money[msg.sender] += _value;
     }
 
     //function _upgrade() internal override {}
