@@ -267,11 +267,11 @@ contract RepositoryBase is Ownable, Money {
     /// @dev 是否已注册
     function _isregister(address _person) public returns (bool) {
         bool flag = false;
-        for(uint256 i=0;i<playersAddress.length;i++){
-            if(playersAddress[i] == _person){
-                flag=true;
+        for (uint256 i = 0; i < playersAddress.length; i++) {
+            if (playersAddress[i] == _person) {
+                flag = true;
             }
         }
         return flag;
-
+    }
 }
