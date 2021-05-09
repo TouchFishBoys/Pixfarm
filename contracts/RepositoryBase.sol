@@ -37,7 +37,7 @@ contract RepositoryBase is Ownable, Money {
     mapping(address => request[]) requestList;
 
     /// @dev is value has permission to see key's storage
-    mapping(address => mapping(address => bool)) internal _storageAllowence;
+    mapping(address => mapping(address => bool)) public storageAllowence;
 
     /// @dev 删除某人的某个格子的道具
     function _remove(
@@ -122,7 +122,7 @@ contract RepositoryBase is Ownable, Money {
 
     modifier requireVisibility(address host, address visitor) {
         require(
-            _storageAllowence[host][visitor],
+            storageAllowence[host][visitor],
             "You have no permission to see this receiver's storage"
         );
         _;
@@ -239,9 +239,13 @@ contract RepositoryBase is Ownable, Money {
         address target
     ) public view returns (Item[] memory) {
         require(
-            user == target || _storageAllowence[target][user],
+            user == target || storageAllowence[target][user],
             "permission denied"
         );
         return _repository[ItemType(itemType)][target];
+    }
+
+    function changePermission(address user, address target) public {
+        storageAllowence[user][target] = !storageAllowence[user][target];
     }
 }
