@@ -32,7 +32,7 @@ module.exports = function (deployer) {
     deployer.deploy(Auction);
     deployer.deploy(Money);
     deployer.deploy(RepositoryBase).then(function () {
-        deployer.deploy(Pixfarmon, Auction.address, Money.address, RepositoryBase.address, FarmMarket.address, FarmBase.address);
+        return deployer.deploy(Pixfarmon, Auction.address, Money.address, RepositoryBase.address, FarmMarket.address, FarmBase.address);
     });
     //deployer.deploy(PixPet);
 
