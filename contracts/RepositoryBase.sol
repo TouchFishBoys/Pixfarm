@@ -288,4 +288,8 @@ contract RepositoryBase is Ownable, Money {
         }
         return (false, name);
     }
+
+    function getFriendList() public view returns (friend[] memory) {
+        return friendList[msg.sender];
+    }
 }
