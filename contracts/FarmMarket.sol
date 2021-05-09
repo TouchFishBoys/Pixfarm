@@ -24,8 +24,8 @@ contract FarmMarket is MarketBase, FarmBase {
         uint256 level,
         uint256 _amount
     ) public {
-        require(level <= 4, "Illegal level");
-        require(getFarmLevel(msg.sender) >= level, "Level lack");
+        require(level <= 4);
+        require(getFarmLevel(msg.sender) >= level);
         PlantPropertiesPacked memory pack;
         pack.specie = Specie(specie);
         pack.hp = 0;
@@ -65,7 +65,7 @@ contract FarmMarket is MarketBase, FarmBase {
         view
         returns (uint256)
     {
-        require(specie < 8, "Dreamy Fruit can't be saled");
+        require(specie < 8);
         return
             (PirceForSpecie[specie] + PirceForLevel[level]) *
             (100 + RateForBenefit[specie] / 100);
@@ -76,7 +76,7 @@ contract FarmMarket is MarketBase, FarmBase {
         PlantPropertiesPacked memory pack = fc.getPropertiesByTag(_tag);
         uint8 specie = uint8(pack.specie);
         uint8 level = pack.atk + pack.hp + pack.def + pack.spd;
-        require(specie < 8, "Dreamy Fruit can't be saled");
+        require(specie < 8);
         return
             (PirceForSpecie[specie] + PirceForLevel[level]) *
             (100 + RateForBenefit[specie] / 100);

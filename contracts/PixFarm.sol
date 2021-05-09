@@ -31,8 +31,10 @@ interface IPixFarm {
     function disassembling(uint256 _fruitTag) external returns (bool);
 }
 
-contract PixFarm is Ownable, IPixFarm, FarmBase, FarmMarket {
+contract PixFarm is Ownable, IPixFarm, FarmBase {
     event SeedPlanted(address owner, uint8 x, uint8 y);
+    FarmMarket fm;
+    FarmFactory fc;
 
     /// @notice 播种
     /// @param _x uint x坐标
@@ -73,34 +75,29 @@ contract PixFarm is Ownable, IPixFarm, FarmBase, FarmMarket {
         } else if (probabilityCheck(10, 995)) {
             num = 2;
         }
+        uint256 x = _x;
+        uint256 y = _y;
         uint256 fruitTag;
         uint8 sign = fc.randomHybridize(msg.sender, uint8(_x), uint8(_y));
-        if (sign == 0) {
-            fruitTag = fc.getFruitTag(fields[msg.sender][_x][_y].seedTag);
-        } else if (sign == 1) {
+        if (sign == 1) {
             //up
-            fruitTag = fc.getHarvestFruitTag(
-                fields[msg.sender][_x][_y].seedTag,
-                fields[msg.sender][_x][_y + 1].seedTag
-            );
+            y += 1;
         } else if (sign == 2) {
             //down
-            fruitTag = fc.getHarvestFruitTag(
-                fields[msg.sender][_x][_y].seedTag,
-                fields[msg.sender][_x][_y - 1].seedTag
-            );
+            y -= 1;
         } else if (sign == 3) {
             //left
-            fruitTag = fc.getHarvestFruitTag(
-                fields[msg.sender][_x][_y].seedTag,
-                fields[msg.sender][_x - 1][_y].seedTag
-            );
+            x -= 1;
         } else {
             //right
-            fruitTag = fc.getHarvestFruitTag(
-                fields[msg.sender][_x][_y].seedTag,
-                fields[msg.sender][_x + 1][_y].seedTag
-            );
+            x += 1;
+        }
+        fruitTag = fc.getHarvestFruitTag(
+            fields[msg.sender][_x][_y].seedTag,
+            fields[msg.sender][x][y].seedTag
+        );
+        if (sign == 0) {
+            fruitTag = fc.getFruitTag(fields[msg.sender][_x][_y].seedTag);
         }
 
         // if (giveItem(ItemType.Fruit,msg.sender, fruitTag, num)) {
@@ -115,7 +112,7 @@ contract PixFarm is Ownable, IPixFarm, FarmBase, FarmMarket {
         item.tag = uint32(fruitTag);
         item.stack = num;
         addItem(ItemType.Fruit, msg.sender, item);
-        farmExperience[msg.sender] += getFruitValueByTag(fruitTag) / 10;
+        farmExperience[msg.sender] += fm.getFruitValueByTag(fruitTag) / 10;
         //return uint8(num);
     }
 
@@ -245,7 +242,7 @@ contract PixFarm is Ownable, IPixFarm, FarmBase, FarmMarket {
         bool check;
         uint256 seedTag;
         (seedTag, check) = fc.disassembleFruit(_fruitTag);
-        uint256 value = getFruitValueByTag(_fruitTag) / 10;
+        uint256 value = fm.getFruitValueByTag(_fruitTag) / 10;
         require(transferToShop(msg.sender, value));
         Item memory seed;
         seed.usable = true;
@@ -261,17 +258,5 @@ contract PixFarm is Ownable, IPixFarm, FarmBase, FarmMarket {
         }
         farmExperience[msg.sender] += value;
         return check;
-    }
-
-    /// @dev 初始化土地
-    function _initField(Field storage _field) internal {
-        if (_field.used == false) {
-            _field.seedTag = 0;
-            _field.sowingTime = 0;
-            _field.maturityTime = 0;
-            _field.stolen = false;
-            _field.firstThief = address(0);
-            _field.secondThief = address(0);
-        }
     }
 }

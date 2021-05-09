@@ -110,4 +110,16 @@ contract FarmBase is RepositoryBase {
             }
         }
     }
+
+    /// @dev 初始化土地
+    function _initField(Field storage _field) internal {
+        if (_field.used == false) {
+            _field.seedTag = 0;
+            _field.sowingTime = 0;
+            _field.maturityTime = 0;
+            _field.stolen = false;
+            _field.firstThief = address(0);
+            _field.secondThief = address(0);
+        }
+    }
 }

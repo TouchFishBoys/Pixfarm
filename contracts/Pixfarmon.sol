@@ -29,7 +29,7 @@ contract Pixfarmon is PixFarm {
         uint256 level,
         uint256 _amount
     ) public {
-        FarmMarket.buySeed(specie, level, _amount);
+        fm.buySeed(specie, level, _amount);
     }
 
     // /// @dev 播种
