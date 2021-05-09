@@ -12,17 +12,20 @@ contract Pixfarmon {
     Money mon;
     RepositoryBase rb;
     FarmMarket fm;
+    FarmBase fb;
 
     constructor(
         Auction _auction,
         Money _mon,
         RepositoryBase _rb,
-        FarmMarket _fm
+        FarmMarket _fm,
+        FarmBase _fb
     ) {
         auction = _auction;
         mon = _mon;
         rb = _rb;
         fm = _fm;
+        fb = _fb;
     }
 
     /// @dev 添加好友
@@ -89,5 +92,7 @@ contract Pixfarmon {
     /// @dev 注册
     function register(string memory _name) public {
         rb._registration(_name);
+        fb.upgradeLand(1);
+        mon.getMoneyFromShop(msg.sender, 1000);
     }
 }

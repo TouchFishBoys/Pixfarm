@@ -17,15 +17,23 @@ module.exports = function (deployer) {
     // deployer.deploy(Money);
     // deployer.deploy(RepositoryBase);
     // deployer.deploy(AuctionBase);
-    // deployer.deploy(FarmBase);
-    deployer.deploy(FarmFactory);
-    deployer.deploy(FarmMarket, FarmFactory.address);
+    deployer.deploy(FarmBase);
+    deployer.deploy(FarmFactory).then(function () {
+        return deployer.deploy(FarmMarket, FarmFactory.address).then(function () {
+            return deployer.deploy(PixFarm, FarmMarket.address, FarmFactory.address);
+        });
+    });
+
     // deployer.deploy(MarketBase);
     // deployer.deploy(PetBase);
     // deployer.deploy(PetFactory);
     //deployer.deploy(PetMarket);
-    deployer.deploy(PixFarm, FarmMarket.address, FarmFactory.address);
 
+    deployer.deploy(Auction);
+    deployer.deploy(Money);
+    deployer.deploy(RepositoryBase).then(function () {
+        deployer.deploy(Pixfarmon, Auction.address, Money.address, RepositoryBase.address, FarmMarket.address, FarmBase.address);
+    });
     //deployer.deploy(PixPet);
-    deployer.deploy(Pixfarmon, Auction.address, Money.address, RepositoryBase.address, FarmMarket.address);
+
 }
