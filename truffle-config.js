@@ -18,7 +18,9 @@
  *
  */
 
-// const HDWalletProvider = require('@truffle/hdwallet-provider');
+let HDWalletProvider = require('@truffle/hdwallet-provider');
+let privateKey = "0x16db936de7342b075849d74a66460007772fab88cf4ab509a3487f23398823d6";
+let skale = "http://54.85.113.255:1234";
 // const infuraKey = "fj4jll3k.....";
 //
 // const fs = require('fs');
@@ -40,6 +42,12 @@ module.exports = {
       host: "127.0.0.1",
       port: 8545,
       network_id: "*"
+    },
+    skale: {
+      provider: ()=>new HDWalletProvider(privateKey, skale),
+      network_id: "*",
+      gasPrice: 0,
+      skipDryRun: true
     }
     // Useful for testing. The `development` name is special - truffle uses it by default
     // if it's defined here and no other network is specified at the command line.
@@ -87,7 +95,19 @@ module.exports = {
   // Configure your compilers
   compilers: {
     solc: {
-      version: "^0.8.0"
+      version: "^0.8.0",
+      settings: {
+        optimizer: {
+          enabled: true,
+          runs: 1000,
+          details: {
+            "cse": true,
+            "deduplicate": true,
+            "orderLiterals": true,
+            "constantOptimizer": true,
+          }
+        },
+      }
       // version: "0.5.1",    // Fetch exact version from solc-bin (default: truffle's version)
       // docker: true,        // Use "0.5.1" you've installed locally with docker (default: false)
       // settings: {          // See the solidity docs for advice about optimization and evmVersion
@@ -108,5 +128,7 @@ module.exports = {
 
   db: {
     enabled: false
-  }
+  },
+
+  plugins: ["truffle-contract-size"]
 };

@@ -8,7 +8,8 @@
   },
   "scripts": {
     "compile": "truffle compile",
-    "migrate-localhost": "truffle migrate --network testNet",
+    "compile-all": "truffle compile --all",
+    "deploy-skale": "truffle deplay --reset --network skale --compile-all",
     "test": "truffle test",
     "lint": "solium -d contracts/",
     "lint-fix": "solium -d contracts/ --fix"
@@ -20,6 +21,7 @@
     "@openzeppelin/contracts": "^4.0.0",
     "@truffle/hdwallet-provider": "^1.2.6",
     "openzeppelin-solidity": "^4.0.0",
-    "solc": "^0.8.3"
+    "solc": "^0.8.3",
+    "truffle-contract-size": "^2.0.1"
   }
 }
