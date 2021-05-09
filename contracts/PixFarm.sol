@@ -264,4 +264,8 @@ contract PixFarm is Ownable, IPixFarm, FarmBase {
         farmExperience[msg.sender] += value;
         return check;
     }
+
+    function getFields(address player) returns (Field[][] memory) {
+        return fields[player];
+    }
 }
