@@ -82,7 +82,7 @@ contract FarmMarket is MarketBase, FarmBase {
             (100 + RateForBenefit[specie] / 100);
     }
 
-    function _sellFruit(uint256 _tag, uint256 _amount) public returns (bool) {
+    function sellFruit(uint256 _tag, uint256 _amount) public returns (bool) {
         sell(ItemType.Fruit, _tag, uint32(_amount), getFruitValueByTag(_tag));
         return true;
     }
