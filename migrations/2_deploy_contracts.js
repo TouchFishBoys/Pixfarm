@@ -12,6 +12,7 @@ const PixFarm = artifacts.require("PixFarm")
 const PixPet = artifacts.require("PixPet")
 const ShopBase = artifacts.require("ShopBase")
 const Pixfarmon = artifacts.require("Pixfarmon")
+const Auction = artifacts.require("Auction")
 module.exports = function (deployer) {
     // deployer.deploy(Money);
     // deployer.deploy(RepositoryBase);
@@ -23,8 +24,8 @@ module.exports = function (deployer) {
     // deployer.deploy(PetBase);
     // deployer.deploy(PetFactory);
     //deployer.deploy(PetMarket);
-    deployer.deploy(PixFarm, FarmMarket.address, FarmFactory.address, Money.address, RepositoryBase.address);
+    deployer.deploy(PixFarm, FarmMarket.address, FarmFactory.address);
 
     //deployer.deploy(PixPet);
-    deployer.deploy(Pixfarmon);
+    deployer.deploy(Pixfarmon, Auction.address, Money.address, RepositoryBase.address, FarmMarket.address);
 }

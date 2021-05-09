@@ -5,23 +5,24 @@ import "./PixFarm.sol";
 import "./Money.sol";
 import "./RepositoryBase.sol";
 import "./Auction.sol";
+import "./FarmMarket.sol";
 
-contract Pixfarmon is PixFarm {
+contract Pixfarmon {
     Auction auction;
-    FarmMarket fm;
     Money mon;
     RepositoryBase rb;
+    FarmMarket fm;
 
     constructor(
         Auction _auction,
-        FarmMarket _fm,
         Money _mon,
-        RepositoryBase _rb
+        RepositoryBase _rb,
+        FarmMarket _fm
     ) {
         auction = _auction;
-        fm = _fm;
         mon = _mon;
         rb = _rb;
+        fm = _fm;
     }
 
     /// @dev 添加好友
