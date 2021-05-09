@@ -104,8 +104,8 @@ contract FarmBase is RepositoryBase {
     function upgradeLand(uint8 level) public {
         require(getFarmLevel(msg.sender) >= level);
         require(transferToShop(msg.sender, landPrice[level - 2]));
-        for (uint8 i = 0; i < level; i++) {
-            for (uint8 j = 0; j < level; j++) {
+        for (uint8 i = 0; i < level + 1; i++) {
+            for (uint8 j = 0; j < level + 1; j++) {
                 fields[msg.sender][i][j].unlocked = true;
             }
         }

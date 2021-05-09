@@ -257,4 +257,11 @@ contract RepositoryBase is Ownable, Money {
         }
         return false;
     }
+
+    /// @dev 注册
+    function _registration(string memory _name) public {
+        playersName.push(_name);
+        nameToAddress[_name] = msg.sender;
+        addressToName[msg.sender] = _name;
+    }
 }

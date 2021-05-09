@@ -2,25 +2,40 @@
 pragma solidity ^0.8.0;
 
 import "./PixFarm.sol";
-
-//import "./RepositoryBase.sol";
+import "./Money.sol";
+import "./RepositoryBase.sol";
 import "./Auction.sol";
 
 contract Pixfarmon is PixFarm {
     Auction auction;
+    FarmMarket fm;
+    Money mon;
+    RepositoryBase rb;
+
+    constructor(
+        Auction _auction,
+        FarmMarket _fm,
+        Money _mon,
+        RepositoryBase _rb
+    ) {
+        auction = _auction;
+        fm = _fm;
+        mon = _mon;
+        rb = _rb;
+    }
 
     /// @dev 添加好友
     function AddFriendByName(string memory _name) public {
-        RepositoryBase.addFriendByName(_name);
+        rb.addFriendByName(_name);
     }
 
     function AddFriendByAddress(address _address) public {
-        RepositoryBase.addFriendByAddress(_address);
+        rb.addFriendByAddress(_address);
     }
 
     /// @dev 氪金
     function RechargeMoney(uint256 _money) public {
-        Money._rechargeMoney(_money);
+        mon._rechargeMoney(_money);
     }
 
     /// @dev 买种子
@@ -68,5 +83,10 @@ contract Pixfarmon is PixFarm {
     /// @dev 拍卖
     function deployAnAuction() public view returns (uint256[] memory) {
         return auction.getTokensList();
+    }
+
+    /// @dev 注册
+    function register(string memory _name) public {
+        rb._registration(_name);
     }
 }

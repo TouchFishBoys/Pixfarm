@@ -23,7 +23,7 @@ module.exports = function (deployer) {
     // deployer.deploy(PetBase);
     // deployer.deploy(PetFactory);
     //deployer.deploy(PetMarket);
-    deployer.deploy(PixFarm, FarmMarket.address, FarmFactory.address);
+    deployer.deploy(PixFarm, FarmMarket.address, FarmFactory.address, Money.address, RepositoryBase.address);
 
     //deployer.deploy(PixPet);
     deployer.deploy(Pixfarmon);
