@@ -21,7 +21,7 @@ contract RepositoryBase is Ownable, Money {
         string friendName;
         address friendAddress;
     }
-    mapping(address => friend[]) friendList;
+    mapping(address => friend[]) public friendList;
 
     struct Item {
         bool usable;
@@ -183,7 +183,7 @@ contract RepositoryBase is Ownable, Money {
         return keccak256(abi.encodePacked(a)) == keccak256(abi.encodePacked(b));
     }
 
-    function _addFriendByName(string memory _name) public returns (bool) {
+    function addFriendByName(string memory _name) public returns (bool) {
         if (!isNameExist(_name)) {
             return false;
         } else {
@@ -195,7 +195,7 @@ contract RepositoryBase is Ownable, Money {
         }
     }
 
-    function _addFriendByAddress(address _address) public returns (bool) {
+    function addFriendByAddress(address _address) public returns (bool) {
         if (!isNameExist(addressToName[_address])) {
             return false;
         } else {

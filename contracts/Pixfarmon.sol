@@ -9,11 +9,11 @@ import "./PixFarm.sol";
 contract Pixfarmon is PixPet, PixFarm {
     /// @dev 添加好友
     function AddFriendByName(string memory _name) public {
-        _addFriendByName(_name);
+        addFriendByName(_name);
     }
 
     function AddFriendByAddress(address _address) public {
-        _addFriendByAddress(_address);
+        addFriendByAddress(_address);
     }
 
     /// @dev 氪金
@@ -58,19 +58,19 @@ contract Pixfarmon is PixPet, PixFarm {
     //     eradicate(_x, _y);
     // }
 
-    /// @dev 偷菜
-    function Steal(
-        address _owner,
-        uint256 _x,
-        uint256 _y
-    ) public {
-        stealPlant(_owner, _x, _y);
-    }
+    // /// @dev 偷菜
+    // function Steal(
+    //     address _owner,
+    //     uint256 _x,
+    //     uint256 _y
+    // ) public {
+    //     stealPlant(_owner, _x, _y);
+    // }
 
-    /// @dev 分解
-    function Disassembling(uint256 _tag) public returns (bool) {
-        return disassembling(_tag);
-    }
+    // /// @dev 分解
+    // function Disassembling(uint256 _tag) public returns (bool) {
+    //     return disassembling(_tag);
+    // }
 
     /// @dev 拍卖
     function auction() public view returns (uint256[] memory) {
