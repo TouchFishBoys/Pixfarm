@@ -11,16 +11,16 @@ contract Pixfarmon is PixFarm {
 
     /// @dev 添加好友
     function AddFriendByName(string memory _name) public {
-        addFriendByName(_name);
+        RepositoryBase.addFriendByName(_name);
     }
 
     function AddFriendByAddress(address _address) public {
-        addFriendByAddress(_address);
+        RepositoryBase.addFriendByAddress(_address);
     }
 
     /// @dev 氪金
     function RechargeMoney(uint256 _money) public {
-        _rechargeMoney(_money);
+        Money._rechargeMoney(_money);
     }
 
     /// @dev 买种子
@@ -29,7 +29,7 @@ contract Pixfarmon is PixFarm {
         uint256 level,
         uint256 _amount
     ) public {
-        buySeed(specie, level, _amount);
+        FarmMarket.buySeed(specie, level, _amount);
     }
 
     // /// @dev 播种

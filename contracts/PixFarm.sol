@@ -15,7 +15,7 @@ interface IPixFarm {
     ) external returns (bool);
 
     ///@dev 收获
-    function harvest(uint256 _x, uint256 _y) external returns (uint8 number);
+    function harvest(uint256 _x, uint256 _y) external;
 
     ///@dev 铲除
     function eradicate(uint256 _x, uint256 _y) external returns (bool getSeed);
@@ -63,11 +63,7 @@ contract PixFarm is Ownable, IPixFarm, FarmBase, FarmMarket {
     /// @notice 收获
     /// @param _x x坐标
     /// @param _y y坐标
-    function harvest(uint256 _x, uint256 _y)
-        external
-        override
-        returns (uint8 number)
-    {
+    function harvest(uint256 _x, uint256 _y) public override {
         require(fields[msg.sender][_x][_y].unlocked == true);
         require(block.timestamp >= fields[msg.sender][_x][_y].maturityTime);
         fields[msg.sender][_x][_y].used = false;
@@ -120,7 +116,7 @@ contract PixFarm is Ownable, IPixFarm, FarmBase, FarmMarket {
         item.stack = num;
         addItem(ItemType.Fruit, msg.sender, item);
         farmExperience[msg.sender] += getFruitValueByTag(fruitTag) / 10;
-        return uint8(num);
+        //return uint8(num);
     }
 
     event PlantEradicated(address owner, uint8 x, uint8 y);
