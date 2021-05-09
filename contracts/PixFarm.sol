@@ -36,6 +36,11 @@ contract PixFarm is Ownable, IPixFarm, FarmBase {
     FarmMarket fm;
     FarmFactory fc;
 
+    constructor(FarmMarket _fm, FarmFactory _fc) {
+        fm = _fm;
+        fc = _fc;
+    }
+
     /// @notice 播种
     /// @param _x uint x坐标
     /// @param _y uint y坐标

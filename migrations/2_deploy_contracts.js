@@ -17,13 +17,14 @@ module.exports = function (deployer) {
     // deployer.deploy(RepositoryBase);
     // deployer.deploy(AuctionBase);
     // deployer.deploy(FarmBase);
-    // deployer.deploy(FarmFactory);
-    // deployer.deploy(FarmMarket);
+    deployer.deploy(FarmFactory);
+    deployer.deploy(FarmMarket, FarmFactory.address);
     // deployer.deploy(MarketBase);
     // deployer.deploy(PetBase);
     // deployer.deploy(PetFactory);
     //deployer.deploy(PetMarket);
-    //deployer.deploy(PixFarm);
+    deployer.deploy(PixFarm, FarmMarket.address, FarmFactory.address);
+
     //deployer.deploy(PixPet);
     deployer.deploy(Pixfarmon);
 }
