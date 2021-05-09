@@ -232,4 +232,16 @@ contract RepositoryBase is Ownable, Money {
         }
         delete requestList[msg.sender][requestList[msg.sender].length - 1];
     }
+
+    function getItemList(
+        uint8 itemType,
+        address user,
+        address target
+    ) public view returns (Item[] memory) {
+        require(
+            user == target || _storageAllowence[target][user],
+            "permission denied"
+        );
+        return _repository[ItemType(itemType)][target];
+    }
 }
