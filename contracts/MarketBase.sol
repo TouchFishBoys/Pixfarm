@@ -48,7 +48,8 @@ contract MarketBase is AuctionBase, RepositoryBase {
         newItem.tag = uint32(_tag);
         newItem.stack = uint32(_amount);
         newItem.usable = true;
-        _repository[ItemType(_tag % 8)][msg.sender].push(newItem);
+        //_repository[ItemType(_tag % 8)][msg.sender].push(newItem);
+        addItem(ItemType(_tag >> 17), msg.sender, newItem);
     }
 
     function _sell(
