@@ -18,8 +18,8 @@
  *
  */
 
-let HDWalletProvider = require('@truffle/hdwallet-provider');
-let privateKey = "0x16db936de7342b075849d74a66460007772fab88cf4ab509a3487f23398823d6";
+let HDWalletProvider = require('truffle-hdwallet-provider');
+let privateKey = "16db936de7342b075849d74a66460007772fab88cf4ab509a3487f23398823d6";
 let skale = "http://54.85.113.255:1234";
 // const infuraKey = "fj4jll3k.....";
 //
