@@ -126,6 +126,7 @@ contract PixFarm is Ownable, IPixFarm, FarmFactory, FarmMarket {
         item.tag = uint32(fruitTag);
         item.stack = num;
         addItem(ItemType.Fruit, msg.sender, item);
+        return uint8(num);
     }
 
     event PlantEradicated(address owner, uint8 x, uint8 y);
@@ -212,7 +213,7 @@ contract PixFarm is Ownable, IPixFarm, FarmFactory, FarmMarket {
         }
         //被偷过
         else {
-            Field memory _field = fields[_owner][_x][_y];
+            //Field memory _field = fields[_owner][_x][_y];
             fields[_owner][_x][_y].used = false;
             _initField(fields[_owner][_x][_y]);
             // if (
@@ -273,13 +274,4 @@ contract PixFarm is Ownable, IPixFarm, FarmFactory, FarmMarket {
             _field.secondThief = address(0);
         }
     }
-
-    // /// @dev 添加好友
-    // function addFriendByName(string memory _name) public {
-    //     _addFriendByName(_name);
-    // }
-
-    // function addFriendByAddress(address _address) public {
-    //     _addFriendByAddress(_address);
-    // }
 }
