@@ -3,6 +3,7 @@ pragma solidity ^0.8.0;
 
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "./FarmFactory.sol";
+import "./FarmBase.sol";
 import "./FarmMarket.sol";
 
 interface IPixFarm {
@@ -30,7 +31,7 @@ interface IPixFarm {
     function disassembling(uint256 _fruitTag) external returns (bool);
 }
 
-contract PixFarm is Ownable, IPixFarm, FarmFactory, FarmMarket {
+contract PixFarm is Ownable, IPixFarm, FarmBase, FarmMarket {
     event SeedPlanted(address owner, uint8 x, uint8 y);
 
     /// @notice 播种
@@ -43,14 +44,8 @@ contract PixFarm is Ownable, IPixFarm, FarmFactory, FarmMarket {
         uint256 _y,
         uint256 _seedTag
     ) external override returns (bool) {
-        require(
-            fields[msg.sender][_x][_y].unlocked == true,
-            "The field is locked!"
-        );
-        require(
-            fields[msg.sender][_x][_y].used == false,
-            "THe field has been used!"
-        );
+        require(fields[msg.sender][_x][_y].unlocked == true);
+        require(fields[msg.sender][_x][_y].used == false);
         if (!removeItem(msg.sender, ItemType.Seed, _seedTag, 1)) {
             return false;
         }
@@ -58,7 +53,7 @@ contract PixFarm is Ownable, IPixFarm, FarmFactory, FarmMarket {
         fields[msg.sender][_x][_y].sowingTime = block.timestamp;
         fields[msg.sender][_x][_y].maturityTime =
             block.timestamp +
-            specieTime[uint8(getPropertiesByTag(_seedTag).specie)];
+            specieTime[uint8(fc.getPropertiesByTag(_seedTag).specie)];
         fields[msg.sender][_x][_y].used = true;
         return true;
     }
@@ -73,14 +68,8 @@ contract PixFarm is Ownable, IPixFarm, FarmFactory, FarmMarket {
         override
         returns (uint8 number)
     {
-        require(
-            fields[msg.sender][_x][_y].unlocked == true,
-            "The field is locked!"
-        );
-        require(
-            block.timestamp >= fields[msg.sender][_x][_y].maturityTime,
-            "Can't be harvested"
-        );
+        require(fields[msg.sender][_x][_y].unlocked == true);
+        require(block.timestamp >= fields[msg.sender][_x][_y].maturityTime);
         fields[msg.sender][_x][_y].used = false;
         uint32 num = 1;
         if (probabilityCheck(5, 1000)) {
@@ -89,30 +78,30 @@ contract PixFarm is Ownable, IPixFarm, FarmFactory, FarmMarket {
             num = 2;
         }
         uint256 fruitTag;
-        uint8 sign = randomHybridize(msg.sender, uint8(_x), uint8(_y));
+        uint8 sign = fc.randomHybridize(msg.sender, uint8(_x), uint8(_y));
         if (sign == 0) {
-            fruitTag = getFruitTag(fields[msg.sender][_x][_y].seedTag);
+            fruitTag = fc.getFruitTag(fields[msg.sender][_x][_y].seedTag);
         } else if (sign == 1) {
             //up
-            fruitTag = getHarvestFruitTag(
+            fruitTag = fc.getHarvestFruitTag(
                 fields[msg.sender][_x][_y].seedTag,
                 fields[msg.sender][_x][_y + 1].seedTag
             );
         } else if (sign == 2) {
             //down
-            fruitTag = getHarvestFruitTag(
+            fruitTag = fc.getHarvestFruitTag(
                 fields[msg.sender][_x][_y].seedTag,
                 fields[msg.sender][_x][_y - 1].seedTag
             );
         } else if (sign == 3) {
             //left
-            fruitTag = getHarvestFruitTag(
+            fruitTag = fc.getHarvestFruitTag(
                 fields[msg.sender][_x][_y].seedTag,
                 fields[msg.sender][_x - 1][_y].seedTag
             );
         } else {
             //right
-            fruitTag = getHarvestFruitTag(
+            fruitTag = fc.getHarvestFruitTag(
                 fields[msg.sender][_x][_y].seedTag,
                 fields[msg.sender][_x + 1][_y].seedTag
             );
@@ -144,20 +133,18 @@ contract PixFarm is Ownable, IPixFarm, FarmFactory, FarmMarket {
         override
         returns (bool)
     {
-        require(
-            fields[msg.sender][_x][_y].unlocked == true,
-            "The field is locked!"
-        );
-        require(
-            fields[msg.sender][_x][_y].used == true,
-            "Nothing can be eradicated!"
-        );
+        require(fields[msg.sender][_x][_y].unlocked == true);
+        require(fields[msg.sender][_x][_y].used == true);
 
         if (
             ((block.timestamp - fields[msg.sender][_x][_y].sowingTime) * 100) /
                 specieTime[
                     uint8(
-                        getPropertiesByTag(fields[msg.sender][_x][_y].seedTag)
+                        fc
+                            .getPropertiesByTag(
+                            fields[msg.sender][_x][_y]
+                                .seedTag
+                        )
                             .specie
                     )
                 ] <
@@ -195,16 +182,12 @@ contract PixFarm is Ownable, IPixFarm, FarmFactory, FarmMarket {
         uint256 _x,
         uint256 _y
     ) public override returns (bool) {
-        require(
-            fields[msg.sender][_x][_y].unlocked == true,
-            "The field is locked!"
-        );
+        require(fields[msg.sender][_x][_y].unlocked == true);
         require(
             fields[msg.sender][_x][_y].used == true &&
-                block.timestamp >= fields[_owner][_x][_y].maturityTime,
-            "can't be stolen"
+                block.timestamp >= fields[_owner][_x][_y].maturityTime
         );
-        require(friendCheck(msg.sender, _owner), "can't be stolen");
+        require(friendCheck(msg.sender, _owner));
         //过宠物判定
         if (!fields[_owner][_x][_y].stolen) {
             //没被偷过
@@ -220,7 +203,7 @@ contract PixFarm is Ownable, IPixFarm, FarmFactory, FarmMarket {
             Item memory item;
             item.stack = 1;
             item.usable = true;
-            item.tag = uint32(getFruitTag(fields[_owner][_x][_y].seedTag));
+            item.tag = uint32(fc.getFruitTag(fields[_owner][_x][_y].seedTag));
             addItem(ItemType.Fruit, msg.sender, item);
             fields[_owner][_x][_y].maturityTime = block.timestamp + 1800;
             fields[_owner][_x][_y].firstThief = msg.sender;
@@ -247,7 +230,7 @@ contract PixFarm is Ownable, IPixFarm, FarmFactory, FarmMarket {
             Item memory item;
             item.stack = 1;
             item.usable = true;
-            item.tag = uint32(getFruitTag(fields[_owner][_x][_y].seedTag));
+            item.tag = uint32(fc.getFruitTag(fields[_owner][_x][_y].seedTag));
             addItem(ItemType.Fruit, msg.sender, item);
             fields[_owner][_x][_y].secondThief = msg.sender;
             return true;
@@ -265,7 +248,7 @@ contract PixFarm is Ownable, IPixFarm, FarmFactory, FarmMarket {
     function disassembling(uint256 _fruitTag) public override returns (bool) {
         bool check;
         uint256 seedTag;
-        (seedTag, check) = disassembleFruit(_fruitTag);
+        (seedTag, check) = fc.disassembleFruit(_fruitTag);
         uint256 value = getFruitValueByTag(_fruitTag) / 10;
         require(transferToShop(msg.sender, value));
         Item memory seed;
@@ -277,7 +260,7 @@ contract PixFarm is Ownable, IPixFarm, FarmFactory, FarmMarket {
             Item memory dreamy;
             dreamy.usable = true;
             dreamy.stack = 1;
-            dreamy.tag = uint32(getDreamySeedTag());
+            dreamy.tag = uint32(fc.getDreamySeedTag());
             addItem(ItemType.Seed, msg.sender, dreamy);
         }
         farmExperience[msg.sender] += value;

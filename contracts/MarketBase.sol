@@ -5,7 +5,7 @@ import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "./AuctionBase.sol";
 import "./RepositoryBase.sol";
 
-contract MarketBase is AuctionBase, RepositoryBase {
+contract MarketBase is RepositoryBase {
     /// @dev 等级附加售价
     uint256[] PirceForLevel = [
         uint256(100),

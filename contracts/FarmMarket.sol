@@ -2,9 +2,11 @@
 pragma solidity ^0.8.0;
 
 import "./MarketBase.sol";
+import "./FarmBase.sol";
 import "./FarmFactory.sol";
 
-contract FarmMarket is MarketBase, FarmFactory {
+contract FarmMarket is MarketBase, FarmBase {
+    FarmFactory fc;
     event SeedSoldFromShop(
         address buyer,
         uint256 tag,
@@ -38,7 +40,7 @@ contract FarmMarket is MarketBase, FarmFactory {
             }
         }
         uint256 _price = getSeedValue(specie, level);
-        uint256 seedTag = getSeedTag(pack);
+        uint256 seedTag = fc.getSeedTag(pack);
         _buy(seedTag, _amount, _price);
         emit SeedSoldFromShop(msg.sender, seedTag, _amount, _price);
     }
@@ -66,7 +68,7 @@ contract FarmMarket is MarketBase, FarmFactory {
 
     /// @dev 利用Tag计算果实价格
     function getFruitValueByTag(uint256 _tag) public view returns (uint256) {
-        PlantPropertiesPacked memory pack = getPropertiesByTag(_tag);
+        PlantPropertiesPacked memory pack = fc.getPropertiesByTag(_tag);
         uint8 specie = uint8(pack.specie);
         uint8 level = pack.atk + pack.hp + pack.def + pack.spd;
         require(specie < 8, "Dreamy Fruit can't be saled");

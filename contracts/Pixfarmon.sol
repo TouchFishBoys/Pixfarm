@@ -1,12 +1,14 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
-import "./PixPet.sol";
 import "./PixFarm.sol";
 
 //import "./RepositoryBase.sol";
+import "./Auction.sol";
 
-contract Pixfarmon is PixPet, PixFarm {
+contract Pixfarmon is PixFarm {
+    Auction auction;
+
     /// @dev 添加好友
     function AddFriendByName(string memory _name) public {
         addFriendByName(_name);
@@ -28,15 +30,6 @@ contract Pixfarmon is PixPet, PixFarm {
         uint256 _amount
     ) public {
         buySeed(specie, level, _amount);
-    }
-
-    /// @dev 卖果实
-    function SellFruitToShop(
-        ItemType _type,
-        uint256 _index,
-        uint256 _amount
-    ) public {
-        _sellFruit(_type, _index, _amount);
     }
 
     // /// @dev 播种
@@ -73,7 +66,7 @@ contract Pixfarmon is PixPet, PixFarm {
     // }
 
     /// @dev 拍卖
-    function auction() public view returns (uint256[] memory) {
-        return getTokensList();
+    function deployAnAuction() public view returns (uint256[] memory) {
+        return auction.getTokensList();
     }
 }
