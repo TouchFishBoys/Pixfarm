@@ -5,25 +5,23 @@ import "./PixPet.sol";
 
 abstract contract IPetMarket is PixPet {
     /// @dev 向商店出售宠物
-    function sellPetToShop(uint256 _index)
-        external
-        virtual
-        returns (bool isSuccess);
-
-    /// @dev 拍卖宠物
-    function sellPetOnAuction(uint256 _index)
-        external
-        virtual
-        returns (bool isSuccess);
-
-    /// @dev 商店购买宠物
-    function buyPetFromShop(uint256 _money, PetPropertiesPacked memory _pet)
-        external
-        virtual
-        returns (bool isSuccess);
+    // function sellPetToShop(uint256 _index)
+    //     external
+    //     virtual
+    //     returns (bool isSuccess);
+    // /// @dev 拍卖宠物
+    // function sellPetOnAuction(uint256 _index)
+    //     external
+    //     virtual
+    //     returns (bool isSuccess);
+    // /// @dev 商店购买宠物
+    // function buyPetFromShop(uint256 _money, PetPropertiesPacked memory _pet)
+    //     external
+    //     virtual
+    //     returns (bool isSuccess);
 }
 
-abstract contract PetMarket is IPetMarket {
+contract PetMarket is IPetMarket {
     // function sellPetToShop(uint256 _index)
     //     public
     //     override
@@ -40,11 +38,11 @@ abstract contract PetMarket is IPetMarket {
     //     }
     // }
 
-    function sellPetOnAuction(uint256 _index)
-        public
-        override
-        returns (bool isSuccess)
-    {}
+    // function sellPetOnAuction(uint256 _index)
+    //     public
+    //     override
+    //     returns (bool isSuccess)
+    // {}
 
     // function buyPetFromShop(uint256 _money, PetPropertiesPacked memory _pet)
     //     public

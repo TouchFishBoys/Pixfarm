@@ -30,7 +30,7 @@ interface IPixFarm {
     function disassembling(uint256 _fruitTag) external returns (bool);
 }
 
-abstract contract PixFarm is Ownable, IPixFarm, FarmFactory, FarmMarket {
+contract PixFarm is Ownable, IPixFarm, FarmFactory, FarmMarket {
     event SeedPlanted(address owner, uint8 x, uint8 y);
 
     /// @notice 播种
@@ -69,6 +69,10 @@ abstract contract PixFarm is Ownable, IPixFarm, FarmFactory, FarmMarket {
     /// @param _x x坐标
     /// @param _y y坐标
     function harvest(uint256 _x, uint256 _y) external override {
+        require(
+            fields[msg.sender][_x][_y].unlocked == true,
+            "The field is locked!"
+        );
         require(
             block.timestamp >= fields[msg.sender][_x][_y].maturityTime,
             "Can't be harvested"
@@ -122,6 +126,8 @@ abstract contract PixFarm is Ownable, IPixFarm, FarmFactory, FarmMarket {
         item.tag = uint32(fruitTag);
         item.stack = num;
         addItem(ItemType.Fruit, msg.sender, item);
+        farmExperience[msg.sender] += getFruitValueByTag(fruitTag) / 10;
+        //return uint8(num);
     }
 
     event PlantEradicated(address owner, uint8 x, uint8 y);
@@ -134,6 +140,15 @@ abstract contract PixFarm is Ownable, IPixFarm, FarmFactory, FarmMarket {
         override
         returns (bool)
     {
+        require(
+            fields[msg.sender][_x][_y].unlocked == true,
+            "The field is locked!"
+        );
+        require(
+            fields[msg.sender][_x][_y].used == true,
+            "Nothing can be eradicated!"
+        );
+
         if (
             ((block.timestamp - fields[msg.sender][_x][_y].sowingTime) * 100) /
                 specieTime[
@@ -177,9 +192,15 @@ abstract contract PixFarm is Ownable, IPixFarm, FarmFactory, FarmMarket {
         uint256 _y
     ) public override returns (bool) {
         require(
-            block.timestamp >= fields[_owner][_x][_y].maturityTime,
+            fields[msg.sender][_x][_y].unlocked == true,
+            "The field is locked!"
+        );
+        require(
+            fields[msg.sender][_x][_y].used == true &&
+                block.timestamp >= fields[_owner][_x][_y].maturityTime,
             "can't be stolen"
         );
+        require(friendCheck(msg.sender, _owner), "can't be stolen");
         //过宠物判定
         if (!fields[_owner][_x][_y].stolen) {
             //没被偷过
@@ -208,9 +229,8 @@ abstract contract PixFarm is Ownable, IPixFarm, FarmFactory, FarmMarket {
         }
         //被偷过
         else {
-            Field memory _field = fields[_owner][_x][_y];
-            // fields[_owner][_x][_y].used = false;
-            _field.used = false;
+            //Field memory _field = fields[_owner][_x][_y];
+            fields[_owner][_x][_y].used = false;
             _initField(fields[_owner][_x][_y]);
             // if (
             //     giveItem(
@@ -256,6 +276,7 @@ abstract contract PixFarm is Ownable, IPixFarm, FarmFactory, FarmMarket {
             dreamy.tag = uint32(getDreamySeedTag());
             addItem(ItemType.Seed, msg.sender, dreamy);
         }
+        farmExperience[msg.sender] += value;
         return check;
     }
 
@@ -269,14 +290,5 @@ abstract contract PixFarm is Ownable, IPixFarm, FarmFactory, FarmMarket {
             _field.firstThief = address(0);
             _field.secondThief = address(0);
         }
-    }
-
-    /// @dev 添加好友
-    function addFriendByName(string memory _name) public {
-        _addFriendByName(_name);
-    }
-
-    function addFriendByAddress(address _address) public {
-        _addFriendByAddress(_address);
     }
 }

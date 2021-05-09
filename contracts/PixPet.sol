@@ -1,11 +1,10 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
-import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "./PetFactory.sol";
 import "./FarmFactory.sol";
 
-abstract contract PixPet is PetFactory, IERC20, IFarmFactory {
+contract PixPet is PetFactory, FarmFactory {
     /// @dev  宠物繁殖
     // function breed(
     //     address _petOwner,

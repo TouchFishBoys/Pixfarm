@@ -21,7 +21,7 @@ contract RepositoryBase is Ownable, Money {
         string friendName;
         address friendAddress;
     }
-    mapping(address => friend[]) friendList;
+    mapping(address => friend[]) public friendList;
 
     struct Item {
         bool usable;
@@ -37,7 +37,7 @@ contract RepositoryBase is Ownable, Money {
     mapping(address => request[]) requestList;
 
     /// @dev is value has permission to see key's storage
-    mapping(address => mapping(address => bool)) internal _storageAllowence;
+    mapping(address => mapping(address => bool)) public storageAllowence;
 
     /// @dev 删除某人的某个格子的道具
     function _remove(
@@ -122,7 +122,7 @@ contract RepositoryBase is Ownable, Money {
 
     modifier requireVisibility(address host, address visitor) {
         require(
-            _storageAllowence[host][visitor],
+            storageAllowence[host][visitor],
             "You have no permission to see this receiver's storage"
         );
         _;
@@ -183,7 +183,7 @@ contract RepositoryBase is Ownable, Money {
         return keccak256(abi.encodePacked(a)) == keccak256(abi.encodePacked(b));
     }
 
-    function _addFriendByName(string memory _name) public returns (bool) {
+    function addFriendByName(string memory _name) public returns (bool) {
         if (!isNameExist(_name)) {
             return false;
         } else {
@@ -195,7 +195,7 @@ contract RepositoryBase is Ownable, Money {
         }
     }
 
-    function _addFriendByAddress(address _address) public returns (bool) {
+    function addFriendByAddress(address _address) public returns (bool) {
         if (!isNameExist(addressToName[_address])) {
             return false;
         } else {
@@ -231,5 +231,30 @@ contract RepositoryBase is Ownable, Money {
             requestList[msg.sender][i] = requestList[msg.sender][i + 1];
         }
         delete requestList[msg.sender][requestList[msg.sender].length - 1];
+    }
+
+    function getItemList(
+        uint8 itemType,
+        address user,
+        address target
+    ) public view returns (Item[] memory) {
+        require(
+            user == target || storageAllowence[target][user],
+            "permission denied"
+        );
+        return _repository[ItemType(itemType)][target];
+    }
+
+    function changePermission(address user, address target) public {
+        storageAllowence[user][target] = !storageAllowence[user][target];
+    }
+
+    function friendCheck(address p1, address p2) public view returns (bool) {
+        for (uint256 i = 0; i < friendList[p1].length; i++) {
+            if (friendList[p1][i].friendAddress == p2) {
+                return true;
+            }
+        }
+        return false;
     }
 }

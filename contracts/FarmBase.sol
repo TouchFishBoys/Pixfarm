@@ -29,7 +29,20 @@ contract FarmBase is RepositoryBase {
     /// @dev 品质
     enum Quality {N, R, SR, SSR}
     /// @dev 物种
-    enum Specie {A, B, C, D, E, F, G, H, I, J, K, L}
+    enum Specie {
+        spirel,
+        zebrot,
+        branut,
+        moonbean,
+        malener,
+        sunberry,
+        barner,
+        thorner,
+        quernom,
+        demute,
+        charis,
+        peento
+    }
 
     //total:21 bits
     //  example:
@@ -71,4 +84,30 @@ contract FarmBase is RepositoryBase {
     ];
     /// @dev 果实饱食度
     uint256[] specieFull = [10, 10, 10, 10, 20, 20, 15, 15, 15, 15, 10, 15];
+
+    /// @dev 地价
+    uint256[] landPrice = [12000, 300000, 6000000, 8000000];
+
+    /// @dev 经验值
+    uint256[] landExp = [500, 8000, 120000, 500000];
+
+    function getFarmLevel(address _owner) public view returns (uint8) {
+        uint8 level = 1;
+        for (uint8 i = 0; i < landExp.length; i++) {
+            if (farmExperience[_owner] > landExp[i]) {
+                level = i + 2;
+            }
+        }
+        return level;
+    }
+
+    function upgradeLand(uint8 level) public {
+        require(getFarmLevel(msg.sender) >= level);
+        require(transferToShop(msg.sender, landPrice[level - 2]));
+        for (uint8 i = 0; i < level; i++) {
+            for (uint8 j = 0; j < level; j++) {
+                fields[msg.sender][i][j].unlocked = true;
+            }
+        }
+    }
 }

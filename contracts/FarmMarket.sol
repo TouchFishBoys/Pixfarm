@@ -4,7 +4,7 @@ pragma solidity ^0.8.0;
 import "./MarketBase.sol";
 import "./FarmFactory.sol";
 
-abstract contract FarmMarket is MarketBase, FarmFactory {
+contract FarmMarket is MarketBase, FarmFactory {
     event SeedSoldFromShop(
         address buyer,
         uint256 tag,
@@ -28,6 +28,7 @@ abstract contract FarmMarket is MarketBase, FarmFactory {
         uint256 _amount
     ) public {
         require(level <= 4, "Illegal level");
+        require(getFarmLevel(msg.sender) >= level, "Level lack");
         PlantPropertiesPacked memory pack;
         pack.specie = Specie(specie);
         pack.hp = 0;
@@ -49,11 +50,6 @@ abstract contract FarmMarket is MarketBase, FarmFactory {
         uint256 _price = getSeedValue(specie, level);
         uint256 seedTag = getSeedTag(pack);
         _buySeed(seedTag, _amount, _price);
-        Item memory item;
-        item.tag = uint32(seedTag);
-        item.stack = uint32(_amount);
-        item.usable = true;
-        addItem(ItemType.Seed, msg.sender, item);
     }
 
     /// @dev 计算种子价格
@@ -92,7 +88,8 @@ abstract contract FarmMarket is MarketBase, FarmFactory {
         ItemType _type,
         uint256 _index,
         uint256 _amount
-    ) public {
+    ) public returns (bool) {
         _sell(_type, _index, uint32(_amount));
+        return true;
     }
 }

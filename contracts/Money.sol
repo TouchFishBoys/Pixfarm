@@ -41,6 +41,6 @@ contract Money {
         if (!isSuccess) {
             revert("Recharge failed");
         }
-        money[msg.sender] = money[msg.sender] + _value;
+        money[msg.sender] = money[msg.sender] + (_value / 400000000000);
     }
 }
