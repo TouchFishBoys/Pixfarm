@@ -185,6 +185,7 @@ contract PixFarm is Ownable, IPixFarm, FarmFactory, FarmMarket {
             block.timestamp >= fields[_owner][_x][_y].maturityTime,
             "can't be stolen"
         );
+        require(friendCheck(msg.sender, _owner), "can't be stolen");
         //过宠物判定
         if (!fields[_owner][_x][_y].stolen) {
             //没被偷过

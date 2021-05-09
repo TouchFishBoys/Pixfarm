@@ -248,4 +248,13 @@ contract RepositoryBase is Ownable, Money {
     function changePermission(address user, address target) public {
         storageAllowence[user][target] = !storageAllowence[user][target];
     }
+
+    function friendCheck(address p1, address p2) public view returns (bool) {
+        for (uint256 i = 0; i < friendList[p1].length; i++) {
+            if (friendList[p1][i].friendAddress == p2) {
+                return true;
+            }
+        }
+        return false;
+    }
 }
