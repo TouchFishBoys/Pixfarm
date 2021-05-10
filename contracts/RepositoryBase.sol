@@ -275,18 +275,10 @@ contract RepositoryBase is Ownable, Money {
         return flag;
     }
 
-    function getUsername(address _person)
-        public
-        view
-        returns (bool, string memory)
-    {
-        string memory name;
-        name = "";
-        name = addressToName[_person];
-        if (hashCompare(name, "")) {
-            return (false, name);
-        }
-        return (false, name);
+    function getUsername(address _person) public view returns (string memory) {
+        string memory name = addressToName[_person];
+        require(hashCompare(name, ""), "user has not registered");
+        return name;
     }
 
     function getFriendList() public view returns (friend[] memory) {
