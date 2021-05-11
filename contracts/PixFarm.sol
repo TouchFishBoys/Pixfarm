@@ -272,4 +272,19 @@ contract PixFarm is Ownable, IPixFarm, FarmBase {
     {
         return fields[player];
     }
+
+    function getAge(uint256 sowingTime, uint256 maturityTime)
+        public
+        returns (uint8)
+    {
+        uint256 timePass = block.timestamp - sowingTime;
+        uint256 rate = timePass / (maturityTime - sowingTime);
+        if (rate <= 50) {
+            return 0;
+        }
+        if (rate <= 99) {
+            return 1;
+        }
+        return 2;
+    }
 }

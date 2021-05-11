@@ -39,7 +39,7 @@ contract Pixfarmon {
 
     /// @dev 氪金
     function RechargeMoney(uint256 _money) public {
-        mon._rechargeMoney(_money);
+        mon.rechargeMoney(_money);
     }
 
     /// @dev 买种子

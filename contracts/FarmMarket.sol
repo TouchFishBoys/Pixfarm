@@ -46,7 +46,12 @@ contract FarmMarket is MarketBase, FarmBase {
         }
         uint256 _price = getSeedValue(specie, level);
         uint256 seedTag = fc.getSeedTag(pack);
-        _buy(seedTag, _amount, _price);
+        Item memory i;
+        i.tag = uint32(seedTag);
+        i.stack = uint32(_amount);
+        i.usable = true;
+        addItem(ItemType.Seed, msg.sender, i);
+        transferToShop(msg.sender, getSeedValue(specie, level));
         emit SeedSoldFromShop(msg.sender, seedTag, _amount, _price);
     }
 
