@@ -35,7 +35,7 @@ contract Money {
     }
 
     ///充值
-    function _rechargeMoney(uint256 _value) public {
+    function rechargeMoney(uint256 _value)  payable public {
         bool isSuccess =
             contrac.transferFrom(msg.sender, address(this), _value);
         if (!isSuccess) {
