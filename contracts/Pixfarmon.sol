@@ -10,7 +10,7 @@ import "./FarmMarket.sol";
 contract Pixfarmon {
     Auction auction;
     Money mon;
-    RepositoryBase rb;
+    RepositoryBase public rb;
     FarmMarket fm;
     FarmBase fb;
 
@@ -99,5 +99,9 @@ contract Pixfarmon {
     /// @dev 检查是否已注册
     function isregister(address _person) public view returns (bool) {
         return rb._isregister(_person);
+    }
+
+    function getUsername(address player) public view returns (string memory) {
+        return rb.getUsername(player);
     }
 }

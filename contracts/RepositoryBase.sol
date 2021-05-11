@@ -277,7 +277,7 @@ contract RepositoryBase is Ownable, Money {
 
     function getUsername(address _person) public view returns (string memory) {
         string memory name = addressToName[_person];
-        require(hashCompare(name, ""), "user has not registered");
+        require(!hashCompare(name, ""), "USER_NOTREGISTERED");
         return name;
     }
 

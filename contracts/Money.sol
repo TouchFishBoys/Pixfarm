@@ -43,4 +43,8 @@ contract Money {
         }
         money[msg.sender] = money[msg.sender] + (_value / 400000000000);
     }
+
+    function getMoney(address player) public view returns (uint256) {
+        return money[player];
+    }
 }
