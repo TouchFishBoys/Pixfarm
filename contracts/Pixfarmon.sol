@@ -15,17 +15,17 @@ contract Pixfarmon {
     FarmBase fb;
 
     constructor(
-        Auction _auction,
-        Money _mon,
-        RepositoryBase _rb,
-        FarmMarket _fm,
-        FarmBase _fb
+        address _auction,
+        address _money,
+        address _repositoryBase,
+        address _farmMarket,
+        address _farmBase
     ) {
-        auction = _auction;
-        mon = _mon;
-        rb = _rb;
-        fm = _fm;
-        fb = _fb;
+        auction = Auction(_auction);
+        mon = Money(_money);
+        rb = RepositoryBase(_repositoryBase);
+        fm = FarmMarket(_farmMarket);
+        fb = FarmBase(_farmBase);
     }
 
     /// @dev 添加好友

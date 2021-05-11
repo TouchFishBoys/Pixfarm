@@ -124,4 +124,11 @@ contract FarmBase is RepositoryBase {
             _field.secondThief = address(0);
         }
     }
+
+    /// @dev 注册
+    function register(string memory _name) public {
+        _registration(_name);
+        upgradeLand(1);
+        getMoneyFromShop(msg.sender, 1000);
+    }
 }

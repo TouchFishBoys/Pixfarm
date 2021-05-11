@@ -1,0 +1,331 @@
+{
+	"compiler": {
+		"version": "0.8.1+commit.df193b15"
+	},
+	"language": "Solidity",
+	"output": {
+		"abi": [
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "_auction",
+						"type": "address"
+					},
+					{
+						"internalType": "address",
+						"name": "_money",
+						"type": "address"
+					},
+					{
+						"internalType": "address",
+						"name": "_repositoryBase",
+						"type": "address"
+					},
+					{
+						"internalType": "address",
+						"name": "_farmMarket",
+						"type": "address"
+					},
+					{
+						"internalType": "address",
+						"name": "_farmBase",
+						"type": "address"
+					}
+				],
+				"stateMutability": "nonpayable",
+				"type": "constructor"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "_address",
+						"type": "address"
+					}
+				],
+				"name": "AddFriendByAddress",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "string",
+						"name": "_name",
+						"type": "string"
+					}
+				],
+				"name": "AddFriendByName",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "uint256",
+						"name": "specie",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "level",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "_amount",
+						"type": "uint256"
+					}
+				],
+				"name": "BuySeedFromShop",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "uint256",
+						"name": "_money",
+						"type": "uint256"
+					}
+				],
+				"name": "RechargeMoney",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "deployAnAuction",
+				"outputs": [
+					{
+						"internalType": "uint256[]",
+						"name": "",
+						"type": "uint256[]"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "player",
+						"type": "address"
+					}
+				],
+				"name": "getUsername",
+				"outputs": [
+					{
+						"internalType": "string",
+						"name": "",
+						"type": "string"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "_person",
+						"type": "address"
+					}
+				],
+				"name": "isregister",
+				"outputs": [
+					{
+						"internalType": "bool",
+						"name": "",
+						"type": "bool"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "rb",
+				"outputs": [
+					{
+						"internalType": "contract RepositoryBase",
+						"name": "",
+						"type": "address"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "string",
+						"name": "_name",
+						"type": "string"
+					}
+				],
+				"name": "register",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			}
+		],
+		"devdoc": {
+			"kind": "dev",
+			"methods": {
+				"AddFriendByName(string)": {
+					"details": "添加好友"
+				},
+				"BuySeedFromShop(uint256,uint256,uint256)": {
+					"details": "买种子"
+				},
+				"RechargeMoney(uint256)": {
+					"details": "氪金"
+				},
+				"deployAnAuction()": {
+					"details": "拍卖"
+				},
+				"isregister(address)": {
+					"details": "检查是否已注册"
+				},
+				"register(string)": {
+					"details": "注册"
+				}
+			},
+			"version": 1
+		},
+		"userdoc": {
+			"kind": "user",
+			"methods": {},
+			"version": 1
+		}
+	},
+	"settings": {
+		"compilationTarget": {
+			"contracts/Pixfarmon.sol": "Pixfarmon"
+		},
+		"evmVersion": "istanbul",
+		"libraries": {},
+		"metadata": {
+			"bytecodeHash": "ipfs"
+		},
+		"optimizer": {
+			"enabled": true,
+			"runs": 200
+		},
+		"remappings": []
+	},
+	"sources": {
+		"@openzeppelin/contracts/access/Ownable.sol": {
+			"keccak256": "0x1cae4f85f114ff17b90414f5da67365b1d00337abb5bce9bf944eb78a2c0673c",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://d5ff16b336ce8f906478d5f2eecc6435e00833bdc0b92f6b209cf9e92cb5b2b7",
+				"dweb:/ipfs/QmRD1rAZEqQ73C33cdA3QoUyBDMEWnNKNMc6PNkAZWHeQQ"
+			]
+		},
+		"@openzeppelin/contracts/token/ERC20/IERC20.sol": {
+			"keccak256": "0xf8e8d118a7a8b2e134181f7da655f6266aa3a0f9134b2605747139fcb0c5d835",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://9ec48567e7ad06acb670980d5cdf3fd7f3949bf12894f02d68c3bb43e75aa84f",
+				"dweb:/ipfs/QmaG3R2J9cz92YT77vFjYrjMNU2wHp4ypwYD62HqDUqS5U"
+			]
+		},
+		"@openzeppelin/contracts/utils/Context.sol": {
+			"keccak256": "0xf930d2df426bfcfc1f7415be724f04081c96f4fb9ec8d0e3a521c07692dface0",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://fc2bfdea0d2562c76fb3c4cf70a86c6ba25c5a30e8f8515c95aafdf8383f8395",
+				"dweb:/ipfs/QmTbFya18786ckJfLYUoWau9jBTKfmWnWm5XSViWvB7PXN"
+			]
+		},
+		"contracts/Auction.sol": {
+			"keccak256": "0x9c2cdc91780818e552109f6715a1f2462a069e1978ea09cf17f650828e7c60c1",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://9baa2a834116de65a30184978403b0d647932b5ce08e3be9b92f5ebb0d73b01f",
+				"dweb:/ipfs/QmRUG4Fq9w955P6hMS6y9AYwPAk5rmpHTyq9h4YUynzbLu"
+			]
+		},
+		"contracts/AuctionBase.sol": {
+			"keccak256": "0x469e31af6f5ce29504c59ccf191e32d99fa6d30805ef04d3c2e7caecb1c418b2",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://0314d079f5db4513c519793bc280353cc1f3ac395468856d98a2bd9debf97fb8",
+				"dweb:/ipfs/QmduV9ZmtUzWA3coQiAhS6aVXbUXJUf9y3BBoY1JDdsfL5"
+			]
+		},
+		"contracts/FarmBase.sol": {
+			"keccak256": "0x7635db6a427a9515f9d96245940d795f6c49147547ca0ced86ff81490d2e643b",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://683419ac56fef9fe2879abcf8cf3af39269a6d5c5f4768300e593c02d26b609f",
+				"dweb:/ipfs/QmZPrCafZ1Saqm2X8GB7CpmzF3Ujo7Cb8RoZYdoDQamgjg"
+			]
+		},
+		"contracts/FarmFactory.sol": {
+			"keccak256": "0x40586619a4fb2c4d665d57871a320bfd42a66aa9d549b898edfa478af75d1683",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://09f31eab155bc9e532cd017be385c52ad254ad5f05f2cf69965978ab53204d6e",
+				"dweb:/ipfs/QmYoubiByUcyfRrvnywxjn7cidrCXpmGosvg4zwKEYhFym"
+			]
+		},
+		"contracts/FarmMarket.sol": {
+			"keccak256": "0x2d504c26c0937a7565d1fa2c256013f6bd41acbcdef8158d64cd007b8efdc684",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://ee63f6197897f1ac331c3d866598730308de00e08beb2182d3ac379b900626e0",
+				"dweb:/ipfs/QmfK5vQjLtzdKstw2TrWKGkZAz2QYRKj8dxDVjSFsZx2Fd"
+			]
+		},
+		"contracts/MarketBase.sol": {
+			"keccak256": "0xdc880ceff32681f79e20407b547e90954f7a9a6fea11480faa8a995908418982",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://4ad2bf19a102341f9ebf2efb07740332d6d0fe42c82e2cd15976a8f0e7ac1d74",
+				"dweb:/ipfs/QmRvQv5cbt1fzJZB2PpzJnHNVmft4S8LxYVGUvaj2a9bJ5"
+			]
+		},
+		"contracts/Money.sol": {
+			"keccak256": "0xeebf2d8cd3861efeea13bb2dcbeeccaf8b8a2675a72beddeb5a08827c5514733",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://1492afa40a3b84ef7b59d15c76065fc2f90d7f842450e669b49c7b8d2b161224",
+				"dweb:/ipfs/Qmc3cVToku3NZ3wjeTQzZETA9sTVUiQV2oxYH216GxHvGZ"
+			]
+		},
+		"contracts/PixFarm.sol": {
+			"keccak256": "0x390464552929e9f975749c41ae923e863717d580cf0c2e671a525aa27cdec013",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://a255cab32e6bc74d7cb73e42b252b937ab9bbb4a6e2f69c52aac87d304e9a8e0",
+				"dweb:/ipfs/QmPsFuXcKU64i875q7K27jJctG6ToKcKSdQHPQbkP2qqGm"
+			]
+		},
+		"contracts/Pixfarmon.sol": {
+			"keccak256": "0x80ad88af92345e54698b2a8c62c153d993d90091c6fbe633564cf1b5f7c18f8e",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://b10f64b69139164544a19a145e188c583836990ea1e36ab8a9cb0145761a4636",
+				"dweb:/ipfs/QmSJwftEsuQCczu2ReYHzC3XJRkB2UUgACWGT7M2HVzTfh"
+			]
+		},
+		"contracts/RepositoryBase.sol": {
+			"keccak256": "0xf261863f696972ea11bb87335fd59452d815019591e88ca124b0f6854901a675",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://7ba779b332e9c6be517bf8e0724e97105aa1bd2ba228c11e269d8021356dc977",
+				"dweb:/ipfs/QmZh6iVi31hNLUXh2gqYydzbhsVEcxYwJVJ35iiEK7feSx"
+			]
+		}
+	},
+	"version": 1
+}

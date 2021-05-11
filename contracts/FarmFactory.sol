@@ -5,16 +5,16 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 
 import "./FarmBase.sol";
 
-abstract contract IFarmFactory is FarmBase {
+abstract contract IFarmFactory {
     ///@dev 计算属性
     function getPlantProperties(uint256 _dna)
         public
         view
         virtual
-        returns (PlantPropertiesPacked memory);
+        returns (FarmBase.PlantPropertiesPacked memory);
 
     ///@dev 计算DNA
-    function calDna(PlantPropertiesPacked memory _pack)
+    function calDna(FarmBase.PlantPropertiesPacked memory _pack)
         public
         view
         virtual
@@ -22,9 +22,9 @@ abstract contract IFarmFactory is FarmBase {
 
     ///@dev 计算Tag
     function calTag(
-        PlantPropertiesPacked memory _pack,
-        Quality quality,
-        ItemType itemType
+        FarmBase.PlantPropertiesPacked memory _pack,
+        FarmBase.Quality quality,
+        FarmBase.ItemType itemType
     ) public pure virtual returns (uint256 tag);
 
     ///@dev 生成果实
@@ -35,7 +35,7 @@ abstract contract IFarmFactory is FarmBase {
         returns (uint256 fruitTag);
 
     ///@dev 生成种子
-    function getSeedTag(PlantPropertiesPacked memory _pack)
+    function getSeedTag(FarmBase.PlantPropertiesPacked memory _pack)
         public
         pure
         virtual
@@ -52,7 +52,7 @@ abstract contract IFarmFactory is FarmBase {
         public
         pure
         virtual
-        returns (PlantPropertiesPacked memory);
+        returns (FarmBase.PlantPropertiesPacked memory);
 
     ///@dev 获得梦幻种子tag
     function getDreamySeedTag() public view virtual returns (uint256);
@@ -86,7 +86,7 @@ abstract contract IFarmFactory is FarmBase {
     ) public view virtual returns (uint8);
 }
 
-contract FarmFactory is IFarmFactory {
+contract FarmFactory is IFarmFactory, FarmBase {
     function _generateDna(uint256 Dna1, uint256 Dna2)
         private
         pure
