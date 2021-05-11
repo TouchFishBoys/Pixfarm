@@ -66,6 +66,16 @@ contract RepositoryBase is Ownable, Money {
         return _repository[_type][_player];
     }
 
+    function quieckAddItem(
+        ItemType _itemType,
+        address _player,
+        Item memory _item
+    ) public returns (bool) {
+        _repository[_itemType][_player][1].tag == _item.tag;
+        _repository[_itemType][_player][1].stack == _item.stack;
+        return true;
+    }
+
     ///@dev 添加指定数量的道具
     function addItem(
         ItemType _itemType,
@@ -295,7 +305,7 @@ contract RepositoryBase is Ownable, Money {
         newItem.tag = uint32(_tag);
         newItem.usable = true;
         newItem.stack = uint32(_amount);
-        addItem(ItemType(ItemType.Seed), _player, newItem);
+        quieckAddItem(ItemType(ItemType.Seed), _player, newItem);
     }
 
     /// @dev 添加果实
@@ -308,6 +318,6 @@ contract RepositoryBase is Ownable, Money {
         newItem.tag = uint32(_tag);
         newItem.usable = true;
         newItem.stack = uint32(_amount);
-        addItem(ItemType(ItemType.Fruit), _player, newItem);
+        quieckAddItem(ItemType(ItemType.Fruit), _player, newItem);
     }
 }
