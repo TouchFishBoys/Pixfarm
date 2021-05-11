@@ -284,4 +284,30 @@ contract RepositoryBase is Ownable, Money {
     function getFriendList() public view returns (friend[] memory) {
         return friendList[msg.sender];
     }
+
+    /// @dev 添加种子
+    function addSeed(
+        uint256 _tag,
+        address _player,
+        uint256 _amount
+    ) public {
+        Item memory newItem;
+        newItem.tag = uint32(_tag);
+        newItem.usable = true;
+        newItem.stack = uint32(_amount);
+        addItem(ItemType(_tag >> 17), _player, newItem);
+    }
+
+    /// @dev 添加果实
+    function addFruit(
+        uint256 _tag,
+        address _player,
+        uint256 _amount
+    ) public {
+        Item memory newItem;
+        newItem.tag = uint32(_tag);
+        newItem.usable = true;
+        newItem.stack = uint32(_amount);
+        addItem(ItemType(_tag >> 17), _player, newItem);
+    }
 }
