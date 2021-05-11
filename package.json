@@ -22,6 +22,7 @@
     "@truffle/hdwallet-provider": "^1.2.6",
     "openzeppelin-solidity": "^4.0.0",
     "solc": "^0.8.3",
-    "truffle-contract-size": "^2.0.1"
+    "truffle-contract-size": "^2.0.1",
+    "truffle-hdwallet-provider": "^1.0.17"
   }
 }
