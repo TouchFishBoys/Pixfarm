@@ -295,7 +295,7 @@ contract RepositoryBase is Ownable, Money {
         newItem.tag = uint32(_tag);
         newItem.usable = true;
         newItem.stack = uint32(_amount);
-        addItem(ItemType(_tag >> 17), _player, newItem);
+        addItem(ItemType(ItemType.Seed), _player, newItem);
     }
 
     /// @dev 添加果实
@@ -308,6 +308,6 @@ contract RepositoryBase is Ownable, Money {
         newItem.tag = uint32(_tag);
         newItem.usable = true;
         newItem.stack = uint32(_amount);
-        addItem(ItemType(_tag >> 17), _player, newItem);
+        addItem(ItemType(ItemType.Fruit), _player, newItem);
     }
 }
