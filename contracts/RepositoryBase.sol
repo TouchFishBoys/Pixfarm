@@ -62,7 +62,7 @@ contract RepositoryBase is Ownable, Money {
 
     /// @dev 获取玩家拥有的物品列表
     function _getAll(ItemType _type, address _player)
-        public
+        internal
         view
         returns (Item[] memory)
     {
