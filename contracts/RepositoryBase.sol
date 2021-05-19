@@ -14,7 +14,9 @@ contract RepositoryBase is Ownable, Money {
     mapping(address => string) public addressToName;
 
     /// @dev 玩家的仓库
-    mapping(ItemType => mapping(address => Item[])) internal _repository;
+    //mapping(ItemType => mapping(address => Item[])) internal _repository;
+    mapping(address => mapping(ItemType => mapping(uint256 => Item)))
+        internal _backpack;
 
     /// @dev 好友
     struct friend {
@@ -43,27 +45,36 @@ contract RepositoryBase is Ownable, Money {
     function _remove(
         ItemType _type,
         address _player,
-        uint256 _slot
+        uint256 _index,
+        uint32 _amount
     ) internal {
-        delete _repository[_type][_player][_slot];
+        _backpack[_player][_type][_index].stack -= _amount;
     }
 
     ///@dev 获取玩家在某个槽的物品
     function _get(
         ItemType _type,
         address _player,
-        uint256 _slot
+        uint256 _index
     ) internal view returns (Item memory) {
-        return _repository[_type][_player][_slot];
+        return _backpack[_player][_type][_index];
     }
 
     /// @dev 获取玩家拥有的物品列表
     function _getAll(ItemType _type, address _player)
-        internal
+        public
         view
         returns (Item[] memory)
     {
-        return _repository[_type][_player];
+        Item[] memory items;
+        uint8 p = 0;
+        for (uint8 i = 0; i < 50; i++) {
+            if (_backpack[_player][_type][i].stack != 0) {
+                items[p] = _backpack[_player][_type][i];
+                p += 1;
+            }
+        }
+        return items;
     }
 
     function quieckAddItem(
@@ -71,8 +82,9 @@ contract RepositoryBase is Ownable, Money {
         address _player,
         Item memory _item
     ) public returns (bool) {
-        _repository[_itemType][_player][1].tag == _item.tag;
-        _repository[_itemType][_player][1].stack == _item.stack;
+        // _repository[_itemType][_player][1].tag == _item.tag;
+        // _repository[_itemType][_player][1].stack == _item.stack;
+        _backpack[_player][_itemType][1] = _item;
         return true;
     }
 
@@ -83,31 +95,33 @@ contract RepositoryBase is Ownable, Money {
         Item memory _item
     ) public returns (bool) {
         // TODO 溢出处理
-        for (uint256 i = 0; i < _repository[_itemType][_player].length; i++) {
-            if (_repository[_itemType][_player][i].tag == _item.tag) {
-                _repository[_itemType][_player][i].stack += _item.stack;
+        for (uint256 i = 0; i < 50; i++) {
+            if (_backpack[_player][_itemType][i].tag == _item.tag) {
+                _backpack[_player][_itemType][i].stack += _item.stack;
                 return true;
             }
         }
-        _repository[_itemType][_player][_findFirstPlace(_player, _itemType)]
-            .tag == _item.tag;
-        _repository[_itemType][_player][_findFirstPlace(_player, _itemType)]
-            .stack == _item.stack;
+        if (_findFirstPlace(_player, _itemType) == 50) {
+            return false;
+        }
+        _backpack[_player][_itemType][
+            _findFirstPlace(_player, _itemType)
+        ] = _item;
         return true;
     }
 
     /// @dev 找到对应仓库的第一个空位
-    function _findFirstPlace(address _receiver, ItemType _itemType)
+    function _findFirstPlace(address _player, ItemType _itemType)
         internal
         view
         returns (uint256)
     {
-        for (uint256 i = 0; i < _repository[_itemType][_receiver].length; i++) {
-            if (_repository[_itemType][_receiver][i].stack == 0) {
+        for (uint256 i = 0; i < 50; i++) {
+            if (_backpack[_player][_itemType][i].stack == 0) {
                 return i;
             }
         }
-        return _repository[_itemType][_receiver].length;
+        return 50; //full
     }
 
     /// @dev 删除指定 tag 的物品 _amount 个
@@ -117,12 +131,12 @@ contract RepositoryBase is Ownable, Money {
         uint256 _tag,
         uint32 _amount
     ) public returns (bool) {
-        for (uint256 i = 0; i < _repository[_itemType][_player].length; i++) {
-            if (_repository[_itemType][_player][i].tag == _tag) {
-                if (_amount > _repository[_itemType][_player][i].stack) {
+        for (uint256 i = 0; i < 50; i++) {
+            if (_backpack[_player][_itemType][i].tag == _tag) {
+                if (_amount > _backpack[_player][_itemType][i].stack) {
                     return false;
                 } else {
-                    _repository[_itemType][_player][i].stack -= _amount;
+                    _backpack[_player][_itemType][i].stack -= _amount;
                     return true;
                 }
             }
@@ -251,7 +265,7 @@ contract RepositoryBase is Ownable, Money {
             user == target || storageAllowence[target][user],
             "permission denied"
         );
-        return _repository[ItemType(itemType)][target];
+        return _getAll(ItemType(itemType), target);
     }
 
     function changePermission(address user, address target) public {
@@ -277,6 +291,7 @@ contract RepositoryBase is Ownable, Money {
     /// @dev 是否已注册
     function _isregister(address _person) public view returns (bool) {
         bool flag = false;
+        //TODO
         for (uint256 i = 0; i < playersAddress.length; i++) {
             if (playersAddress[i] == _person) {
                 flag = true;

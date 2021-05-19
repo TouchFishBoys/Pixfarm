@@ -44,6 +44,7 @@ contract FarmMarket is MarketBase, FarmBase {
                 pack.spd++;
             }
         }
+        //TODO
         uint256 _price = getSeedValue(specie, level);
         uint256 seedTag = fc.getSeedTag(pack);
         Item memory i;

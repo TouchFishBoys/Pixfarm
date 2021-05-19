@@ -89,15 +89,29 @@ contract FarmBase is RepositoryBase {
     uint256[] landPrice = [12000, 300000, 6000000, 8000000];
 
     /// @dev 经验值
-    uint256[] landExp = [500, 8000, 120000, 500000];
+    //uint256[] landExp = [500, 8000, 120000, 500000];
 
     function getFarmLevel(address _owner) public view returns (uint8) {
-        uint8 level = 1;
-        for (uint8 i = 0; i < landExp.length; i++) {
-            if (farmExperience[_owner] > landExp[i]) {
-                level = i + 2;
-            }
+        uint8 level;
+        uint256 Exp = farmExperience[_owner];
+        // for (uint8 i = 0; i < landExp.length; i++) {
+        //     if (farmExperience[_owner] > landExp[i]) {
+        //         level = i + 2;
+        //     }
+        // }
+        if(Exp<500){
+            level=1;
+        }else if(Exp<8000){
+            level=2;
+        }else if(Exp<120000){
+            level=3;
+        }else if(Exp<500000){
+            level=4;
+        }else{
+            level=5;
         }
+
+
         return level;
     }
 
