@@ -17,6 +17,7 @@ contract RepositoryBase is Ownable, Money {
     //mapping(ItemType => mapping(address => Item[])) internal _repository;
     mapping(address => mapping(ItemType => mapping(uint256 => Item)))
         internal _backpack;
+    mapping(address => uint256) internal maxIndex;
 
     /// @dev 好友
     struct friend {
@@ -68,7 +69,7 @@ contract RepositoryBase is Ownable, Money {
     {
         Item[] memory items;
         uint8 p = 0;
-        for (uint8 i = 0; i < 50; i++) {
+        for (uint8 i = 0; i < maxIndex[_player]; i++) {
             if (_backpack[_player][_type][i].stack != 0) {
                 items[p] = _backpack[_player][_type][i];
                 p += 1;
@@ -95,7 +96,7 @@ contract RepositoryBase is Ownable, Money {
         Item memory _item
     ) public returns (bool) {
         // TODO 溢出处理
-        for (uint256 i = 0; i < 50; i++) {
+        for (uint256 i = 0; i < maxIndex[_player]; i++) {
             if (_backpack[_player][_itemType][i].tag == _item.tag) {
                 _backpack[_player][_itemType][i].stack += _item.stack;
                 return true;
@@ -113,14 +114,19 @@ contract RepositoryBase is Ownable, Money {
     /// @dev 找到对应仓库的第一个空位
     function _findFirstPlace(address _player, ItemType _itemType)
         internal
-        view
         returns (uint256)
     {
-        for (uint256 i = 0; i < 50; i++) {
+        uint256 index;
+        for (uint256 i = 0; i < maxIndex[_player]; i++) {
             if (_backpack[_player][_itemType][i].stack == 0) {
-                return i;
+                index = i;
             }
         }
+        if (index == 0 && maxIndex[_player] <= 49) {
+            maxIndex[_player] += 1;
+            index = maxIndex[_player];
+        }
+        return index;
         return 50; //full
     }
 
