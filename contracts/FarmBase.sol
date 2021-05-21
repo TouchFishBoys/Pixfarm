@@ -99,18 +99,17 @@ contract FarmBase is RepositoryBase {
         //         level = i + 2;
         //     }
         // }
-        if(Exp<500){
-            level=1;
-        }else if(Exp<8000){
-            level=2;
-        }else if(Exp<120000){
-            level=3;
-        }else if(Exp<500000){
-            level=4;
-        }else{
-            level=5;
+        if (Exp < 500) {
+            level = 1;
+        } else if (Exp < 8000) {
+            level = 2;
+        } else if (Exp < 120000) {
+            level = 3;
+        } else if (Exp < 500000) {
+            level = 4;
+        } else {
+            level = 5;
         }
-
 
         return level;
     }
@@ -144,5 +143,6 @@ contract FarmBase is RepositoryBase {
         _registration(_name);
         upgradeLand(1);
         getMoneyFromShop(msg.sender, 1000);
+        maxIndex[msg.sender] = 0;
     }
 }

@@ -108,12 +108,16 @@ contract RepositoryBase is Ownable, Money {
         _backpack[_player][_itemType][
             _findFirstPlace(_player, _itemType)
         ] = _item;
+        if (_findFirstPlace(_player, _itemType) == maxIndex[_player]) {
+            maxIndex[_player] += 1;
+        }
         return true;
     }
 
     /// @dev 找到对应仓库的第一个空位
     function _findFirstPlace(address _player, ItemType _itemType)
-        internal
+        public
+        view
         returns (uint256)
     {
         uint256 index;
@@ -123,11 +127,9 @@ contract RepositoryBase is Ownable, Money {
             }
         }
         if (index == 0 && maxIndex[_player] <= 49) {
-            maxIndex[_player] += 1;
-            index = maxIndex[_player];
+            return maxIndex[_player];
         }
-        return index;
-        return 50; //full
+        return 50;
     }
 
     /// @dev 删除指定 tag 的物品 _amount 个
@@ -326,7 +328,7 @@ contract RepositoryBase is Ownable, Money {
         newItem.tag = uint32(_tag);
         newItem.usable = true;
         newItem.stack = uint32(_amount);
-        quieckAddItem(ItemType(ItemType.Seed), _player, newItem);
+        addItem(ItemType(ItemType.Seed), _player, newItem);
     }
 
     /// @dev 添加果实
@@ -339,6 +341,6 @@ contract RepositoryBase is Ownable, Money {
         newItem.tag = uint32(_tag);
         newItem.usable = true;
         newItem.stack = uint32(_amount);
-        quieckAddItem(ItemType(ItemType.Fruit), _player, newItem);
+        addItem(ItemType(ItemType.Fruit), _player, newItem);
     }
 }
