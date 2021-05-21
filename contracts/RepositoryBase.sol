@@ -17,7 +17,7 @@ contract RepositoryBase is Ownable, Money {
     //mapping(ItemType => mapping(address => Item[])) internal _repository;
     mapping(address => mapping(ItemType => mapping(uint256 => Item)))
         internal _backpack;
-    mapping(address => uint256) internal maxIndex;
+    mapping(address => uint256[8]) internal maxIndex;
 
     /// @dev 好友
     struct friend {
@@ -65,11 +65,11 @@ contract RepositoryBase is Ownable, Money {
     function _getAll(ItemType _type, address _player)
         internal
         view
-        returns (Item[] memory)
+        returns (Item[50] memory)
     {
-        Item[] memory items;
+        Item[50] memory items;
         uint8 p = 0;
-        for (uint8 i = 0; i < maxIndex[_player]; i++) {
+        for (uint8 i = 0; i < maxIndex[_player][uint8(_type)]; i++) {
             if (_backpack[_player][_type][i].stack != 0) {
                 items[p] = _backpack[_player][_type][i];
                 p += 1;
@@ -96,7 +96,7 @@ contract RepositoryBase is Ownable, Money {
         Item memory _item
     ) public returns (bool) {
         // TODO 溢出处理
-        for (uint256 i = 0; i < maxIndex[_player]; i++) {
+        for (uint256 i = 0; i < maxIndex[_player][uint8(_itemType)]; i++) {
             if (_backpack[_player][_itemType][i].tag == _item.tag) {
                 _backpack[_player][_itemType][i].stack += _item.stack;
                 return true;
@@ -108,8 +108,11 @@ contract RepositoryBase is Ownable, Money {
         _backpack[_player][_itemType][
             _findFirstPlace(_player, _itemType)
         ] = _item;
-        if (_findFirstPlace(_player, _itemType) == maxIndex[_player]) {
-            maxIndex[_player] += 1;
+        if (
+            _findFirstPlace(_player, _itemType) ==
+            maxIndex[_player][uint8(_itemType)]
+        ) {
+            maxIndex[_player][uint8(_itemType)] += 1;
         }
         return true;
     }
@@ -121,13 +124,13 @@ contract RepositoryBase is Ownable, Money {
         returns (uint256)
     {
         uint256 index;
-        for (uint256 i = 0; i < maxIndex[_player]; i++) {
+        for (uint256 i = 0; i < maxIndex[_player][uint8(_itemType)]; i++) {
             if (_backpack[_player][_itemType][i].stack == 0) {
                 index = i;
             }
         }
-        if (index == 0 && maxIndex[_player] <= 49) {
-            return maxIndex[_player];
+        if (index == 0 && maxIndex[_player][uint8(_itemType)] <= 49) {
+            return maxIndex[_player][uint8(_itemType)];
         }
         return 50;
     }
@@ -268,7 +271,7 @@ contract RepositoryBase is Ownable, Money {
         uint8 itemType,
         address user,
         address target
-    ) public view returns (Item[] memory) {
+    ) public view returns (Item[50] memory) {
         require(
             user == target || storageAllowence[target][user],
             "permission denied"
