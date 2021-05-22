@@ -3,9 +3,9 @@ pragma solidity ^0.8.0;
 
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "./AuctionBase.sol";
-import "./RepositoryBase.sol";
+import "./Repository.sol";
 
-contract MarketBase is RepositoryBase {
+contract MarketBase is Repository {
     /// @dev 等级附加售价
     uint256[] PirceForLevel = [
         uint256(100),

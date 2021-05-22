@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
-import "./RepositoryBase.sol";
+import "./Repository.sol";
 
-contract FarmBase is RepositoryBase {
+contract FarmBase is Repository {
     /// @dev 属性封包
     struct PlantPropertiesPacked {
         Specie specie;
@@ -143,6 +143,13 @@ contract FarmBase is RepositoryBase {
         _registration(_name);
         upgradeLand(1);
         getMoneyFromShop(msg.sender, 1000);
-        maxIndex[msg.sender] = 0;
+        maxIndex[msg.sender][0] = 0;
+        maxIndex[msg.sender][1] = 0;
+        maxIndex[msg.sender][2] = 0;
+        maxIndex[msg.sender][3] = 0;
+        maxIndex[msg.sender][4] = 0;
+        maxIndex[msg.sender][5] = 0;
+        maxIndex[msg.sender][6] = 0;
+        maxIndex[msg.sender][7] = 0;
     }
 }

@@ -1,5 +1,5 @@
 const Money = artifacts.require("Money");
-const RepositoryBase = artifacts.require("RepositoryBase");
+const Repository = artifacts.require("Repository");
 const AuctionBase = artifacts.require("AuctionBase");
 const FarmBase = artifacts.require("FarmBase");
 const FarmFactory = artifacts.require("FarmFactory");
@@ -16,7 +16,7 @@ const Auction = artifacts.require("Auction");
 
 module.exports = function(deployer) {
   // deployer.deploy(Money);
-  // deployer.deploy(RepositoryBase);
+  // deployer.deploy(Repository);
   // deployer.deploy(AuctionBase);
 
   // deployer.deploy(MarketBase);

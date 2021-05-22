@@ -3,27 +3,27 @@ pragma solidity ^0.8.0;
 
 import "./PixFarm.sol";
 import "./Money.sol";
-import "./RepositoryBase.sol";
+import "./Repository.sol";
 import "./Auction.sol";
 import "./FarmMarket.sol";
 
 contract Pixfarmon {
     Auction auction;
     Money mon;
-    RepositoryBase public rb;
+    Repository public rb;
     FarmMarket fm;
     FarmBase fb;
 
     constructor(
         address _auction,
         address _money,
-        address _repositoryBase,
+        address _repository,
         address _farmMarket,
         address _farmBase
     ) {
         auction = Auction(_auction);
         mon = Money(_money);
-        rb = RepositoryBase(_repositoryBase);
+        rb = Repository(_repository);
         fm = FarmMarket(_farmMarket);
         fb = FarmBase(_farmBase);
     }

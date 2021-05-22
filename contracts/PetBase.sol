@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
-import "./RepositoryBase.sol";
+import "./Repository.sol";
 
-contract PetBase is RepositoryBase {
+contract PetBase is Repository {
     /// @dev  宠物列表
     mapping(address => PetPropertiesPacked[]) internal petList;
 

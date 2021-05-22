@@ -4,7 +4,8 @@ pragma solidity ^0.8.0;
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "./Money.sol";
 
-contract RepositoryBase is Ownable, Money {
+/// @dev 游戏的仓库的合约
+contract Repository is Ownable, Money {
     // 定义了物品的类型
     enum ItemType {Seed, Fruit, Feed} // 3bits for futher development
 
