@@ -71,6 +71,7 @@ contract PixFarm is Ownable, IPixFarm, FarmBase {
     /// @param _x x坐标
     /// @param _y y坐标
     function harvest(uint256 _x, uint256 _y) public override {
+        require(fields[msg.sender][_x][_y].used == true);
         require(fields[msg.sender][_x][_y].unlocked == true);
         require(block.timestamp >= fields[msg.sender][_x][_y].maturityTime);
         fields[msg.sender][_x][_y].used = false;
@@ -83,27 +84,27 @@ contract PixFarm is Ownable, IPixFarm, FarmBase {
         uint256 x = _x;
         uint256 y = _y;
         uint256 fruitTag;
-        uint8 sign = fc.randomHybridize(msg.sender, uint8(_x), uint8(_y));
-        if (sign == 1) {
-            //up
-            y += 1;
-        } else if (sign == 2) {
-            //down
-            y -= 1;
-        } else if (sign == 3) {
-            //left
-            x -= 1;
-        } else {
-            //right
-            x += 1;
-        }
-        fruitTag = fc.getHarvestFruitTag(
-            fields[msg.sender][_x][_y].seedTag,
-            fields[msg.sender][x][y].seedTag
-        );
-        if (sign == 0) {
-            fruitTag = fc.getFruitTag(fields[msg.sender][_x][_y].seedTag);
-        }
+        // uint8 sign = fc.randomHybridize(msg.sender, uint8(_x), uint8(_y));
+        // if (sign == 1) {
+        //     //up
+        //     y += 1;
+        // } else if (sign == 2) {
+        //     //down
+        //     y -= 1;
+        // } else if (sign == 3) {
+        //     //left
+        //     x -= 1;
+        // } else {
+        //     //right
+        //     x += 1;
+        // }
+        // fruitTag = fc.getHarvestFruitTag(
+        //     fields[msg.sender][_x][_y].seedTag,
+        //     fields[msg.sender][x][y].seedTag
+        // );
+        // if (sign == 0) {
+        //     fruitTag = fc.getFruitTag(fields[msg.sender][_x][_y].seedTag);
+        // }
 
         // if (giveItem(ItemType.Fruit,msg.sender, fruitTag, num)) {
         //     _initField(fields[msg.sender][_x][_y]);
@@ -118,6 +119,7 @@ contract PixFarm is Ownable, IPixFarm, FarmBase {
         item.stack = num;
         addItem(ItemType.Fruit, msg.sender, item);
         farmExperience[msg.sender] += fm.getFruitValueByTag(fruitTag) / 10;
+        _initField(fields[msg.sender][_x][_y]);
         //return uint8(num);
     }
 
@@ -162,10 +164,9 @@ contract PixFarm is Ownable, IPixFarm, FarmBase {
             item.tag = uint32(fields[msg.sender][_x][_y].seedTag);
             addItem(ItemType.Seed, msg.sender, item);
             return true;
-        } else {
-            _initField(fields[msg.sender][_x][_y]);
-            return true;
         }
+        _initField(fields[msg.sender][_x][_y]);
+        return true;
     }
 
     // event PlantStolen(address owner, address thief, uint8 x, uint8 y);
