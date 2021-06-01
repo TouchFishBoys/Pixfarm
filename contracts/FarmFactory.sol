@@ -4,6 +4,7 @@ pragma solidity ^0.8.0;
 import "@openzeppelin/contracts/access/Ownable.sol";
 
 import "./FarmBase.sol";
+import "./Repository.sol";
 
 abstract contract IFarmFactory {
     ///@dev 计算属性
@@ -24,7 +25,7 @@ abstract contract IFarmFactory {
     function calTag(
         FarmBase.PlantPropertiesPacked memory _pack,
         FarmBase.Quality quality,
-        FarmBase.ItemType itemType
+        Repository.ItemType itemType
     ) public pure virtual returns (uint256 tag);
 
     ///@dev 生成果实
@@ -87,6 +88,8 @@ abstract contract IFarmFactory {
 }
 
 contract FarmFactory is IFarmFactory, FarmBase {
+    constructor(Repository _repo) FarmBase(_repo) {}
+
     function _generateDna(uint256 Dna1, uint256 Dna2)
         private
         pure
@@ -105,14 +108,14 @@ contract FarmFactory is IFarmFactory, FarmBase {
     {
         PlantPropertiesPacked memory pack = getPropertiesByTag(_seedTag);
         Quality quality;
-        if (probabilityCheck(1, 100)) {
+        if (repo.probabilityCheck(1, 100)) {
             quality = Quality(3);
-        } else if (probabilityCheck(5, 99)) {
+        } else if (repo.probabilityCheck(5, 99)) {
             quality = Quality(2);
-        } else if (probabilityCheck(10, 94)) {
+        } else if (repo.probabilityCheck(10, 94)) {
             quality = Quality(1);
         }
-        return calTag(pack, quality, ItemType.Fruit);
+        return calTag(pack, quality, Repository.ItemType.Fruit);
     }
 
     function getSeedTag(PlantPropertiesPacked memory _pack)
@@ -165,7 +168,7 @@ contract FarmFactory is IFarmFactory, FarmBase {
     function calTag(
         PlantPropertiesPacked memory _pack,
         Quality quality,
-        ItemType itemType
+        Repository.ItemType itemType
     ) public pure override returns (uint256 tag) {
         uint256 _tag =
             (calDna(_pack) << 5) + (uint256(quality) << 3) + uint256(itemType);
@@ -190,13 +193,13 @@ contract FarmFactory is IFarmFactory, FarmBase {
         pack = generateRandomAttribute(pack, quality);
         bool check;
         if (quality == 3) {
-            check = probabilityCheck(5, 100);
+            check = repo.probabilityCheck(5, 100);
         } else if (quality == 2) {
-            check = probabilityCheck(1, 95);
+            check = repo.probabilityCheck(1, 95);
         } else if (quality == 1) {
-            check = probabilityCheck(5, 940);
+            check = repo.probabilityCheck(5, 940);
         } else {
-            check = probabilityCheck(1, 935);
+            check = repo.probabilityCheck(1, 935);
         }
         return (getSeedTag(pack), check);
     }
@@ -208,24 +211,24 @@ contract FarmFactory is IFarmFactory, FarmBase {
         PlantPropertiesPacked memory _pack,
         uint256 quality
     ) public view returns (PlantPropertiesPacked memory) {
-        if (probabilityCheck(2, 10)) {
+        if (repo.probabilityCheck(2, 10)) {
             _pack = followRandom(_pack);
         }
         PropertiesLegelCheck(_pack);
         if (quality == 3) {
             return followSpecie(_pack);
         } else if (quality == 2) {
-            if (probabilityCheck(50, 100)) {
+            if (repo.probabilityCheck(50, 100)) {
                 return followSpecie(_pack);
             }
             return _pack;
         } else if (quality == 1) {
-            if (probabilityCheck(30, 100)) {
+            if (repo.probabilityCheck(30, 100)) {
                 return followSpecie(_pack);
             }
             return _pack;
         } else {
-            if (probabilityCheck(10, 100)) {
+            if (repo.probabilityCheck(10, 100)) {
                 return followSpecie(_pack);
             }
             return _pack;
@@ -240,7 +243,7 @@ contract FarmFactory is IFarmFactory, FarmBase {
         view
         returns (PlantPropertiesPacked memory)
     {
-        uint256 rnd = getRandom(4);
+        uint256 rnd = repo.getRandom(4);
         if (rnd == 0) {
             _pack.hp = uint8(
                 int8(_pack.hp) + int8(specieData[uint256(_pack.specie)][0])
@@ -281,9 +284,9 @@ contract FarmFactory is IFarmFactory, FarmBase {
     //获取随机调整值
     //返回：int8
     function getFollowRandom() internal view returns (int8) {
-        if (probabilityCheck(5, 100)) {
+        if (repo.probabilityCheck(5, 100)) {
             return 1;
-        } else if (probabilityCheck(5, 95)) {
+        } else if (repo.probabilityCheck(5, 95)) {
             return -1;
         }
         return 0;
@@ -326,7 +329,7 @@ contract FarmFactory is IFarmFactory, FarmBase {
         //处理总属性和>8
         uint256 rnd;
         while (_pack.hp + _pack.atk + _pack.def + _pack.spd > 8) {
-            rnd = getRandom(4);
+            rnd = repo.getRandom(4);
             if (rnd == 0) {
                 if (_pack.hp > 0) {
                     _pack.hp--;
@@ -365,7 +368,7 @@ contract FarmFactory is IFarmFactory, FarmBase {
     //返回：uint256
     function getDreamySeedTag() public view override returns (uint256) {
         PlantPropertiesPacked memory pack;
-        uint256 rnd = getRandom(4);
+        uint256 rnd = repo.getRandom(4);
         if (rnd == 0) {
             pack.specie = Specie(8);
             pack.hp = 5;
@@ -403,7 +406,7 @@ contract FarmFactory is IFarmFactory, FarmBase {
         override
         returns (uint256)
     {
-        if (probabilityCheck(10, 20)) {
+        if (repo.probabilityCheck(10, 20)) {
             return getFruitTag(parent1);
         } else {
             return getFruitTag(getHybridizedSeedTag(parent1, parent2));
@@ -475,7 +478,7 @@ contract FarmFactory is IFarmFactory, FarmBase {
         if (count == 0) {
             return 0;
         }
-        uint256 rnd = getRandom(count);
+        uint256 rnd = repo.getRandom(count);
         uint8[] memory temp;
         if (sign % 2 == 1) {
             temp[p] = 4;

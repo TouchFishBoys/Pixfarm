@@ -3,7 +3,7 @@ pragma solidity ^0.8.0;
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 
 contract Money {
-    mapping(address => uint256) money;
+    mapping(address => uint256) public money;
 
     IERC20 internal contrac;
 
@@ -35,7 +35,7 @@ contract Money {
     }
 
     ///充值
-    function rechargeMoney(uint256 _value)  payable public {
+    function rechargeMoney(uint256 _value) public payable {
         bool isSuccess =
             contrac.transferFrom(msg.sender, address(this), _value);
         if (!isSuccess) {

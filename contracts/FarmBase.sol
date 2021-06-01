@@ -2,8 +2,11 @@
 pragma solidity ^0.8.0;
 
 import "./Repository.sol";
+import "@openzeppelin/contracts/access/Ownable.sol";
 
-contract FarmBase is Repository {
+contract FarmBase is Ownable {
+    //TODO to interface IRepository
+    Repository repo;
     /// @dev 属性封包
     struct PlantPropertiesPacked {
         Specie specie;
@@ -55,6 +58,10 @@ contract FarmBase is Repository {
     //  |   |  |  |  |       | itemType (3bits)
     //  |   |  |  |  |       | |
     //  0011001010011100     01010
+
+    constructor(Repository _repo) {
+        repo = _repo;
+    }
 
     /// @dev 物种偏向
     int256[][] specieData = [
@@ -117,7 +124,7 @@ contract FarmBase is Repository {
     function upgradeLand(uint8 level) public {
         require(getFarmLevel(msg.sender) >= level);
         if (level != 1) {
-            require(transferToShop(msg.sender, landPrice[level - 2]));
+            repo.transferToShop(msg.sender, landPrice[level - 2]);
         }
         for (uint8 i = 0; i < level + 1; i++) {
             for (uint8 j = 0; j < level + 1; j++) {
@@ -140,16 +147,9 @@ contract FarmBase is Repository {
 
     /// @dev 注册
     function register(string memory _name) public {
-        _registration(_name);
+        repo._registration(_name);
         upgradeLand(1);
-        getMoneyFromShop(msg.sender, 1000);
-        maxIndex[msg.sender][0] = 0;
-        maxIndex[msg.sender][1] = 0;
-        maxIndex[msg.sender][2] = 0;
-        maxIndex[msg.sender][3] = 0;
-        maxIndex[msg.sender][4] = 0;
-        maxIndex[msg.sender][5] = 0;
-        maxIndex[msg.sender][6] = 0;
-        maxIndex[msg.sender][7] = 0;
+        repo.getMoneyFromShop(msg.sender, 1000);
+        repo.updateMaxIndex();
     }
 }

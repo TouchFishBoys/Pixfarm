@@ -5,6 +5,8 @@ import "./PetFactory.sol";
 import "./FarmFactory.sol";
 
 contract PixPet is PetFactory, FarmFactory {
+    constructor(Repository _repo) FarmFactory(_repo) {}
+
     /// @dev  宠物繁殖
     // function breed(
     //     address _petOwner,

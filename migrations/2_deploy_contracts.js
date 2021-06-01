@@ -26,12 +26,25 @@ module.exports = function(deployer) {
 
   deployer.deploy(Auction);
   deployer
-    .deploy(FarmFactory)
+    .deploy(Repository)
     .then(() => {
-      return deployer.deploy(FarmMarket, FarmFactory.address);
+      return deployer.deploy(FarmFactory, Repository.address);
     })
     .then(() => {
-      return deployer.deploy(PixFarm, FarmMarket.address, FarmFactory.address);
+      return deployer.deploy(
+        FarmMarket,
+        FarmFactory.address,
+        Repository.address
+      );
+    })
+    .then(() => {
+      return deployer.deploy(
+        PixFarm,
+        FarmMarket.address,
+        FarmFactory.address,
+        Repository.address
+      );
     });
+
   // deployer.deploy(PixPet);
 };

@@ -3,7 +3,7 @@ pragma solidity ^0.8.0;
 import "./MarketBase.sol";
 import "./PixPet.sol";
 
-abstract contract IPetMarket is PixPet {
+interface IPetMarket {
     /// @dev 向商店出售宠物
     // function sellPetToShop(uint256 _index)
     //     external
@@ -57,7 +57,7 @@ contract PetMarket is IPetMarket {
     //     petList[msg.sender].push(_pet);
     // }
 
-    function getPetValue(PetPropertiesPacked memory _pet)
+    function getPetValue(PixPet.PetPropertiesPacked memory _pet)
         internal
         returns (uint256 _value)
     {}

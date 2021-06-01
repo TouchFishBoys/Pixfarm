@@ -5,7 +5,13 @@ import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "./AuctionBase.sol";
 import "./Repository.sol";
 
-contract MarketBase is Repository {
+contract MarketBase {
+    Repository private repo;
+
+    constructor(Repository _repo) {
+        repo = _repo;
+    }
+
     /// @dev 等级附加售价
     uint256[] PirceForLevel = [
         uint256(100),
@@ -43,17 +49,17 @@ contract MarketBase is Repository {
         uint256 _price
     ) internal {
         //require(bank.allowance(msg.sender, address(this)) > _amount);
-        require(transferToShop(msg.sender, _amount * _price));
-        Item memory newItem;
+        require(repo.transferToShop(msg.sender, _amount * _price));
+        Repository.Item memory newItem;
         newItem.tag = uint32(_tag);
         newItem.stack = uint32(_amount);
         newItem.usable = true;
         //_repository[ItemType(_tag % 8)][msg.sender].push(newItem);
-        addItem(ItemType(_tag >> 17), msg.sender, newItem);
+        repo.addItem(Repository.ItemType(_tag >> 17), msg.sender, newItem);
     }
 
     function sell(
-        ItemType _type,
+        Repository.ItemType _type,
         uint256 _tag,
         uint32 _amount,
         uint256 _value
@@ -65,8 +71,8 @@ contract MarketBase is Repository {
         // uint256 _price;
         // _price = _repository[_type][msg.sender][_index].tag >> 17; //收购价 = 作物种类（x%）* 总属性对应价
         // getMoneyFromShop(msg.sender, _amount);
-        require(removeItem(msg.sender, _type, _tag, _amount));
-        money[msg.sender] += _value;
+        require(repo.removeItem(msg.sender, _type, _tag, _amount));
+        repo.getMoneyFromShop(msg.sender, _value);
     }
 
     //function _upgrade() internal override {}

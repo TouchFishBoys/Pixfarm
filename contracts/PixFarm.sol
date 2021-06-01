@@ -2,6 +2,7 @@
 pragma solidity ^0.8.0;
 
 import "@openzeppelin/contracts/access/Ownable.sol";
+import "./Repository.sol";
 import "./FarmFactory.sol";
 import "./FarmBase.sol";
 import "./FarmMarket.sol";
@@ -36,7 +37,11 @@ contract PixFarm is Ownable, IPixFarm, FarmBase {
     FarmMarket fm;
     FarmFactory fc;
 
-    constructor(FarmMarket _fm, FarmFactory _fc) {
+    constructor(
+        FarmMarket _fm,
+        FarmFactory _fc,
+        Repository _repo
+    ) FarmBase(_repo) {
         fm = _fm;
         fc = _fc;
     }
@@ -53,7 +58,9 @@ contract PixFarm is Ownable, IPixFarm, FarmBase {
     ) external override returns (bool) {
         require(fields[msg.sender][_x][_y].unlocked == true);
         require(fields[msg.sender][_x][_y].used == false);
-        if (!removeItem(msg.sender, ItemType.Seed, _seedTag, 1)) {
+        if (
+            !repo.removeItem(msg.sender, Repository.ItemType.Seed, _seedTag, 1)
+        ) {
             return false;
         }
         fields[msg.sender][_x][_y].seedTag = _seedTag;
@@ -76,9 +83,9 @@ contract PixFarm is Ownable, IPixFarm, FarmBase {
         require(block.timestamp >= fields[msg.sender][_x][_y].maturityTime);
         fields[msg.sender][_x][_y].used = false;
         uint32 num = 1;
-        if (probabilityCheck(5, 1000)) {
+        if (repo.probabilityCheck(5, 1000)) {
             num = 3;
-        } else if (probabilityCheck(10, 995)) {
+        } else if (repo.probabilityCheck(10, 995)) {
             num = 2;
         }
         uint256 x = _x;
@@ -113,11 +120,11 @@ contract PixFarm is Ownable, IPixFarm, FarmBase {
         //     fields[msg.sender][_x][_y].used = true;
         //     return (false, uint8(num));
         // }
-        Item memory item;
+        Repository.Item memory item;
         item.usable = true;
         item.tag = uint32(fruitTag);
         item.stack = num;
-        addItem(ItemType.Fruit, msg.sender, item);
+        repo.addItem(Repository.ItemType.Fruit, msg.sender, item);
         farmExperience[msg.sender] += fm.getFruitValueByTag(fruitTag) / 10;
         _initField(fields[msg.sender][_x][_y]);
         //return uint8(num);
@@ -133,8 +140,8 @@ contract PixFarm is Ownable, IPixFarm, FarmBase {
         override
         returns (bool)
     {
-        require(fields[msg.sender][_x][_y].unlocked == true);
-        require(fields[msg.sender][_x][_y].used == true);
+        require(fields[msg.sender][_x][_y].unlocked == true, "ERR_LOCKED");
+        require(fields[msg.sender][_x][_y].used == true, "ERR_UNUSED");
 
         if (
             ((block.timestamp - fields[msg.sender][_x][_y].sowingTime) * 100) /
@@ -158,11 +165,11 @@ contract PixFarm is Ownable, IPixFarm, FarmBase {
             //     fields[msg.sender][_x][_y].used = true;
             //     revert("Repository is full");
             // }
-            Item memory item;
+            Repository.Item memory item;
             item.stack = 1;
             item.usable = true;
             item.tag = uint32(fields[msg.sender][_x][_y].seedTag);
-            addItem(ItemType.Seed, msg.sender, item);
+            repo.addItem(Repository.ItemType.Seed, msg.sender, item);
             return true;
         }
         _initField(fields[msg.sender][_x][_y]);
@@ -249,18 +256,18 @@ contract PixFarm is Ownable, IPixFarm, FarmBase {
         uint256 seedTag;
         (seedTag, check) = fc.disassembleFruit(_fruitTag);
         uint256 value = fm.getFruitValueByTag(_fruitTag) / 10;
-        require(transferToShop(msg.sender, value));
-        Item memory seed;
+        require(repo.transferToShop(msg.sender, value));
+        Repository.Item memory seed;
         seed.usable = true;
         seed.stack = 1;
         seed.tag = uint32(seedTag);
-        addItem(ItemType.Seed, msg.sender, seed);
+        repo.addItem(Repository.ItemType.Seed, msg.sender, seed);
         if (check) {
-            Item memory dreamy;
+            Repository.Item memory dreamy;
             dreamy.usable = true;
             dreamy.stack = 1;
             dreamy.tag = uint32(fc.getDreamySeedTag());
-            addItem(ItemType.Seed, msg.sender, dreamy);
+            repo.addItem(Repository.ItemType.Seed, msg.sender, dreamy);
         }
         farmExperience[msg.sender] += value;
         return check;

@@ -5,7 +5,7 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 import "./Money.sol";
 
 /// @dev 游戏的仓库的合约
-contract Repository is Ownable, Money {
+contract Repository is Money {
     // 定义了物品的类型
     enum ItemType {Seed, Fruit, Feed} // 3bits for futher development
 
@@ -164,6 +164,7 @@ contract Repository is Ownable, Money {
         _;
     }
 
+    //TODO seprate
     function probabilityCheck(uint256 numerator, uint256 denominator)
         public
         view
@@ -175,6 +176,7 @@ contract Repository is Ownable, Money {
         return false;
     }
 
+    // TODO seprate
     function getRandom(uint256 decimal) public view returns (uint256) {
         return
             uint256(
@@ -346,5 +348,16 @@ contract Repository is Ownable, Money {
         newItem.usable = true;
         newItem.stack = uint32(_amount);
         addItem(ItemType(ItemType.Fruit), _player, newItem);
+    }
+
+    function updateMaxIndex() external {
+        maxIndex[msg.sender][0] = 0;
+        maxIndex[msg.sender][1] = 0;
+        maxIndex[msg.sender][2] = 0;
+        maxIndex[msg.sender][3] = 0;
+        maxIndex[msg.sender][4] = 0;
+        maxIndex[msg.sender][5] = 0;
+        maxIndex[msg.sender][6] = 0;
+        maxIndex[msg.sender][7] = 0;
     }
 }

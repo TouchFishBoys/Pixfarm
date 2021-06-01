@@ -8,7 +8,10 @@ import "./FarmFactory.sol";
 contract FarmMarket is MarketBase, FarmBase {
     FarmFactory fc;
 
-    constructor(FarmFactory _fc) {
+    constructor(FarmFactory _fc, Repository _repo)
+        FarmBase(_repo)
+        MarketBase(_repo)
+    {
         fc = _fc;
     }
 
@@ -18,22 +21,24 @@ contract FarmMarket is MarketBase, FarmBase {
         uint256 _amount,
         uint256 cost
     );
+    event CalculatedTag(uint256 seedTag);
 
     function buySeed(
         uint256 specie,
         uint256 level,
         uint256 _amount
     ) public {
-        require(level <= 4);
-        require(getFarmLevel(msg.sender) >= level);
+        require(level <= 4, "ERR_ARG_LEVEL");
+        require(getFarmLevel(msg.sender) >= level, "ERR_LVL");
         PlantPropertiesPacked memory pack;
         pack.specie = Specie(specie);
         pack.hp = 0;
         pack.atk = 0;
         pack.def = 0;
         pack.spd = 0;
+        // 随机分配点数
         for (uint256 i = 0; i < level; i++) {
-            uint256 rnd = getRandom(4);
+            uint256 rnd = repo.getRandom(4);
             if (rnd == 0) {
                 pack.hp++;
             } else if (rnd == 1) {
@@ -44,15 +49,16 @@ contract FarmMarket is MarketBase, FarmBase {
                 pack.spd++;
             }
         }
-        //TODO
+        // 计算种子价格
         uint256 _price = getSeedValue(specie, level);
         uint256 seedTag = fc.getSeedTag(pack);
-        Item memory i;
-        i.tag = uint32(seedTag);
-        i.stack = uint32(_amount);
-        i.usable = true;
-        addItem(ItemType.Seed, msg.sender, i);
-        transferToShop(msg.sender, getSeedValue(specie, level));
+        emit CalculatedTag(seedTag);
+        // Item memory item;
+        // item.tag = uint32(seedTag);
+        // item.stack = uint32(_amount);
+        // item.usable = true;
+        repo.addSeed(seedTag, msg.sender, _amount);
+        repo.transferToShop(msg.sender, getSeedValue(specie, level));
         emit SeedSoldFromShop(msg.sender, seedTag, _amount, _price);
     }
 
@@ -62,7 +68,8 @@ contract FarmMarket is MarketBase, FarmBase {
         view
         returns (uint256)
     {
-        return PirceForSpecie[specie] + PirceForLevel[level];
+        return
+            MarketBase.PirceForSpecie[specie] + MarketBase.PirceForLevel[level];
     }
 
     /// @dev 计算果实价格
@@ -73,8 +80,9 @@ contract FarmMarket is MarketBase, FarmBase {
     {
         require(specie < 8);
         return
-            (PirceForSpecie[specie] + PirceForLevel[level]) *
-            (100 + RateForBenefit[specie] / 100);
+            (MarketBase.PirceForSpecie[specie] +
+                MarketBase.PirceForLevel[level]) *
+            (100 + MarketBase.RateForBenefit[specie] / 100);
     }
 
     /// @dev 利用Tag计算果实价格
@@ -84,12 +92,18 @@ contract FarmMarket is MarketBase, FarmBase {
         uint8 level = pack.atk + pack.hp + pack.def + pack.spd;
         require(specie < 8);
         return
-            (PirceForSpecie[specie] + PirceForLevel[level]) *
-            (100 + RateForBenefit[specie] / 100);
+            (MarketBase.PirceForSpecie[specie] +
+                MarketBase.PirceForLevel[level]) *
+            (100 + MarketBase.RateForBenefit[specie] / 100);
     }
 
     function sellFruit(uint256 _tag, uint256 _amount) public returns (bool) {
-        sell(ItemType.Fruit, _tag, uint32(_amount), getFruitValueByTag(_tag));
+        sell(
+            Repository.ItemType.Fruit,
+            _tag,
+            uint32(_amount),
+            getFruitValueByTag(_tag)
+        );
         return true;
     }
 }
