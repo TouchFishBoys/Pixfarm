@@ -165,6 +165,7 @@ contract PixFarm is Ownable, IPixFarm, FarmBase {
             addItem(ItemType.Seed, msg.sender, item);
             return true;
         }
+        fields[msg.sender][_x][_y].used=false;
         _initField(fields[msg.sender][_x][_y]);
         return true;
     }
