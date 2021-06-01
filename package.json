@@ -9,6 +9,7 @@
   "scripts": {
     "compile": "truffle compile",
     "compile-all": "truffle compile --all",
+    "migrate": "truffle migrate --reset",
     "deploy-skale": "truffle deploy --reset --network skale --compile-all",
     "test": "truffle test",
     "lint": "solium -d contracts/",

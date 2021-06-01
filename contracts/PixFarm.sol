@@ -269,9 +269,9 @@ contract PixFarm is Ownable, IPixFarm, FarmBase {
     function getFields(address player)
         public
         view
-        returns (Field[6][6] memory)
+        returns (uint256, Field[6][6] memory)
     {
-        return fields[player];
+        return (block.timestamp, fields[player]);
     }
 
     function getAge(uint256 sowingTime, uint256 maturityTime)
