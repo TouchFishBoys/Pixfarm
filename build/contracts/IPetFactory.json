@@ -1,0 +1,305 @@
+{
+  "contractName": "IPetFactory",
+  "abi": [],
+  "metadata": "{\"compiler\":{\"version\":\"0.8.4+commit.c7e474f2\"},\"language\":\"Solidity\",\"output\":{\"abi\":[],\"devdoc\":{\"kind\":\"dev\",\"methods\":{},\"version\":1},\"userdoc\":{\"kind\":\"user\",\"methods\":{},\"version\":1}},\"settings\":{\"compilationTarget\":{\"/F/Projects/PixFarmon-frontend/src/util/pixfarmon-dapp/Pixfarmon/contracts/PetFactory.sol\":\"IPetFactory\"},\"evmVersion\":\"istanbul\",\"libraries\":{},\"metadata\":{\"bytecodeHash\":\"ipfs\"},\"optimizer\":{\"enabled\":true,\"runs\":1000},\"remappings\":[]},\"sources\":{\"/F/Projects/PixFarmon-frontend/src/util/pixfarmon-dapp/Pixfarmon/contracts/Money.sol\":{\"keccak256\":\"0xe4d0d4088fffaa80cfbc23e381969b727805e12cd0d0c0ffe30d6271cd066b40\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://6e71addbff265cd9aca35a234a6d424bf41c7dd5930344ea9a77663274575c66\",\"dweb:/ipfs/QmPE9ghHDnjkzxmH1aPCe7cnLM9zBiesQhBeQ9A5xKbCiD\"]},\"/F/Projects/PixFarmon-frontend/src/util/pixfarmon-dapp/Pixfarmon/contracts/PetBase.sol\":{\"keccak256\":\"0xb6341d23d3980e27faa07044d51c11abac8d330639825eecf7a5b9def369d686\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://7c6c51a538e69a7ae2ada49a17812f6730a1f3fdf099c7322f9a184a26ee3463\",\"dweb:/ipfs/QmbJnvBhPprYmJbSENjVkwCkC2pFm1jcvAgSKvGtsoY4vB\"]},\"/F/Projects/PixFarmon-frontend/src/util/pixfarmon-dapp/Pixfarmon/contracts/PetFactory.sol\":{\"keccak256\":\"0x3a3d2d0f9cf2339cca3c24dfefb73b3376549eb4509ccf30d851dce9c864cfe6\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://073dda90f39adc1d197d4959b869af606d1682fcd25f164885eba9477cb979b3\",\"dweb:/ipfs/QmUPntKvQD7Y5UNK1dBSuSVP9Ks4ZqECXUNumx8RXVZFnZ\"]},\"/F/Projects/PixFarmon-frontend/src/util/pixfarmon-dapp/Pixfarmon/contracts/Repository.sol\":{\"keccak256\":\"0xd619f830a86787cb98306b8fbd63571e52f5ada22591b3e45bdfd1b851da1ed0\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://b624be9e5301477eae3720770949225daf031387db845bff74567117670a705f\",\"dweb:/ipfs/QmSmZBmx2wmpLAeTDiEgiai2q5eyJpEFgr5FhNCpXWSTVo\"]},\"@openzeppelin/contracts/access/Ownable.sol\":{\"keccak256\":\"0x1cae4f85f114ff17b90414f5da67365b1d00337abb5bce9bf944eb78a2c0673c\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://d5ff16b336ce8f906478d5f2eecc6435e00833bdc0b92f6b209cf9e92cb5b2b7\",\"dweb:/ipfs/QmRD1rAZEqQ73C33cdA3QoUyBDMEWnNKNMc6PNkAZWHeQQ\"]},\"@openzeppelin/contracts/token/ERC20/IERC20.sol\":{\"keccak256\":\"0xf8e8d118a7a8b2e134181f7da655f6266aa3a0f9134b2605747139fcb0c5d835\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://9ec48567e7ad06acb670980d5cdf3fd7f3949bf12894f02d68c3bb43e75aa84f\",\"dweb:/ipfs/QmaG3R2J9cz92YT77vFjYrjMNU2wHp4ypwYD62HqDUqS5U\"]},\"@openzeppelin/contracts/utils/Context.sol\":{\"keccak256\":\"0xf930d2df426bfcfc1f7415be724f04081c96f4fb9ec8d0e3a521c07692dface0\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://fc2bfdea0d2562c76fb3c4cf70a86c6ba25c5a30e8f8515c95aafdf8383f8395\",\"dweb:/ipfs/QmTbFya18786ckJfLYUoWau9jBTKfmWnWm5XSViWvB7PXN\"]}},\"version\":1}",
+  "bytecode": "0x",
+  "deployedBytecode": "0x",
+  "immutableReferences": {},
+  "generatedSources": [],
+  "deployedGeneratedSources": [],
+  "sourceMap": "",
+  "deployedSourceMap": "",
+  "source": "// SPDX-License-Identifier: MIT\npragma solidity ^0.8.0;\n\nimport \"./PetBase.sol\";\n\ninterface IPetFactory {\n    // ///@dev 计算属性\n    // function getPetProperties(uint256 _dna)\n    //     external\n    //     view\n    //     returns (PetBase.PetPropertiesPacked calldata);\n    // ///@dev 计算DNA\n    // function calDna(PetBase.PetPropertiesPacked memory _pack)\n    //     external\n    //     view\n    //     returns (uint256 dna);\n}\n\ncontract PetFactory is Ownable, PetBase, IPetFactory {\n    // function getPetProperties(uint256 _dna)\n    //     public\n    //     pure\n    //     override\n    //     returns (PetPropertiesPacked memory)\n    // {\n    //     PetPropertiesPacked memory pack;\n    //     //TODO\n    //     return pack;\n    // }\n    // function calDna(PetPropertiesPacked memory _pack)\n    //     public\n    //     pure\n    //     override\n    //     returns (uint256)\n    // {\n    //     uint256 dna;\n    //     //TODO\n    //     return dna;\n    // }\n    // //全局随机调整属性\n    // //参数：PlantPropertiesPacked\n    // //返回：PlantPropertiesPacked\n    // function followRandom(PetPropertiesPacked memory _pack)\n    //     internal\n    //     view\n    //     returns (PetPropertiesPacked memory)\n    // {\n    //     //TODO\n    //     return _pack;\n    // }\n}\n",
+  "sourcePath": "F:/Projects/PixFarmon-frontend/src/util/pixfarmon-dapp/Pixfarmon/contracts/PetFactory.sol",
+  "ast": {
+    "absolutePath": "/F/Projects/PixFarmon-frontend/src/util/pixfarmon-dapp/Pixfarmon/contracts/PetFactory.sol",
+    "exportedSymbols": {
+      "Context": [
+        4304
+      ],
+      "IERC20": [
+        4281
+      ],
+      "IPetFactory": [
+        2846
+      ],
+      "Money": [
+        2799
+      ],
+      "Ownable": [
+        4203
+      ],
+      "PetBase": [
+        2842
+      ],
+      "PetFactory": [
+        2853
+      ],
+      "Repository": [
+        4065
+      ]
+    },
+    "id": 2854,
+    "license": "MIT",
+    "nodeType": "SourceUnit",
+    "nodes": [
+      {
+        "id": 2844,
+        "literals": [
+          "solidity",
+          "^",
+          "0.8",
+          ".0"
+        ],
+        "nodeType": "PragmaDirective",
+        "src": "32:23:7"
+      },
+      {
+        "absolutePath": "/F/Projects/PixFarmon-frontend/src/util/pixfarmon-dapp/Pixfarmon/contracts/PetBase.sol",
+        "file": "./PetBase.sol",
+        "id": 2845,
+        "nameLocation": "-1:-1:-1",
+        "nodeType": "ImportDirective",
+        "scope": 2854,
+        "sourceUnit": 2843,
+        "src": "57:23:7",
+        "symbolAliases": [],
+        "unitAlias": ""
+      },
+      {
+        "abstract": false,
+        "baseContracts": [],
+        "contractDependencies": [],
+        "contractKind": "interface",
+        "fullyImplemented": true,
+        "id": 2846,
+        "linearizedBaseContracts": [
+          2846
+        ],
+        "name": "IPetFactory",
+        "nameLocation": "92:11:7",
+        "nodeType": "ContractDefinition",
+        "nodes": [],
+        "scope": 2854,
+        "src": "82:355:7",
+        "usedErrors": []
+      },
+      {
+        "abstract": false,
+        "baseContracts": [
+          {
+            "baseName": {
+              "id": 2847,
+              "name": "Ownable",
+              "nodeType": "IdentifierPath",
+              "referencedDeclaration": 4203,
+              "src": "462:7:7"
+            },
+            "id": 2848,
+            "nodeType": "InheritanceSpecifier",
+            "src": "462:7:7"
+          },
+          {
+            "baseName": {
+              "id": 2849,
+              "name": "PetBase",
+              "nodeType": "IdentifierPath",
+              "referencedDeclaration": 2842,
+              "src": "471:7:7"
+            },
+            "id": 2850,
+            "nodeType": "InheritanceSpecifier",
+            "src": "471:7:7"
+          },
+          {
+            "baseName": {
+              "id": 2851,
+              "name": "IPetFactory",
+              "nodeType": "IdentifierPath",
+              "referencedDeclaration": 2846,
+              "src": "480:11:7"
+            },
+            "id": 2852,
+            "nodeType": "InheritanceSpecifier",
+            "src": "480:11:7"
+          }
+        ],
+        "contractDependencies": [],
+        "contractKind": "contract",
+        "fullyImplemented": true,
+        "id": 2853,
+        "linearizedBaseContracts": [
+          2853,
+          2846,
+          2842,
+          4065,
+          2799,
+          4203,
+          4304
+        ],
+        "name": "PetFactory",
+        "nameLocation": "448:10:7",
+        "nodeType": "ContractDefinition",
+        "nodes": [],
+        "scope": 2854,
+        "src": "439:854:7",
+        "usedErrors": []
+      }
+    ],
+    "src": "32:1262:7"
+  },
+  "legacyAST": {
+    "absolutePath": "/F/Projects/PixFarmon-frontend/src/util/pixfarmon-dapp/Pixfarmon/contracts/PetFactory.sol",
+    "exportedSymbols": {
+      "Context": [
+        4304
+      ],
+      "IERC20": [
+        4281
+      ],
+      "IPetFactory": [
+        2846
+      ],
+      "Money": [
+        2799
+      ],
+      "Ownable": [
+        4203
+      ],
+      "PetBase": [
+        2842
+      ],
+      "PetFactory": [
+        2853
+      ],
+      "Repository": [
+        4065
+      ]
+    },
+    "id": 2854,
+    "license": "MIT",
+    "nodeType": "SourceUnit",
+    "nodes": [
+      {
+        "id": 2844,
+        "literals": [
+          "solidity",
+          "^",
+          "0.8",
+          ".0"
+        ],
+        "nodeType": "PragmaDirective",
+        "src": "32:23:7"
+      },
+      {
+        "absolutePath": "/F/Projects/PixFarmon-frontend/src/util/pixfarmon-dapp/Pixfarmon/contracts/PetBase.sol",
+        "file": "./PetBase.sol",
+        "id": 2845,
+        "nameLocation": "-1:-1:-1",
+        "nodeType": "ImportDirective",
+        "scope": 2854,
+        "sourceUnit": 2843,
+        "src": "57:23:7",
+        "symbolAliases": [],
+        "unitAlias": ""
+      },
+      {
+        "abstract": false,
+        "baseContracts": [],
+        "contractDependencies": [],
+        "contractKind": "interface",
+        "fullyImplemented": true,
+        "id": 2846,
+        "linearizedBaseContracts": [
+          2846
+        ],
+        "name": "IPetFactory",
+        "nameLocation": "92:11:7",
+        "nodeType": "ContractDefinition",
+        "nodes": [],
+        "scope": 2854,
+        "src": "82:355:7",
+        "usedErrors": []
+      },
+      {
+        "abstract": false,
+        "baseContracts": [
+          {
+            "baseName": {
+              "id": 2847,
+              "name": "Ownable",
+              "nodeType": "IdentifierPath",
+              "referencedDeclaration": 4203,
+              "src": "462:7:7"
+            },
+            "id": 2848,
+            "nodeType": "InheritanceSpecifier",
+            "src": "462:7:7"
+          },
+          {
+            "baseName": {
+              "id": 2849,
+              "name": "PetBase",
+              "nodeType": "IdentifierPath",
+              "referencedDeclaration": 2842,
+              "src": "471:7:7"
+            },
+            "id": 2850,
+            "nodeType": "InheritanceSpecifier",
+            "src": "471:7:7"
+          },
+          {
+            "baseName": {
+              "id": 2851,
+              "name": "IPetFactory",
+              "nodeType": "IdentifierPath",
+              "referencedDeclaration": 2846,
+              "src": "480:11:7"
+            },
+            "id": 2852,
+            "nodeType": "InheritanceSpecifier",
+            "src": "480:11:7"
+          }
+        ],
+        "contractDependencies": [],
+        "contractKind": "contract",
+        "fullyImplemented": true,
+        "id": 2853,
+        "linearizedBaseContracts": [
+          2853,
+          2846,
+          2842,
+          4065,
+          2799,
+          4203,
+          4304
+        ],
+        "name": "PetFactory",
+        "nameLocation": "448:10:7",
+        "nodeType": "ContractDefinition",
+        "nodes": [],
+        "scope": 2854,
+        "src": "439:854:7",
+        "usedErrors": []
+      }
+    ],
+    "src": "32:1262:7"
+  },
+  "compiler": {
+    "name": "solc",
+    "version": "0.8.4+commit.c7e474f2.Emscripten.clang"
+  },
+  "networks": {},
+  "schemaVersion": "3.3.4",
+  "updatedAt": "2021-05-29T02:25:10.072Z",
+  "devdoc": {
+    "kind": "dev",
+    "methods": {},
+    "version": 1
+  },
+  "userdoc": {
+    "kind": "user",
+    "methods": {},
+    "version": 1
+  }
+}
