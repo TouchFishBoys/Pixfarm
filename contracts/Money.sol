@@ -29,9 +29,10 @@ contract Money {
         address p1,
         address p2,
         uint256 _value
-    ) public {
+    ) public returns (bool) {
         money[p1] = money[p1] - _value;
         money[p2] = money[p2] + _value;
+        return true;
     }
 
     ///充值

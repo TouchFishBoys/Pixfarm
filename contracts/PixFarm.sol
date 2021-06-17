@@ -6,6 +6,7 @@ import "./Repository.sol";
 import "./FarmFactory.sol";
 import "./FarmBase.sol";
 import "./FarmMarket.sol";
+import "./MarketBase.sol";
 
 interface IPixFarm {
     ///@dev 播种
@@ -16,7 +17,7 @@ interface IPixFarm {
     ) external returns (bool);
 
     ///@dev 收获
-    function harvest(uint256 _x, uint256 _y) external;
+    function harvest(uint256 _x, uint256 _y) external returns (bool);
 
     ///@dev 铲除
     function eradicate(uint256 _x, uint256 _y) external returns (bool getSeed);
@@ -29,23 +30,20 @@ interface IPixFarm {
     // ) external returns (bool);
 
     ///@dev 分解果实
-    function disassembling(uint256 _fruitTag) external returns (bool);
+    // function disassembling(uint256 _fruitTag) external returns (bool);
 }
 
 contract PixFarm is Ownable, IPixFarm, FarmBase, Money {
     event SeedPlanted(address owner, uint8 x, uint8 y);
     FarmMarket fm;
-    FarmFactory fc;
     Money mon;
 
     constructor(
         FarmMarket _fm,
-        FarmFactory _fc,
         Repository _repo,
         Money _mon
     ) FarmBase(_repo) {
         fm = _fm;
-        fc = _fc;
         mon = _mon;
     }
 
@@ -65,7 +63,8 @@ contract PixFarm is Ownable, IPixFarm, FarmBase, Money {
         //Need Change
         if (fields[_x][_y].owner != msg.sender) {
             require(
-                mon.money[msg.sender] > (mon.PirceForSpecie[_specie] * 8) / 100,
+                money[msg.sender] >
+                    (MarketBase.PriceForSpecie[_specie] * 8) / 100,
                 "You don't have enough money to pay your rent"
             );
         }
@@ -74,7 +73,7 @@ contract PixFarm is Ownable, IPixFarm, FarmBase, Money {
             !mon.transferTo(
                 msg.sender,
                 fields[_x][_y].owner,
-                (mon.PriceForSpecie[_specie] * 8) / 100
+                (MarketBase.PriceForSpecie[_specie] * 8) / 100
             )
         ) {
             return false;
@@ -107,7 +106,7 @@ contract PixFarm is Ownable, IPixFarm, FarmBase, Money {
         if (msg.sender != fields[_x][_y].farmer) {
             require(
                 block.timestamp >=
-                    (fields.sowingTime +
+                    (fields[_x][_y].sowingTime +
                         specieTime[fields[_x][_y].specie] +
                         1800),
                 "This crop is under protection"
@@ -173,7 +172,7 @@ contract PixFarm is Ownable, IPixFarm, FarmBase, Money {
             repo.addItem(Repository.ItemType.Seed, msg.sender, item);
         }
         fields[_x][_y].specie = Specie.empty;
-        _initField([_x][_y]);
+        _initField(fields[_x][_y]);
         return true;
     }
 
@@ -254,22 +253,22 @@ contract PixFarm is Ownable, IPixFarm, FarmBase, Money {
         view
         returns (uint256, Field[6][6] memory)
     {
-        return (block.timestamp, fields[player]);
+        return (block.timestamp, fields);
     }
 
     ///@dev 获取土地信息
     function getFieldsMessage(uint256 _x, uint256 _y)
         public
         returns (
-            uint256,
+            Specie,
             uint256,
             address,
             address
         )
     {
         return (
-            fields[_x][_y].seedTag,
-            fields[_x][_y].maturityTime,
+            fields[_x][_y].specie,
+            fields[_x][_y].sowingTime,
             fields[_x][_y].farmer,
             fields[_x][_y].owner
         );
@@ -304,16 +303,16 @@ contract PixFarm is Ownable, IPixFarm, FarmBase, Money {
         return true;
     }
 
-    ///@dev 出售土地
-    function sellLandToShop(uint256 _x, uint256 _y) public returns (bool) {
-        require(fields[_x][_y].owner == msg.sender);
-        if (!mon.getMoneyFromShop(msg.sender, 999)) {
-            return false;
-        }
-        fields[_x][_y].specie = Specie.empty;
-        fields[_x][_y].sowingTime = 0;
-        fields[_x][_y].owner = address(this);
-        fields[_x][_y].farmer = address(0);
-        return true;
-    }
+    // ///@dev 出售土地
+    // function sellLandToShop(uint256 _x, uint256 _y) public returns (bool) {
+    //     require(fields[_x][_y].owner == msg.sender);
+    //     if (!mon.getMoneyFromShop(msg.sender, 999)) {
+    //         return false;
+    //     }
+    //     fields[_x][_y].specie = Specie.empty;
+    //     fields[_x][_y].sowingTime = 0;
+    //     fields[_x][_y].owner = address(this);
+    //     fields[_x][_y].farmer = address(0);
+    //     return true;
+    // }
 }

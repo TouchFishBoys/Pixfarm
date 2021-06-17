@@ -38,7 +38,7 @@ contract MarketBase {
     // ];
     /// @dev 作物本身价格
     //uint256[] PirceForSpecie = [uint256(150), 300, 500, 800];
-    mapping(FarmBase.Specie => uint256) PriceForSpecie;
+    mapping(FarmBase.Specie => uint256) public PriceForSpecie;
     /// @dev 作物收益
     //uint256[] RateForBenefit = [uint256(10), 15, 30, 50];
     mapping(FarmBase.Specie => uint256) RateForBenefit;
@@ -68,19 +68,10 @@ contract MarketBase {
         FarmBase.Specie _specie,
         uint32 _amount
     ) internal {
-        //bank.transfer(msg.sender, _amount);
-        // _repository[_type][msg.sender][_index].stack =
-        //     _repository[_type][msg.sender][_index].stack -
-        //     _amount;
-        // uint256 _price;
-        // _price = _repository[_type][msg.sender][_index].tag >> 17; //收购价 = 作物种类（x%）* 总属性对应价
-        // getMoneyFromShop(msg.sender, _amount);
         require(repo.removeItem(msg.sender, _type, _specie, _amount));
         repo.getMoneyFromShop(
             msg.sender,
             (PriceForSpecie[_specie] * (100 + RateForBenefit[_specie])) / 100
         );
     }
-
-    //function _upgrade() internal override {}
 }
