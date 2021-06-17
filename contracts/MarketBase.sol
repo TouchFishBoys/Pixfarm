@@ -66,8 +66,7 @@ contract MarketBase {
     function sell(
         Repository.ItemType _type,
         FarmBase.Specie _specie,
-        uint32 _amount,
-        uint256 _value
+        uint32 _amount
     ) internal {
         //bank.transfer(msg.sender, _amount);
         // _repository[_type][msg.sender][_index].stack =
@@ -77,7 +76,10 @@ contract MarketBase {
         // _price = _repository[_type][msg.sender][_index].tag >> 17; //收购价 = 作物种类（x%）* 总属性对应价
         // getMoneyFromShop(msg.sender, _amount);
         require(repo.removeItem(msg.sender, _type, _specie, _amount));
-        repo.getMoneyFromShop(msg.sender, _value);
+        repo.getMoneyFromShop(
+            msg.sender,
+            (PriceForSpecie[_specie] * (100 + RateForBenefit[_specie])) / 100
+        );
     }
 
     //function _upgrade() internal override {}

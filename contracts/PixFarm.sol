@@ -104,16 +104,39 @@ contract PixFarm is Ownable, IPixFarm, FarmBase, Money {
         );
 
         //uint32 num = 1;
+        if (msg.sender != fields[_x][_y].farmer) {
+            require(
+                block.timestamp >=
+                    (fields.sowingTime +
+                        specieTime[fields[_x][_y].specie] +
+                        1800),
+                "This crop is under protection"
+            );
+            return PlantStole(_x, _y);
+        }
         if (!repo.probabilityCheck(successRate[fields[_x][_y].specie], 100)) {
             return false;
         }
-        uint256 x = _x;
-        uint256 y = _y;
-        uint256 fruitTag;
+        // uint256 x = _x;
+        // uint256 y = _y;
         Repository.Item memory item;
         item.usable = true;
-        item.tag = uint32(fruitTag);
-        item.stack = num;
+        item.specie = fields[_x][_y].specie;
+        item.stack = 1;
+        repo.addItem(Repository.ItemType.Fruit, msg.sender, item);
+        _initField(fields[_x][_y]);
+        return true;
+    }
+
+    function PlantStole(uint256 _x, uint256 _y) internal returns (bool) {
+        //------------TODO
+        if (!repo.probabilityCheck(successRate[fields[_x][_y].specie], 100)) {
+            return false;
+        }
+        Repository.Item memory item;
+        item.usable = true;
+        item.specie = fields[_x][_y].specie;
+        item.stack = 1;
         repo.addItem(Repository.ItemType.Fruit, msg.sender, item);
         _initField(fields[_x][_y]);
         return true;
@@ -143,13 +166,6 @@ contract PixFarm is Ownable, IPixFarm, FarmBase, Money {
                 specieTime[fields[_x][_y].specie] <
             10
         ) {
-            // if (giveItem(msg.sender, fields[msg.sender][_x][_y].seedTag, 1)) {
-            //     _initField(fields[msg.sender][_x][_y]);
-            //     return true;
-            // } else {
-            //     fields[msg.sender][_x][_y].used = true;
-            //     revert("Repository is full");
-            // }
             Repository.Item memory item;
             item.stack = 1;
             item.usable = true;
@@ -232,31 +248,6 @@ contract PixFarm is Ownable, IPixFarm, FarmBase, Money {
     //         // }
     //     }
     // }
-
-    /// @notice 分解果实
-    /// @dev 返回false则为背包满
-    /// @param _fruitTag果实Tag
-    function disassembling(uint256 _fruitTag) public override returns (bool) {
-        bool check;
-        uint256 seedTag;
-        (seedTag, check) = fc.disassembleFruit(_fruitTag);
-        uint256 value = fm.getFruitValueByTag(_fruitTag) / 10;
-        require(repo.transferToShop(msg.sender, value));
-        Repository.Item memory seed;
-        seed.usable = true;
-        seed.stack = 1;
-        seed.tag = uint32(seedTag);
-        repo.addItem(Repository.ItemType.Seed, msg.sender, seed);
-        if (check) {
-            Repository.Item memory dreamy;
-            dreamy.usable = true;
-            dreamy.stack = 1;
-            dreamy.tag = uint32(fc.getDreamySeedTag());
-            repo.addItem(Repository.ItemType.Seed, msg.sender, dreamy);
-        }
-        farmExperience[msg.sender] += value;
-        return check;
-    }
 
     function getFields(address player)
         public
