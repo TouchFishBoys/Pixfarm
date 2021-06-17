@@ -12,7 +12,7 @@ interface IPixFarm {
     function sowing(
         uint256 _x,
         uint256 _y,
-        uint256 _seedTag
+        Specie _specie
     ) external returns (bool);
 
     ///@dev 收获
@@ -52,26 +52,30 @@ contract PixFarm is Ownable, IPixFarm, FarmBase, Money {
     /// @notice 播种
     /// @param _x uint x坐标
     /// @param _y uint y坐标
-    /// @param _seedTag uint256 种子标签
+    /// @param _specie uint256 种子标签
     //返回：bool
     function sowing(
         uint256 _x,
         uint256 _y,
-        uint256 _seedTag
+        Specie _specie
     ) external override returns (bool) {
         //require(fields[msg.sender][_x][_y].unlocked == true);
-        //require(fields[msg.sender][_x][_y].used == false);
+        require(fields[_x][_y].specie == Specie.empty);
 
         //Need Change
         if (fields[_x][_y].owner != msg.sender) {
             require(
-                money[msg.sender] < (999 * 8) / 100,
+                money[msg.sender] < (PirceForSpecie[_specie] * 8) / 100,
                 "You don't have enough money to pay your rent"
             );
         }
 
         if (
-            !mon.transferTo(msg.sender, fields[_x][_y].owner, (999 * 8) / 100)
+            !mon.transferTo(
+                msg.sender,
+                fields[_x][_y].owner,
+                (PriceForSpecie[_specie] * 8) / 100
+            )
         ) {
             return false;
         }
@@ -81,13 +85,9 @@ contract PixFarm is Ownable, IPixFarm, FarmBase, Money {
         ) {
             return false;
         }
-        fields[_x][_y].planter = msg.sender;
-        fields[_x][_y].seedTag = _seedTag;
+        fields[_x][_y].farmer = msg.sender;
+        fields[_x][_y].specie = _specie;
         fields[_x][_y].sowingTime = block.timestamp;
-        fields[_x][_y].maturityTime =
-            block.timestamp +
-            specieTime[uint8(fc.getPropertiesByTag(_seedTag).specie)];
-        fields[_x][_y].used = true;
         return true;
     }
 
@@ -96,58 +96,27 @@ contract PixFarm is Ownable, IPixFarm, FarmBase, Money {
     /// @notice 收获
     /// @param _x x坐标
     /// @param _y y坐标
-    function harvest(uint256 _x, uint256 _y) public override {
-        require(fields[msg.sender][_x][_y].used == true);
-        require(fields[msg.sender][_x][_y].unlocked == true);
-        require(block.timestamp >= fields[msg.sender][_x][_y].maturityTime);
+    function harvest(uint256 _x, uint256 _y) public override returns (bool) {
+        require(fields[_x][_y].specie != Specie.empty);
+        require(
+            block.timestamp >=
+                (fields[_x][_y].sowingTime + specieTime[fields[_x][_y].specie])
+        );
 
-        fields[msg.sender][_x][_y].used = false;
-        uint32 num = 1;
-        if (repo.probabilityCheck(5, 1000)) {
-            num = 3;
-        } else if (repo.probabilityCheck(10, 995)) {
-            num = 2;
+        //uint32 num = 1;
+        if (!repo.probabilityCheck(successRate[fields[_x][_y].specie], 100)) {
+            return false;
         }
         uint256 x = _x;
         uint256 y = _y;
         uint256 fruitTag;
-        // uint8 sign = fc.randomHybridize(msg.sender, uint8(_x), uint8(_y));
-        // if (sign == 1) {
-        //     //up
-        //     y += 1;
-        // } else if (sign == 2) {
-        //     //down
-        //     y -= 1;
-        // } else if (sign == 3) {
-        //     //left
-        //     x -= 1;
-        // } else {
-        //     //right
-        //     x += 1;
-        // }
-        // fruitTag = fc.getHarvestFruitTag(
-        //     fields[msg.sender][_x][_y].seedTag,
-        //     fields[msg.sender][x][y].seedTag
-        // );
-        // if (sign == 0) {
-        //     fruitTag = fc.getFruitTag(fields[msg.sender][_x][_y].seedTag);
-        // }
-
-        // if (giveItem(ItemType.Fruit,msg.sender, fruitTag, num)) {
-        //     _initField(fields[msg.sender][_x][_y]);
-        //     return (true, uint8(num));
-        // } else {
-        //     fields[msg.sender][_x][_y].used = true;
-        //     return (false, uint8(num));
-        // }
         Repository.Item memory item;
         item.usable = true;
         item.tag = uint32(fruitTag);
         item.stack = num;
         repo.addItem(Repository.ItemType.Fruit, msg.sender, item);
-        farmExperience[msg.sender] += fm.getFruitValueByTag(fruitTag) / 10;
         _initField(fields[_x][_y]);
-        //return uint8(num);
+        return true;
     }
 
     event PlantEradicated(address owner, uint8 x, uint8 y);
@@ -160,24 +129,20 @@ contract PixFarm is Ownable, IPixFarm, FarmBase, Money {
         override
         returns (bool)
     {
-        require(fields[msg.sender][_x][_y].unlocked == true, "ERR_LOCKED");
-        require(fields[msg.sender][_x][_y].used == true, "ERR_UNUSED");
+        require(
+            fields[_x][_y].owner == msg.sender,
+            "You have no right to do this"
+        );
+        require(
+            fields[_x][_y].specie != Specie.empty,
+            "Thers is no plant to remove"
+        );
 
         if (
-            ((block.timestamp - fields[msg.sender][_x][_y].sowingTime) * 100) /
-                specieTime[
-                    uint8(
-                        fc
-                            .getPropertiesByTag(
-                            fields[msg.sender][_x][_y]
-                                .seedTag
-                        )
-                            .specie
-                    )
-                ] <
+            ((block.timestamp - fields[_x][_y].sowingTime) * 100) /
+                specieTime[fields[_x][_y].specie] <
             10
         ) {
-            fields[msg.sender][_x][_y].used = false;
             // if (giveItem(msg.sender, fields[msg.sender][_x][_y].seedTag, 1)) {
             //     _initField(fields[msg.sender][_x][_y]);
             //     return true;
@@ -188,12 +153,11 @@ contract PixFarm is Ownable, IPixFarm, FarmBase, Money {
             Repository.Item memory item;
             item.stack = 1;
             item.usable = true;
-            item.tag = uint32(fields[msg.sender][_x][_y].seedTag);
+            item.specie = fields[_x][_y].specie;
             repo.addItem(Repository.ItemType.Seed, msg.sender, item);
-            return true;
         }
-        fields[msg.sender][_x][_y].used = false;
-        _initField(fields[msg.sender][_x][_y]);
+        fields[_x][_y].specie = Specie.empty;
+        _initField([_x][_y]);
         return true;
     }
 
@@ -315,7 +279,7 @@ contract PixFarm is Ownable, IPixFarm, FarmBase, Money {
         return (
             fields[_x][_y].seedTag,
             fields[_x][_y].maturityTime,
-            fields[_x][_y].planter,
+            fields[_x][_y].farmer,
             fields[_x][_y].owner
         );
     }
@@ -339,10 +303,10 @@ contract PixFarm is Ownable, IPixFarm, FarmBase, Money {
     ///@dev 购买土地
     function buyLand(uint256 _x, uint256 _y) public returns (bool) {
         require(
-            fields[_x][_y].unlocked == false,
+            fields[_x][_y].owner == address(this),
             "This land has been unlocked"
         );
-        if (!mon.transferToShop(msg.sender, 999)) {
+        if (!mon.transferTo(msg.sender, address(this), 999)) {
             return false;
         }
         fields[_x][_y].owner = msg.sender;
@@ -355,14 +319,10 @@ contract PixFarm is Ownable, IPixFarm, FarmBase, Money {
         if (!mon.getMoneyFromShop(msg.sender, 999)) {
             return false;
         }
-        fields[_x][_y].unlocked = false;
-        fields[_x][_y].used = false;
-        fields[_x][_y].seedTag = 0;
+        fields[_x][_y].specie = Specie.empty;
         fields[_x][_y].sowingTime = 0;
-        fields[_x][_y].maturityTime = 0;
-        fields[_x][_y].stolen = false;
-        fields[_x][_y].owner = address(0);
-        fields[_x][_y].planter = address(0);
+        fields[_x][_y].owner = address(this);
+        fields[_x][_y].farmer = address(0);
         return true;
     }
 }

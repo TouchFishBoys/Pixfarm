@@ -7,48 +7,29 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 contract FarmBase is Ownable {
     //TODO to interface IRepository
     Repository repo;
-    /// @dev 属性封包
-    struct PlantPropertiesPacked {
-        Specie specie;
-        uint8 hp;
-        uint8 atk;
-        uint8 def;
-        uint8 spd;
-    }
+    // /// @dev 属性封包
+    // struct PlantPropertiesPacked {
+    //     Specie specie;
+    //     uint8 hp;
+    //     uint8 atk;
+    //     uint8 def;
+    //     uint8 spd;
+    // }
 
     struct Field {
-        bool unlocked;
-        bool used;
-        uint256 seedTag;
+        Specie specie;
         uint256 sowingTime;
-        uint256 maturityTime;
-        bool stolen;
-        //    address firstThief;
-        //   address secondThief;
         address owner; //土地拥有者
-        address planter; //种植者
+        address farmer; //种植者
     }
-    mapping(address => uint256) farmExperience;
-    mapping(address => address[]) public owners;
+    //mapping(address => uint256) farmExperience;
+    //mapping(address => address[]) public owners;
     //mapping(address => ) fields;
+    uint8 fieldSize = 6;
     Field[6][6] fields;
-    /// @dev 品质
-    enum Quality {N, R, SR, SSR}
+
     /// @dev 物种
-    enum Specie {
-        spirel,
-        zebrot,
-        branut,
-        moonbean,
-        malener,
-        sunberry,
-        barner,
-        thorner,
-        quernom,
-        demute,
-        charis,
-        peento
-    }
+    enum Specie {empty, branut, moonbean, sunberry, charis}
 
     //total:21 bits
     //  example:
@@ -64,65 +45,57 @@ contract FarmBase is Ownable {
 
     constructor(Repository _repo) {
         repo = _repo;
+
+        specieTime[Specie.empty] = uint256(0) - 1;
+        specieTime[Specie.branut] = 300;
+        specieTime[Specie.moonbean] = 3600;
+        specieTime[Specie.sunberry] = 21600;
+        specieTime[Specie.charis] = 43200;
+
+        successRate[Specie.branut] = 10;
+        successRate[Specie.moonbean] = 15;
+        successRate[Specie.sunberry] = 25;
+        successRate[Specie.charis] = 35;
     }
 
-    /// @dev 物种偏向
-    int256[][] specieData = [
-        [int256(1), -1, -1, 1],
-        [int256(1), -1, -1, 1],
-        [int256(1), -1, 1, -1],
-        [int256(-1), 1, 1, -1],
-        [int256(-1), 1, -1, 1],
-        [int256(-1), -1, 1, 1],
-        [int256(1), 0, 0, 0],
-        [int256(0), 0, 0, 1]
-    ];
     /// @dev 作物成熟时间
-    uint256[] specieTime = [
-        uint256(300),
-        600,
-        1800,
-        3600,
-        7200,
-        18000,
-        28800,
-        43200,
-        86400,
-        86400,
-        86400,
-        86400
-    ];
+    //uint256[] specieTime = [uint256(300), 3600, 21600, 43200];
+    mapping(Specie => uint256) specieTime;
+
+    /// @dev 作物收获成功率
+    mapping(Specie => uint256) successRate;
+
     /// @dev 果实饱食度
-    uint256[] specieFull = [10, 10, 10, 10, 20, 20, 15, 15, 15, 15, 10, 15];
+    //uint256[] specieFull = [10, 10, 10, 10, 20, 20, 15, 15, 15, 15, 10, 15];
 
     /// @dev 地价
-    uint256[] landPrice = [12000, 300000, 6000000, 8000000];
+    //uint256[] landPrice = [12000, 300000, 6000000, 8000000];
 
     /// @dev 经验值
     //uint256[] landExp = [500, 8000, 120000, 500000];
 
-    function getFarmLevel(address _owner) public view returns (uint8) {
-        uint8 level;
-        uint256 Exp = farmExperience[_owner];
-        // for (uint8 i = 0; i < landExp.length; i++) {
-        //     if (farmExperience[_owner] > landExp[i]) {
-        //         level = i + 2;
-        //     }
-        // }
-        if (Exp < 500) {
-            level = 1;
-        } else if (Exp < 8000) {
-            level = 2;
-        } else if (Exp < 120000) {
-            level = 3;
-        } else if (Exp < 500000) {
-            level = 4;
-        } else {
-            level = 5;
-        }
+    // function getFarmLevel(address _owner) public view returns (uint8) {
+    //     uint8 level;
+    //     uint256 Exp = farmExperience[_owner];
+    //     // for (uint8 i = 0; i < landExp.length; i++) {
+    //     //     if (farmExperience[_owner] > landExp[i]) {
+    //     //         level = i + 2;
+    //     //     }
+    //     // }
+    //     if (Exp < 500) {
+    //         level = 1;
+    //     } else if (Exp < 8000) {
+    //         level = 2;
+    //     } else if (Exp < 120000) {
+    //         level = 3;
+    //     } else if (Exp < 500000) {
+    //         level = 4;
+    //     } else {
+    //         level = 5;
+    //     }
 
-        return level;
-    }
+    //     return level;
+    // }
 
     // function upgradeLand(uint8 level) public {
     //     require(getFarmLevel(msg.sender) >= level);
@@ -138,14 +111,9 @@ contract FarmBase is Ownable {
 
     /// @dev 初始化土地
     function _initField(Field storage _field) internal {
-        if (_field.used == false) {
-            _field.seedTag = 0;
+        if (_field.specie == Specie.empty) {
             _field.sowingTime = 0;
-            _field.maturityTime = 0;
-            _field.stolen = false;
-            //    _field.firstThief = address(0);
-            //    _field.secondThief = address(0);
-            _field.planter = address(0);
+            _field.farmer = address(0);
         }
     }
 
@@ -155,5 +123,14 @@ contract FarmBase is Ownable {
         //upgradeLand(1);
         repo.getMoneyFromShop(msg.sender, 1000);
         repo.updateMaxIndex();
+    }
+
+    function startInit() internal {
+        for (uint8 i = 0; i < fieldSize * fieldSize; i++) {
+            fields[i / 6][i % 6].specie = Specie.empty;
+            fields[i / 6][i % 6].sowingTime = 0;
+            fields[i / 6][i % 6].owner = address(this);
+            fields[i / 6][i % 6].farmer = address(0);
+        }
     }
 }

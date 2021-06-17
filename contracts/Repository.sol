@@ -3,13 +3,14 @@ pragma solidity ^0.8.0;
 
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "./Money.sol";
+import "./FarmBase.sol";
 
 /// @dev 游戏的仓库的合约
 contract Repository is Money {
     // 定义了物品的类型
-    enum ItemType {Seed, Fruit, Feed} // 3bits for futher development
+    enum ItemType {Seed, Fruit, Tool} // 3bits for futher development
 
-    /// @dev 所有玩家名字
+    /// @dev 所有玩家
     address[] playersAddress;
     mapping(string => address) nameToAddress;
     mapping(address => string) public addressToName;
@@ -29,7 +30,8 @@ contract Repository is Money {
 
     struct Item {
         bool usable;
-        uint32 tag;
+        //uint32 tag;
+        FarmBase.Specie specie;
         uint32 stack;
     }
 
@@ -98,7 +100,7 @@ contract Repository is Money {
     ) public returns (bool) {
         // TODO 溢出处理
         for (uint256 i = 0; i < maxIndex[_player][uint8(_itemType)]; i++) {
-            if (_backpack[_player][_itemType][i].tag == _item.tag) {
+            if (_backpack[_player][_itemType][i].specie == _item.specie) {
                 _backpack[_player][_itemType][i].stack += _item.stack;
                 return true;
             }
@@ -140,11 +142,11 @@ contract Repository is Money {
     function removeItem(
         address _player,
         ItemType _itemType,
-        uint256 _tag,
+        FarmBase.Specie _specie,
         uint32 _amount
     ) public returns (bool) {
         for (uint256 i = 0; i < 50; i++) {
-            if (_backpack[_player][_itemType][i].tag == _tag) {
+            if (_backpack[_player][_itemType][i].specie == _specie) {
                 if (_amount > _backpack[_player][_itemType][i].stack) {
                     return false;
                 } else {
@@ -220,56 +222,6 @@ contract Repository is Money {
         return keccak256(abi.encodePacked(a)) == keccak256(abi.encodePacked(b));
     }
 
-    function addFriendByName(string memory _name) public returns (bool) {
-        if (!isNameExist(_name)) {
-            return false;
-        } else {
-            request memory newRequest;
-            newRequest.senderAddress = msg.sender;
-            newRequest.senderName = addressToName[msg.sender];
-            requestList[nameToAddress[_name]].push(newRequest);
-            return true;
-        }
-    }
-
-    function addFriendByAddress(address _address) public returns (bool) {
-        if (!isNameExist(addressToName[_address])) {
-            return false;
-        } else {
-            request memory newRequest;
-            newRequest.senderAddress = msg.sender;
-            newRequest.senderName = addressToName[msg.sender];
-            requestList[_address].push(newRequest);
-            return true;
-        }
-    }
-
-    function acceptFriend(uint256 _index) public {
-        friend memory newFriend;
-        newFriend.friendName = requestList[msg.sender][_index].senderName;
-        newFriend.friendAddress = requestList[msg.sender][_index].senderAddress;
-        friendList[msg.sender].push(newFriend);
-
-        friend memory receiver;
-        receiver.friendName = addressToName[msg.sender];
-        receiver.friendAddress = msg.sender;
-        friendList[requestList[msg.sender][_index].senderAddress].push(
-            receiver
-        );
-
-        for (uint256 i = _index; i < requestList[msg.sender].length; i++) {
-            requestList[msg.sender][i] = requestList[msg.sender][i + 1];
-        }
-        delete requestList[msg.sender][requestList[msg.sender].length - 1];
-    }
-
-    function refuseFriend(uint256 _index) public {
-        for (uint256 i = _index; i < requestList[msg.sender].length; i++) {
-            requestList[msg.sender][i] = requestList[msg.sender][i + 1];
-        }
-        delete requestList[msg.sender][requestList[msg.sender].length - 1];
-    }
-
     function getItemList(
         uint8 itemType,
         address user,
@@ -284,15 +236,6 @@ contract Repository is Money {
 
     function changePermission(address user, address target) public {
         storageAllowence[user][target] = !storageAllowence[user][target];
-    }
-
-    function friendCheck(address p1, address p2) public view returns (bool) {
-        for (uint256 i = 0; i < friendList[p1].length; i++) {
-            if (friendList[p1][i].friendAddress == p2) {
-                return true;
-            }
-        }
-        return false;
     }
 
     /// @dev 注册
@@ -314,24 +257,14 @@ contract Repository is Money {
         return flag;
     }
 
-    function getUsername(address _person) public view returns (string memory) {
-        string memory name = addressToName[_person];
-        require(!hashCompare(name, ""), "USER_NOTREGISTERED");
-        return name;
-    }
-
-    function getFriendList() public view returns (friend[] memory) {
-        return friendList[msg.sender];
-    }
-
     /// @dev 添加种子
     function addSeed(
-        uint256 _tag,
+        FarmBase.Specie _specie,
         address _player,
         uint256 _amount
     ) public {
         Item memory newItem;
-        newItem.tag = uint32(_tag);
+        newItem.specie = _specie;
         newItem.usable = true;
         newItem.stack = uint32(_amount);
         addItem(ItemType(ItemType.Seed), _player, newItem);
@@ -339,12 +272,12 @@ contract Repository is Money {
 
     /// @dev 添加果实
     function addFruit(
-        uint256 _tag,
+        FarmBase.Specie _specie,
         address _player,
         uint256 _amount
     ) public {
         Item memory newItem;
-        newItem.tag = uint32(_tag);
+        newItem.specie = _specie;
         newItem.usable = true;
         newItem.stack = uint32(_amount);
         addItem(ItemType(ItemType.Fruit), _player, newItem);
