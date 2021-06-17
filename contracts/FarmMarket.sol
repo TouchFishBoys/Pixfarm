@@ -24,7 +24,7 @@ contract FarmMarket is MarketBase, FarmBase {
 
     function buySeed(Specie _specie, uint256 _amount) public {
         repo.addSeed(_specie, msg.sender, _amount);
-        repo.transferToShop(msg.sender, PriceForSpecie[_specie] * _amout);
+        repo.transferToShop(msg.sender, PriceForSpecie[_specie] * _amount);
         //emit SeedSoldFromShop(msg.sender, seedTag, _amount, _price);
     }
 

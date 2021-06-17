@@ -12,7 +12,7 @@ interface IPixFarm {
     function sowing(
         uint256 _x,
         uint256 _y,
-        Specie _specie
+        FarmBase.Specie _specie
     ) external returns (bool);
 
     ///@dev 收获
@@ -65,7 +65,7 @@ contract PixFarm is Ownable, IPixFarm, FarmBase, Money {
         //Need Change
         if (fields[_x][_y].owner != msg.sender) {
             require(
-                money[msg.sender] < (PirceForSpecie[_specie] * 8) / 100,
+                mon.money[msg.sender] > (mon.PirceForSpecie[_specie] * 8) / 100,
                 "You don't have enough money to pay your rent"
             );
         }
@@ -74,14 +74,14 @@ contract PixFarm is Ownable, IPixFarm, FarmBase, Money {
             !mon.transferTo(
                 msg.sender,
                 fields[_x][_y].owner,
-                (PriceForSpecie[_specie] * 8) / 100
+                (mon.PriceForSpecie[_specie] * 8) / 100
             )
         ) {
             return false;
         }
 
         if (
-            !repo.removeItem(msg.sender, Repository.ItemType.Seed, _seedTag, 1)
+            !repo.removeItem(msg.sender, Repository.ItemType.Seed, _specie, 1)
         ) {
             return false;
         }
