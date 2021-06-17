@@ -18,8 +18,8 @@ interface IPixFarm {
     ///@dev 收获
     function harvest(uint256 _x, uint256 _y) external returns (bool);
 
-    ///@dev 铲除
-    function eradicate(uint256 _x, uint256 _y) external returns (bool getSeed);
+    // ///@dev 铲除
+    // function eradicate(uint256 _x, uint256 _y) external returns (bool getSeed);
 
     ///@dev 偷菜
     // function stealPlant(
@@ -32,17 +32,11 @@ interface IPixFarm {
     // function disassembling(uint256 _fruitTag) external returns (bool);
 }
 
-contract PixFarm is Ownable, IPixFarm, FarmBase, Money {
+contract PixFarm is Ownable, IPixFarm, FarmBase, Money, MarketBase {
     event SeedPlanted(address owner, uint8 x, uint8 y);
-    FarmMarket fm;
     Money mon;
 
-    constructor(
-        FarmMarket _fm,
-        Repository _repo,
-        Money _mon
-    ) FarmBase(_repo) {
-        fm = _fm;
+    constructor(Repository _repo, Money _mon) FarmBase(_repo) {
         mon = _mon;
     }
 
@@ -62,8 +56,7 @@ contract PixFarm is Ownable, IPixFarm, FarmBase, Money {
         //Need Change
         if (fields[_x][_y].owner != msg.sender) {
             require(
-                money[msg.sender] >
-                    (MarketBase.PriceForSpecie[_specie] * 8) / 100,
+                money[msg.sender] > (PriceForSpecie[_specie] * 8) / 100,
                 "You don't have enough money to pay your rent"
             );
         }
@@ -72,7 +65,7 @@ contract PixFarm is Ownable, IPixFarm, FarmBase, Money {
             !mon.transferTo(
                 msg.sender,
                 fields[_x][_y].owner,
-                (MarketBase.PriceForSpecie[_specie] * 8) / 100
+                (PriceForSpecie[_specie] * 8) / 100
             )
         ) {
             return false;
@@ -142,38 +135,38 @@ contract PixFarm is Ownable, IPixFarm, FarmBase, Money {
 
     event PlantEradicated(address owner, uint8 x, uint8 y);
 
-    /// @notice 铲除某地的植物
-    /// @param _x 被铲除的x坐标
-    /// @param _y 被铲除的y坐标
-    function eradicate(uint256 _x, uint256 _y)
-        external
-        override
-        returns (bool)
-    {
-        require(
-            fields[_x][_y].owner == msg.sender,
-            "You have no right to do this"
-        );
-        require(
-            fields[_x][_y].specie != Specie.empty,
-            "Thers is no plant to remove"
-        );
+    // /// @notice 铲除某地的植物
+    // /// @param _x 被铲除的x坐标
+    // /// @param _y 被铲除的y坐标
+    // function eradicate(uint256 _x, uint256 _y)
+    //     external
+    //     override
+    //     returns (bool)
+    // {
+    //     require(
+    //         fields[_x][_y].owner == msg.sender,
+    //         "You have no right to do this"
+    //     );
+    //     require(
+    //         fields[_x][_y].specie != Specie.empty,
+    //         "Thers is no plant to remove"
+    //     );
 
-        if (
-            ((block.timestamp - fields[_x][_y].sowingTime) * 100) /
-                specieTime[fields[_x][_y].specie] <
-            10
-        ) {
-            Repository.Item memory item;
-            item.stack = 1;
-            item.usable = true;
-            item.specie = fields[_x][_y].specie;
-            repo.addItem(Repository.ItemType.Seed, msg.sender, item);
-        }
-        fields[_x][_y].specie = Specie.empty;
-        _initField(fields[_x][_y]);
-        return true;
-    }
+    //     if (
+    //         ((block.timestamp - fields[_x][_y].sowingTime) * 100) /
+    //             specieTime[fields[_x][_y].specie] <
+    //         10
+    //     ) {
+    //         Repository.Item memory item;
+    //         item.stack = 1;
+    //         item.usable = true;
+    //         item.specie = fields[_x][_y].specie;
+    //         repo.addItem(Repository.ItemType.Seed, msg.sender, item);
+    //     }
+    //     fields[_x][_y].specie = Specie.empty;
+    //     _initField(fields[_x][_y]);
+    //     return true;
+    // }
 
     // event PlantStolen(address owner, address thief, uint8 x, uint8 y);
 

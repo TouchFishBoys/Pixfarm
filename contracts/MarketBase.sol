@@ -1,8 +1,6 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
-import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
-import "./AuctionBase.sol";
 import "./Repository.sol";
 import "./FarmBase.sol";
 
@@ -63,7 +61,7 @@ contract MarketBase {
         repo.addItem(Repository.ItemType.Seed, msg.sender, newItem);
     }
 
-    function sell(
+    function _sell(
         Repository.ItemType _type,
         FarmBase.Specie _specie,
         uint32 _amount

@@ -29,13 +29,13 @@ contract Pixfarmon {
     }
 
     /// @dev 添加好友
-    function AddFriendByName(string memory _name) public {
-        rb.addFriendByName(_name);
-    }
+    // function AddFriendByName(string memory _name) public {
+    //     rb.addFriendByName(_name);
+    // }
 
-    function AddFriendByAddress(address _address) public {
-        rb.addFriendByAddress(_address);
-    }
+    // function AddFriendByAddress(address _address) public {
+    //     rb.addFriendByAddress(_address);
+    // }
 
     /// @dev 氪金
     function RechargeMoney(uint256 _money) public {
@@ -44,11 +44,11 @@ contract Pixfarmon {
 
     /// @dev 买种子
     function BuySeedFromShop(
-        uint256 specie,
+        uint8 specie,
         uint256 level,
         uint256 _amount
     ) public {
-        fm.buySeed(specie, level, _amount);
+        fm.buySeed(specie, _amount);
     }
 
     // /// @dev 播种
@@ -92,7 +92,6 @@ contract Pixfarmon {
     /// @dev 注册
     function register(string memory _name) public {
         rb._registration(_name);
-        fb.upgradeLand(1);
         mon.getMoneyFromShop(msg.sender, 1000);
     }
 
@@ -102,6 +101,6 @@ contract Pixfarmon {
     }
 
     function getUsername(address player) public view returns (string memory) {
-        return rb.getUsername(player);
+        // return rb.getUsername(player);
     }
 }

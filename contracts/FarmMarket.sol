@@ -14,14 +14,17 @@ contract FarmMarket is MarketBase, FarmBase {
         uint256 cost
     );
 
-    function buySeed(Specie _specie, uint256 _amount) public {
-        repo.addSeed(_specie, msg.sender, _amount);
-        repo.transferToShop(msg.sender, PriceForSpecie[_specie] * _amount);
+    function buySeed(uint8 _specie, uint256 _amount) public {
+        repo.addSeed(Specie(_specie), msg.sender, _amount);
+        repo.transferToShop(
+            msg.sender,
+            PriceForSpecie[Specie(_specie)] * _amount
+        );
         //emit SeedSoldFromShop(msg.sender, seedTag, _amount, _price);
     }
 
     function sellFruit(Specie _specie, uint256 _amount) public returns (bool) {
-        sell(Repository.ItemType.Fruit, _specie, uint32(_amount));
+        _sell(Repository.ItemType.Fruit, _specie, uint32(_amount));
         return true;
     }
 }
