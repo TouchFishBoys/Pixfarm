@@ -3,17 +3,9 @@ pragma solidity ^0.8.0;
 
 import "./MarketBase.sol";
 import "./FarmBase.sol";
-import "./FarmFactory.sol";
 
 contract FarmMarket is MarketBase, FarmBase {
-    FarmFactory fc;
-
-    constructor(FarmFactory _fc, Repository _repo)
-        FarmBase(_repo)
-        MarketBase(_repo)
-    {
-        fc = _fc;
-    }
+    constructor(Repository _repo) FarmBase(_repo) MarketBase(_repo) {}
 
     event SeedSoldFromShop(
         address buyer,

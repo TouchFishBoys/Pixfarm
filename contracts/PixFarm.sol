@@ -3,7 +3,6 @@ pragma solidity ^0.8.0;
 
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "./Repository.sol";
-import "./FarmFactory.sol";
 import "./FarmBase.sol";
 import "./FarmMarket.sol";
 import "./MarketBase.sol";
