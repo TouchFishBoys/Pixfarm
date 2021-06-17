@@ -32,18 +32,21 @@ interface IPixFarm {
     function disassembling(uint256 _fruitTag) external returns (bool);
 }
 
-contract PixFarm is Ownable, IPixFarm, FarmBase {
+contract PixFarm is Ownable, IPixFarm, FarmBase, Money {
     event SeedPlanted(address owner, uint8 x, uint8 y);
     FarmMarket fm;
     FarmFactory fc;
+    Money mon;
 
     constructor(
         FarmMarket _fm,
         FarmFactory _fc,
-        Repository _repo
+        Repository _repo,
+        Money _mon
     ) FarmBase(_repo) {
         fm = _fm;
         fc = _fc;
+        mon = _mon;
     }
 
     /// @notice 播种
@@ -56,19 +59,35 @@ contract PixFarm is Ownable, IPixFarm, FarmBase {
         uint256 _y,
         uint256 _seedTag
     ) external override returns (bool) {
-        require(fields[msg.sender][_x][_y].unlocked == true);
-        require(fields[msg.sender][_x][_y].used == false);
+        //require(fields[msg.sender][_x][_y].unlocked == true);
+        //require(fields[msg.sender][_x][_y].used == false);
+
+        //Need Change
+        if (fields[_x][_y].owner != msg.sender) {
+            require(
+                money[msg.sender] < (999 * 8) / 100,
+                "You don't have enough money to pay your rent"
+            );
+        }
+
+        if (
+            !mon.transferTo(msg.sender, fields[_x][_y].owner, (999 * 8) / 100)
+        ) {
+            return false;
+        }
+
         if (
             !repo.removeItem(msg.sender, Repository.ItemType.Seed, _seedTag, 1)
         ) {
             return false;
         }
-        fields[msg.sender][_x][_y].seedTag = _seedTag;
-        fields[msg.sender][_x][_y].sowingTime = block.timestamp;
-        fields[msg.sender][_x][_y].maturityTime =
+        fields[_x][_y].planter = msg.sender;
+        fields[_x][_y].seedTag = _seedTag;
+        fields[_x][_y].sowingTime = block.timestamp;
+        fields[_x][_y].maturityTime =
             block.timestamp +
             specieTime[uint8(fc.getPropertiesByTag(_seedTag).specie)];
-        fields[msg.sender][_x][_y].used = true;
+        fields[_x][_y].used = true;
         return true;
     }
 
@@ -81,6 +100,7 @@ contract PixFarm is Ownable, IPixFarm, FarmBase {
         require(fields[msg.sender][_x][_y].used == true);
         require(fields[msg.sender][_x][_y].unlocked == true);
         require(block.timestamp >= fields[msg.sender][_x][_y].maturityTime);
+
         fields[msg.sender][_x][_y].used = false;
         uint32 num = 1;
         if (repo.probabilityCheck(5, 1000)) {
@@ -126,7 +146,7 @@ contract PixFarm is Ownable, IPixFarm, FarmBase {
         item.stack = num;
         repo.addItem(Repository.ItemType.Fruit, msg.sender, item);
         farmExperience[msg.sender] += fm.getFruitValueByTag(fruitTag) / 10;
-        _initField(fields[msg.sender][_x][_y]);
+        _initField(fields[_x][_y]);
         //return uint8(num);
     }
 
@@ -172,7 +192,7 @@ contract PixFarm is Ownable, IPixFarm, FarmBase {
             repo.addItem(Repository.ItemType.Seed, msg.sender, item);
             return true;
         }
-        fields[msg.sender][_x][_y].used=false;
+        fields[msg.sender][_x][_y].used = false;
         _initField(fields[msg.sender][_x][_y]);
         return true;
     }
@@ -282,6 +302,24 @@ contract PixFarm is Ownable, IPixFarm, FarmBase {
         return (block.timestamp, fields[player]);
     }
 
+    ///@dev 获取土地信息
+    function getFieldsMessage(uint256 _x, uint256 _y)
+        public
+        returns (
+            uint256,
+            uint256,
+            address,
+            address
+        )
+    {
+        return (
+            fields[_x][_y].seedTag,
+            fields[_x][_y].maturityTime,
+            fields[_x][_y].planter,
+            fields[_x][_y].owner
+        );
+    }
+
     function getAge(uint256 sowingTime, uint256 maturityTime)
         public
         view
@@ -296,5 +334,35 @@ contract PixFarm is Ownable, IPixFarm, FarmBase {
             return 1;
         }
         return 2;
+    }
+
+    ///@dev 购买土地
+    function buyLand(uint256 _x, uint256 _y) public returns (bool) {
+        require(
+            fields[_x][_y].unlocked == false,
+            "This land has been unlocked"
+        );
+        if (!mon.transferToShop(msg.sender, 999)) {
+            return false;
+        }
+        fields[_x][_y].owner = msg.sender;
+        return true;
+    }
+
+    ///@dev 出售土地
+    function sellLandToShop(uint256 _x, uint256 _y) public returns (bool) {
+        require(fields[_x][_y].owner == msg.sender);
+        if (!mon.getMoneyFromShop(msg.sender, 999)) {
+            return false;
+        }
+        fields[_x][_y].unlocked = false;
+        fields[_x][_y].used = false;
+        fields[_x][_y].seedTag = 0;
+        fields[_x][_y].sowingTime = 0;
+        fields[_x][_y].maturityTime = 0;
+        fields[_x][_y].stolen = false;
+        fields[_x][_y].owner = address(0);
+        fields[_x][_y].planter = address(0);
+        return true;
     }
 }

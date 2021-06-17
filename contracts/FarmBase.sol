@@ -23,12 +23,15 @@ contract FarmBase is Ownable {
         uint256 sowingTime;
         uint256 maturityTime;
         bool stolen;
-        address firstThief;
-        address secondThief;
+        //    address firstThief;
+        //   address secondThief;
+        address owner; //土地拥有者
+        address planter; //种植者
     }
     mapping(address => uint256) farmExperience;
     mapping(address => address[]) public owners;
-    mapping(address => Field[6][6]) fields;
+    //mapping(address => ) fields;
+    Field[6][6] fields;
     /// @dev 品质
     enum Quality {N, R, SR, SSR}
     /// @dev 物种
@@ -121,17 +124,17 @@ contract FarmBase is Ownable {
         return level;
     }
 
-    function upgradeLand(uint8 level) public {
-        require(getFarmLevel(msg.sender) >= level);
-        if (level != 1) {
-            repo.transferToShop(msg.sender, landPrice[level - 2]);
-        }
-        for (uint8 i = 0; i < level + 1; i++) {
-            for (uint8 j = 0; j < level + 1; j++) {
-                fields[msg.sender][i][j].unlocked = true;
-            }
-        }
-    }
+    // function upgradeLand(uint8 level) public {
+    //     require(getFarmLevel(msg.sender) >= level);
+    //     if (level != 1) {
+    //         repo.transferToShop(msg.sender, landPrice[level - 2]);
+    //     }
+    //     for (uint8 i = 0; i < level + 1; i++) {
+    //         for (uint8 j = 0; j < level + 1; j++) {
+    //             fields[msg.sender][i][j].unlocked = true;
+    //         }
+    //     }
+    // }
 
     /// @dev 初始化土地
     function _initField(Field storage _field) internal {
@@ -140,15 +143,16 @@ contract FarmBase is Ownable {
             _field.sowingTime = 0;
             _field.maturityTime = 0;
             _field.stolen = false;
-            _field.firstThief = address(0);
-            _field.secondThief = address(0);
+            //    _field.firstThief = address(0);
+            //    _field.secondThief = address(0);
+            _field.planter = address(0);
         }
     }
 
     /// @dev 注册
     function register(string memory _name) public {
         repo._registration(_name);
-        upgradeLand(1);
+        //upgradeLand(1);
         repo.getMoneyFromShop(msg.sender, 1000);
         repo.updateMaxIndex();
     }
