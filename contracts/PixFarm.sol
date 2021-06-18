@@ -36,7 +36,7 @@ contract PixFarm is Ownable, IPixFarm, FarmBase, Money, MarketBase {
     event SeedPlanted(address owner, uint8 x, uint8 y);
     Money mon;
 
-    constructor(Repository _repo, Money _mon) FarmBase(_repo) {
+    constructor(Repository _repo, Money _mon) FarmBase(_repo) MarketBase(_repo) {
         mon = _mon;
     }
 
