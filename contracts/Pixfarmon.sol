@@ -42,14 +42,14 @@ contract Pixfarmon {
         mon.rechargeMoney(_money);
     }
 
-    /// @dev 买种子
-    function BuySeedFromShop(
-        uint8 specie,
-        //uint256 level,
-        uint256 _amount
-    ) public {
-        fm.buySeed(specie, _amount);
-    }
+    // /// @dev 买种子
+    // function BuySeedFromShop(
+    //     uint8 specie,
+    //     //uint256 level,
+    //     uint256 _amount
+    // ) public {
+    //     fm.buySeed(specie, _amount);
+    // }
 
     // /// @dev 播种
     // function Sowing(
@@ -84,23 +84,23 @@ contract Pixfarmon {
     //     return disassembling(_tag);
     // }
 
-    /// @dev 拍卖
-    function deployAnAuction() public view returns (uint256[] memory) {
-        return auction.getTokensList();
-    }
+    // /// @dev 拍卖
+    // function deployAnAuction() public view returns (uint256[] memory) {
+    //     return auction.getTokensList();
+    // }
 
-    /// @dev 注册
-    function register(string memory _name) public {
-        rb._registration(_name);
-        mon.getMoneyFromShop(msg.sender, 1000);
-    }
+    // /// @dev 注册
+    // function register(string memory _name) public {
+    //     rb._registration(_name);
+    //     mon.getMoneyFromShop(msg.sender, 1000);
+    // }
 
-    /// @dev 检查是否已注册
-    function isregister(address _person) public view returns (bool) {
-        return rb._isregister(_person);
-    }
+    // /// @dev 检查是否已注册
+    // function isregister(address _person) public view returns (bool) {
+    //     return rb._isregister(_person);
+    // }
 
-    function getUsername(address player) public view returns (string memory) {
-        // return rb.getUsername(player);
-    }
+    // function getUsername(address player) public view returns (string memory) {
+    //     // return rb.getUsername(player);
+    // }
 }

@@ -46,7 +46,7 @@ contract FarmBase is Ownable {
     constructor(Repository _repo) {
         repo = _repo;
 
-        specieTime[Specie.empty] = uint256(0) - 1;
+        specieTime[Specie.empty] = 0;
         specieTime[Specie.branut] = 300;
         specieTime[Specie.moonbean] = 3600;
         specieTime[Specie.sunberry] = 21600;

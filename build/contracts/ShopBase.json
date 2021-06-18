@@ -22,7 +22,7 @@
       "type": "function"
     }
   ],
-  "metadata": "{\"compiler\":{\"version\":\"0.8.5+commit.a4f2e591\"},\"language\":\"Solidity\",\"output\":{\"abi\":[{\"inputs\":[],\"name\":\"_buy\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"_sell\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"}],\"devdoc\":{\"kind\":\"dev\",\"methods\":{},\"version\":1},\"userdoc\":{\"kind\":\"user\",\"methods\":{},\"version\":1}},\"settings\":{\"compilationTarget\":{\"/D/ETH Project/Pixfarmon/contracts/ShopBase.sol\":\"ShopBase\"},\"evmVersion\":\"berlin\",\"libraries\":{},\"metadata\":{\"bytecodeHash\":\"ipfs\"},\"optimizer\":{\"enabled\":true,\"runs\":200},\"remappings\":[]},\"sources\":{\"/D/ETH Project/Pixfarmon/contracts/FarmBase.sol\":{\"keccak256\":\"0x5353a37289b67232282544fb05442541c7d74fffd39a698f289c86d14440209c\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://5b4f8e7cd3b9cbfb41c43cf2fdb827b72c3d526893d5f2a02086c94224b234ef\",\"dweb:/ipfs/QmQmeUJDpaRqUnuHbMNi3HWZ7ECgRKr9w1mbPQrvANa91U\"]},\"/D/ETH Project/Pixfarmon/contracts/Money.sol\":{\"keccak256\":\"0x66b8b70a923810300763b36c329e6c46baabcd08945ba67a156268251e8388b7\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://6731f2f8334d198075dd1a58ceafcfe296be11c7382afe091e71c1ca434407ee\",\"dweb:/ipfs/QmbFcoAofZKb1DHmqakb6Hvs4WRJv9EvapvbNfVjcy7m7k\"]},\"/D/ETH Project/Pixfarmon/contracts/Repository.sol\":{\"keccak256\":\"0x2e1ec33dea11440e7bd08005e578538234ed80b7dfb5fadde16403cb869e45cf\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://c4e9b227647ebf1d27068fd8328d831b3482baa32a95fa5f2c1ff4c300092006\",\"dweb:/ipfs/QmdWc7tUrnR7mGyqDmq7JLM8pT1J9PY71DL9qWgumc4ADf\"]},\"/D/ETH Project/Pixfarmon/contracts/ShopBase.sol\":{\"keccak256\":\"0xaee8b7d557ddf026018ae8ac7ba25dded2b7526c842fcb09caba9769beeb716d\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://c82962bfe883d578654a24f5d261b38d2cb31d3db2ecbaa645f5910b4bd8fc30\",\"dweb:/ipfs/QmWMAYKMWQLYqmevthe2jABzSP3vmMCVQmAxYZab9Ff7dr\"]},\"@openzeppelin/contracts/access/Ownable.sol\":{\"keccak256\":\"0x1cae4f85f114ff17b90414f5da67365b1d00337abb5bce9bf944eb78a2c0673c\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://d5ff16b336ce8f906478d5f2eecc6435e00833bdc0b92f6b209cf9e92cb5b2b7\",\"dweb:/ipfs/QmRD1rAZEqQ73C33cdA3QoUyBDMEWnNKNMc6PNkAZWHeQQ\"]},\"@openzeppelin/contracts/token/ERC20/IERC20.sol\":{\"keccak256\":\"0xf8e8d118a7a8b2e134181f7da655f6266aa3a0f9134b2605747139fcb0c5d835\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://9ec48567e7ad06acb670980d5cdf3fd7f3949bf12894f02d68c3bb43e75aa84f\",\"dweb:/ipfs/QmaG3R2J9cz92YT77vFjYrjMNU2wHp4ypwYD62HqDUqS5U\"]},\"@openzeppelin/contracts/utils/Context.sol\":{\"keccak256\":\"0xf930d2df426bfcfc1f7415be724f04081c96f4fb9ec8d0e3a521c07692dface0\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://fc2bfdea0d2562c76fb3c4cf70a86c6ba25c5a30e8f8515c95aafdf8383f8395\",\"dweb:/ipfs/QmTbFya18786ckJfLYUoWau9jBTKfmWnWm5XSViWvB7PXN\"]}},\"version\":1}",
+  "metadata": "{\"compiler\":{\"version\":\"0.8.5+commit.a4f2e591\"},\"language\":\"Solidity\",\"output\":{\"abi\":[{\"inputs\":[],\"name\":\"_buy\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"_sell\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"}],\"devdoc\":{\"kind\":\"dev\",\"methods\":{},\"version\":1},\"userdoc\":{\"kind\":\"user\",\"methods\":{},\"version\":1}},\"settings\":{\"compilationTarget\":{\"/D/ETH Project/Pixfarmon/contracts/ShopBase.sol\":\"ShopBase\"},\"evmVersion\":\"berlin\",\"libraries\":{},\"metadata\":{\"bytecodeHash\":\"ipfs\"},\"optimizer\":{\"enabled\":true,\"runs\":200},\"remappings\":[]},\"sources\":{\"/D/ETH Project/Pixfarmon/contracts/FarmBase.sol\":{\"keccak256\":\"0x2f8eb4beab9851e6861cd3c09ed79817b12f6a16281efd3fdedccebb4e4bf977\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://12b12f4dd920e7cf6769071f5a54bf2c68bc5e5eb085e3307302209300d27168\",\"dweb:/ipfs/QmUM75w67rfxYUXgrNuP5wXv2gW5TK2wjQzk39pmse4kTj\"]},\"/D/ETH Project/Pixfarmon/contracts/Money.sol\":{\"keccak256\":\"0x66b8b70a923810300763b36c329e6c46baabcd08945ba67a156268251e8388b7\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://6731f2f8334d198075dd1a58ceafcfe296be11c7382afe091e71c1ca434407ee\",\"dweb:/ipfs/QmbFcoAofZKb1DHmqakb6Hvs4WRJv9EvapvbNfVjcy7m7k\"]},\"/D/ETH Project/Pixfarmon/contracts/Repository.sol\":{\"keccak256\":\"0x2e1ec33dea11440e7bd08005e578538234ed80b7dfb5fadde16403cb869e45cf\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://c4e9b227647ebf1d27068fd8328d831b3482baa32a95fa5f2c1ff4c300092006\",\"dweb:/ipfs/QmdWc7tUrnR7mGyqDmq7JLM8pT1J9PY71DL9qWgumc4ADf\"]},\"/D/ETH Project/Pixfarmon/contracts/ShopBase.sol\":{\"keccak256\":\"0xaee8b7d557ddf026018ae8ac7ba25dded2b7526c842fcb09caba9769beeb716d\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://c82962bfe883d578654a24f5d261b38d2cb31d3db2ecbaa645f5910b4bd8fc30\",\"dweb:/ipfs/QmWMAYKMWQLYqmevthe2jABzSP3vmMCVQmAxYZab9Ff7dr\"]},\"@openzeppelin/contracts/access/Ownable.sol\":{\"keccak256\":\"0x1cae4f85f114ff17b90414f5da67365b1d00337abb5bce9bf944eb78a2c0673c\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://d5ff16b336ce8f906478d5f2eecc6435e00833bdc0b92f6b209cf9e92cb5b2b7\",\"dweb:/ipfs/QmRD1rAZEqQ73C33cdA3QoUyBDMEWnNKNMc6PNkAZWHeQQ\"]},\"@openzeppelin/contracts/token/ERC20/IERC20.sol\":{\"keccak256\":\"0xf8e8d118a7a8b2e134181f7da655f6266aa3a0f9134b2605747139fcb0c5d835\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://9ec48567e7ad06acb670980d5cdf3fd7f3949bf12894f02d68c3bb43e75aa84f\",\"dweb:/ipfs/QmaG3R2J9cz92YT77vFjYrjMNU2wHp4ypwYD62HqDUqS5U\"]},\"@openzeppelin/contracts/utils/Context.sol\":{\"keccak256\":\"0xf930d2df426bfcfc1f7415be724f04081c96f4fb9ec8d0e3a521c07692dface0\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://fc2bfdea0d2562c76fb3c4cf70a86c6ba25c5a30e8f8515c95aafdf8383f8395\",\"dweb:/ipfs/QmTbFya18786ckJfLYUoWau9jBTKfmWnWm5XSViWvB7PXN\"]}},\"version\":1}",
   "bytecode": "0x",
   "deployedBytecode": "0x",
   "immutableReferences": {},
@@ -36,33 +36,33 @@
     "absolutePath": "/D/ETH Project/Pixfarmon/contracts/ShopBase.sol",
     "exportedSymbols": {
       "Context": [
-        3162
+        2480
       ],
       "FarmBase": [
-        748
+        254
       ],
       "IERC20": [
-        3139
+        2457
       ],
       "Money": [
-        1237
+        710
       ],
       "Ownable": [
-        3061
+        2379
       ],
       "Repository": [
-        2933
+        2251
       ],
       "ShopBase": [
-        2947
+        2265
       ]
     },
-    "id": 2948,
+    "id": 2266,
     "license": "MIT",
     "nodeType": "SourceUnit",
     "nodes": [
       {
-        "id": 2935,
+        "id": 2253,
         "literals": [
           "solidity",
           "^",
@@ -70,41 +70,41 @@
           ".0"
         ],
         "nodeType": "PragmaDirective",
-        "src": "33:23:10"
+        "src": "33:23:6"
       },
       {
         "absolutePath": "@openzeppelin/contracts/token/ERC20/IERC20.sol",
         "file": "@openzeppelin/contracts/token/ERC20/IERC20.sol",
-        "id": 2936,
+        "id": 2254,
         "nameLocation": "-1:-1:-1",
         "nodeType": "ImportDirective",
-        "scope": 2948,
-        "sourceUnit": 3140,
-        "src": "60:56:10",
+        "scope": 2266,
+        "sourceUnit": 2458,
+        "src": "60:56:6",
         "symbolAliases": [],
         "unitAlias": ""
       },
       {
         "absolutePath": "/D/ETH Project/Pixfarmon/contracts/FarmBase.sol",
         "file": "./FarmBase.sol",
-        "id": 2937,
+        "id": 2255,
         "nameLocation": "-1:-1:-1",
         "nodeType": "ImportDirective",
-        "scope": 2948,
-        "sourceUnit": 749,
-        "src": "118:24:10",
+        "scope": 2266,
+        "sourceUnit": 255,
+        "src": "118:24:6",
         "symbolAliases": [],
         "unitAlias": ""
       },
       {
         "absolutePath": "/D/ETH Project/Pixfarmon/contracts/Money.sol",
         "file": "./Money.sol",
-        "id": 2938,
+        "id": 2256,
         "nameLocation": "-1:-1:-1",
         "nodeType": "ImportDirective",
-        "scope": 2948,
-        "sourceUnit": 1238,
-        "src": "144:21:10",
+        "scope": 2266,
+        "sourceUnit": 711,
+        "src": "144:21:6",
         "symbolAliases": [],
         "unitAlias": ""
       },
@@ -114,42 +114,42 @@
         "contractDependencies": [],
         "contractKind": "interface",
         "fullyImplemented": false,
-        "id": 2947,
+        "id": 2265,
         "linearizedBaseContracts": [
-          2947
+          2265
         ],
         "name": "ShopBase",
-        "nameLocation": "179:8:10",
+        "nameLocation": "179:8:6",
         "nodeType": "ContractDefinition",
         "nodes": [
           {
             "functionSelector": "9299f294",
-            "id": 2943,
+            "id": 2261,
             "implemented": false,
             "kind": "function",
             "modifiers": [],
             "name": "_buy",
-            "nameLocation": "204:4:10",
+            "nameLocation": "204:4:6",
             "nodeType": "FunctionDefinition",
             "parameters": {
-              "id": 2939,
+              "id": 2257,
               "nodeType": "ParameterList",
               "parameters": [],
-              "src": "208:2:10"
+              "src": "208:2:6"
             },
             "returnParameters": {
-              "id": 2942,
+              "id": 2260,
               "nodeType": "ParameterList",
               "parameters": [
                 {
                   "constant": false,
-                  "id": 2941,
+                  "id": 2259,
                   "mutability": "mutable",
                   "name": "",
                   "nameLocation": "-1:-1:-1",
                   "nodeType": "VariableDeclaration",
-                  "scope": 2943,
-                  "src": "229:7:10",
+                  "scope": 2261,
+                  "src": "229:7:6",
                   "stateVariable": false,
                   "storageLocation": "default",
                   "typeDescriptions": {
@@ -157,10 +157,10 @@
                     "typeString": "uint256"
                   },
                   "typeName": {
-                    "id": 2940,
+                    "id": 2258,
                     "name": "uint256",
                     "nodeType": "ElementaryTypeName",
-                    "src": "229:7:10",
+                    "src": "229:7:6",
                     "typeDescriptions": {
                       "typeIdentifier": "t_uint256",
                       "typeString": "uint256"
@@ -169,80 +169,80 @@
                   "visibility": "internal"
                 }
               ],
-              "src": "228:9:10"
+              "src": "228:9:6"
             },
-            "scope": 2947,
-            "src": "195:43:10",
+            "scope": 2265,
+            "src": "195:43:6",
             "stateMutability": "nonpayable",
             "virtual": false,
             "visibility": "external"
           },
           {
             "functionSelector": "5eba7fcc",
-            "id": 2946,
+            "id": 2264,
             "implemented": false,
             "kind": "function",
             "modifiers": [],
             "name": "_sell",
-            "nameLocation": "255:5:10",
+            "nameLocation": "255:5:6",
             "nodeType": "FunctionDefinition",
             "parameters": {
-              "id": 2944,
+              "id": 2262,
               "nodeType": "ParameterList",
               "parameters": [],
-              "src": "260:2:10"
+              "src": "260:2:6"
             },
             "returnParameters": {
-              "id": 2945,
+              "id": 2263,
               "nodeType": "ParameterList",
               "parameters": [],
-              "src": "271:0:10"
+              "src": "271:0:6"
             },
-            "scope": 2947,
-            "src": "246:26:10",
+            "scope": 2265,
+            "src": "246:26:6",
             "stateMutability": "nonpayable",
             "virtual": false,
             "visibility": "external"
           }
         ],
-        "scope": 2948,
-        "src": "169:326:10",
+        "scope": 2266,
+        "src": "169:326:6",
         "usedErrors": []
       }
     ],
-    "src": "33:464:10"
+    "src": "33:464:6"
   },
   "legacyAST": {
     "absolutePath": "/D/ETH Project/Pixfarmon/contracts/ShopBase.sol",
     "exportedSymbols": {
       "Context": [
-        3162
+        2480
       ],
       "FarmBase": [
-        748
+        254
       ],
       "IERC20": [
-        3139
+        2457
       ],
       "Money": [
-        1237
+        710
       ],
       "Ownable": [
-        3061
+        2379
       ],
       "Repository": [
-        2933
+        2251
       ],
       "ShopBase": [
-        2947
+        2265
       ]
     },
-    "id": 2948,
+    "id": 2266,
     "license": "MIT",
     "nodeType": "SourceUnit",
     "nodes": [
       {
-        "id": 2935,
+        "id": 2253,
         "literals": [
           "solidity",
           "^",
@@ -250,41 +250,41 @@
           ".0"
         ],
         "nodeType": "PragmaDirective",
-        "src": "33:23:10"
+        "src": "33:23:6"
       },
       {
         "absolutePath": "@openzeppelin/contracts/token/ERC20/IERC20.sol",
         "file": "@openzeppelin/contracts/token/ERC20/IERC20.sol",
-        "id": 2936,
+        "id": 2254,
         "nameLocation": "-1:-1:-1",
         "nodeType": "ImportDirective",
-        "scope": 2948,
-        "sourceUnit": 3140,
-        "src": "60:56:10",
+        "scope": 2266,
+        "sourceUnit": 2458,
+        "src": "60:56:6",
         "symbolAliases": [],
         "unitAlias": ""
       },
       {
         "absolutePath": "/D/ETH Project/Pixfarmon/contracts/FarmBase.sol",
         "file": "./FarmBase.sol",
-        "id": 2937,
+        "id": 2255,
         "nameLocation": "-1:-1:-1",
         "nodeType": "ImportDirective",
-        "scope": 2948,
-        "sourceUnit": 749,
-        "src": "118:24:10",
+        "scope": 2266,
+        "sourceUnit": 255,
+        "src": "118:24:6",
         "symbolAliases": [],
         "unitAlias": ""
       },
       {
         "absolutePath": "/D/ETH Project/Pixfarmon/contracts/Money.sol",
         "file": "./Money.sol",
-        "id": 2938,
+        "id": 2256,
         "nameLocation": "-1:-1:-1",
         "nodeType": "ImportDirective",
-        "scope": 2948,
-        "sourceUnit": 1238,
-        "src": "144:21:10",
+        "scope": 2266,
+        "sourceUnit": 711,
+        "src": "144:21:6",
         "symbolAliases": [],
         "unitAlias": ""
       },
@@ -294,42 +294,42 @@
         "contractDependencies": [],
         "contractKind": "interface",
         "fullyImplemented": false,
-        "id": 2947,
+        "id": 2265,
         "linearizedBaseContracts": [
-          2947
+          2265
         ],
         "name": "ShopBase",
-        "nameLocation": "179:8:10",
+        "nameLocation": "179:8:6",
         "nodeType": "ContractDefinition",
         "nodes": [
           {
             "functionSelector": "9299f294",
-            "id": 2943,
+            "id": 2261,
             "implemented": false,
             "kind": "function",
             "modifiers": [],
             "name": "_buy",
-            "nameLocation": "204:4:10",
+            "nameLocation": "204:4:6",
             "nodeType": "FunctionDefinition",
             "parameters": {
-              "id": 2939,
+              "id": 2257,
               "nodeType": "ParameterList",
               "parameters": [],
-              "src": "208:2:10"
+              "src": "208:2:6"
             },
             "returnParameters": {
-              "id": 2942,
+              "id": 2260,
               "nodeType": "ParameterList",
               "parameters": [
                 {
                   "constant": false,
-                  "id": 2941,
+                  "id": 2259,
                   "mutability": "mutable",
                   "name": "",
                   "nameLocation": "-1:-1:-1",
                   "nodeType": "VariableDeclaration",
-                  "scope": 2943,
-                  "src": "229:7:10",
+                  "scope": 2261,
+                  "src": "229:7:6",
                   "stateVariable": false,
                   "storageLocation": "default",
                   "typeDescriptions": {
@@ -337,10 +337,10 @@
                     "typeString": "uint256"
                   },
                   "typeName": {
-                    "id": 2940,
+                    "id": 2258,
                     "name": "uint256",
                     "nodeType": "ElementaryTypeName",
-                    "src": "229:7:10",
+                    "src": "229:7:6",
                     "typeDescriptions": {
                       "typeIdentifier": "t_uint256",
                       "typeString": "uint256"
@@ -349,48 +349,48 @@
                   "visibility": "internal"
                 }
               ],
-              "src": "228:9:10"
+              "src": "228:9:6"
             },
-            "scope": 2947,
-            "src": "195:43:10",
+            "scope": 2265,
+            "src": "195:43:6",
             "stateMutability": "nonpayable",
             "virtual": false,
             "visibility": "external"
           },
           {
             "functionSelector": "5eba7fcc",
-            "id": 2946,
+            "id": 2264,
             "implemented": false,
             "kind": "function",
             "modifiers": [],
             "name": "_sell",
-            "nameLocation": "255:5:10",
+            "nameLocation": "255:5:6",
             "nodeType": "FunctionDefinition",
             "parameters": {
-              "id": 2944,
+              "id": 2262,
               "nodeType": "ParameterList",
               "parameters": [],
-              "src": "260:2:10"
+              "src": "260:2:6"
             },
             "returnParameters": {
-              "id": 2945,
+              "id": 2263,
               "nodeType": "ParameterList",
               "parameters": [],
-              "src": "271:0:10"
+              "src": "271:0:6"
             },
-            "scope": 2947,
-            "src": "246:26:10",
+            "scope": 2265,
+            "src": "246:26:6",
             "stateMutability": "nonpayable",
             "virtual": false,
             "visibility": "external"
           }
         ],
-        "scope": 2948,
-        "src": "169:326:10",
+        "scope": 2266,
+        "src": "169:326:6",
         "usedErrors": []
       }
     ],
-    "src": "33:464:10"
+    "src": "33:464:6"
   },
   "compiler": {
     "name": "solc",
@@ -398,7 +398,8 @@
   },
   "networks": {},
   "schemaVersion": "3.4.1",
-  "updatedAt": "2021-06-18T01:52:30.866Z",
+  "updatedAt": "2021-06-18T03:14:52.663Z",
+  "networkType": "ethereum",
   "devdoc": {
     "kind": "dev",
     "methods": {},

@@ -2,7 +2,7 @@ const HDWalletProvider = require("truffle-hdwallet-provider");
 
 // const privateKey = process.env.PRIVATE_KEY;
 const privateKey =
-  "3e72023b6eb2a8994edd33119e9f2c523850b63834e194cd4481567ab1ce52c5";
+  "91218c9ef59fe4ae8fda0cb0c8086756191f311850e673721822dcabce1c99c9";
 const skale = "https://dev-testnet-v1-1.skalelabs.com";
 
 module.exports = {

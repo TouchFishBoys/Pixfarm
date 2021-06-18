@@ -6,7 +6,6 @@ const FarmMarket = artifacts.require("FarmMarket");
 const MarketBase = artifacts.require("MarketBase");
 const PixFarm = artifacts.require("PixFarm");
 const ShopBase = artifacts.require("ShopBase");
-const Pixfarmon = artifacts.require("Pixfarmon");
 const Auction = artifacts.require("Auction");
 
 module.exports = function (deployer) {
@@ -20,25 +19,11 @@ module.exports = function (deployer) {
   // deployer.deploy(PetMarket);
 
   deployer.deploy(Auction);
-  deployer
-    .deploy(Repository)
-    // .then(() => {
-    //   return deployer.deploy(FarmFactory, Repository.address);})
-    .then(() => {
-      return deployer.deploy(
-        FarmMarket,
-        //FarmFactory.address,
-        Repository.address
-      );
-    })
-    .then(() => {
-      return deployer.deploy(
-        PixFarm,
-        FarmMarket.address,
-        //FarmFactory.address,
-        Repository.address
-      );
-    });
+  deployer.deploy(Repository).then(() => { return deployer.deploy(FarmBase, Repository.address) })
+    .then(() => { return deployer.deploy(MarketBase, Repository.address) })
+    .then(() => { return deployer.deploy(FarmMarket, Repository.address) })
+    .then(() => { return deployer.deploy(PixFarm, Repository.address, Auction.address) });
+
 
   // deployer.deploy(PixPet);
 };
