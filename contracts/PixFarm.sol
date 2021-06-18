@@ -36,7 +36,10 @@ contract PixFarm is Ownable, IPixFarm, FarmBase, Money, MarketBase {
     event SeedPlanted(address owner, uint8 x, uint8 y);
     Money mon;
 
-    constructor(Repository _repo, Money _mon) FarmBase(_repo) MarketBase(_repo) {
+    constructor(Repository _repo, Money _mon)
+        FarmBase(_repo)
+        MarketBase(_repo)
+    {
         mon = _mon;
     }
 
@@ -240,17 +243,14 @@ contract PixFarm is Ownable, IPixFarm, FarmBase, Money, MarketBase {
     //     }
     // }
 
-    function getFields(address player)
-        public
-        view
-        returns (uint256, Field[6][6] memory)
-    {
+    function getFields() public view returns (uint256, Field[6][6] memory) {
         return (block.timestamp, fields);
     }
 
     ///@dev 获取土地信息
     function getFieldsMessage(uint256 _x, uint256 _y)
         public
+        view
         returns (
             Specie,
             uint256,

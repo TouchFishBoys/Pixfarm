@@ -45,7 +45,7 @@ contract Pixfarmon {
     /// @dev 买种子
     function BuySeedFromShop(
         uint8 specie,
-        uint256 level,
+        //uint256 level,
         uint256 _amount
     ) public {
         fm.buySeed(specie, _amount);
