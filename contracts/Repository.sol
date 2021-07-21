@@ -8,7 +8,11 @@ import "./FarmBase.sol";
 /// @dev 游戏的仓库的合约
 contract Repository is Money {
     // 定义了物品的类型
-    enum ItemType {Seed, Fruit, Tool} // 3bits for futher development
+    enum ItemType {
+        Seed,
+        Fruit,
+        Tool
+    } // 3bits for futher development
 
     /// @dev 所有玩家
     address[] playersAddress;
@@ -167,6 +171,8 @@ contract Repository is Money {
     }
 
     //TODO seprate
+    //numerator : 分子
+    //denominator : 分母
     function probabilityCheck(uint256 numerator, uint256 denominator)
         public
         view
@@ -188,7 +194,8 @@ contract Repository is Money {
                         gasleft(),
                         block.difficulty,
                         block.number,
-                        keccak256(abi.encode(block.gaslimit))
+                        //keccak256(abi.encode(block.gaslimit))
+                        block.timestamp
                     )
                 )
             ) % decimal;
