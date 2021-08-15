@@ -13,6 +13,13 @@ module.exports = {
       network_id: "*",
       skipDryRun: true
     },
+    polygon: {
+      provider: () => new HDWalletProvider(privateKey, polygon),
+      gasPrice: 0,
+      network_id: "*",
+      skipDryRun: true,
+      networkCheckTimeout: 600000
+    },
     development: {
       host: "54.144.133.190",
       port: 8545,
